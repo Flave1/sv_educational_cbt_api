@@ -12,7 +12,7 @@ namespace CBT.Contracts
         {
             Message = new APIResponseMessage();
         }
-        public bool IsSuccessful;
+        public bool IsSuccessful { get; set; }
         public T Result { get; set; }
         public string Status { get; set; }
         public APIResponseMessage Message { get; set; }

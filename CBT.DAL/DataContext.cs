@@ -1,5 +1,6 @@
 ﻿using CBT.DAL.Models.Authentication;
 using CBT.DAL.Models.Candidate;
+using CBT.DAL.Models.Candidates;
 using CBT.DAL.Models.Examination;
 using CBT.DAL.Models.Question;
 using CBT.DAL.Models.Setting;

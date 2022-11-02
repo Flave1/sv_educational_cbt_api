@@ -1,5 +1,7 @@
 ﻿using CBT.BLL.Services.Authentication;
-using CBT.BLL.Services.Candidate;
+using CBT.BLL.Services.Candidates;
+using CBT.BLL.Services.Category;
+using CBT.BLL.Services.FileUpload;
 using CBT.BLL.Services.WebRequests;
 using CBT.Contracts.Options;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -18,6 +20,8 @@ namespace CBT.Installers
             services.AddScoped<IWebRequest, WebRequest>();
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<ICandidateCategoryService, CandidateCategoryService>();
+            services.AddScoped<ICandidateService, CandidateService>();
+            services.AddScoped<IFileUploadService, FileUploadService>();
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();

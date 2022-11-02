@@ -2,54 +2,63 @@
 using CBT.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using CBT.BLL.Middleware;
-using CBT.BLL.Services.Candidate;
-using CBT.Contracts.Candidate;
+using CBT.BLL.Services.Category;
+using CBT.Contracts.Category;
+using CBT.BLL.Services.Candidates;
+using CBT.Contracts.Candidates;
+using CBT.Contracts.Common;
 
 namespace CBT.Controllers.CandidateController
 {
     [CbtAuthorize]
-    [Route("cbt/api/v1/candidate-category")]
+    [Route("cbt/api/v1/candidate")]
     public class CandidateController: Controller
     {
-        private readonly ICandidateCategoryService _categoryService;
+        private readonly ICandidateService _service;
 
-        public CandidateController(ICandidateCategoryService categoryService)
+        public CandidateController(ICandidateService service)
         {
-            _categoryService = categoryService;
+            _service = service;
         }
         [HttpPost("create")]
-        public async Task<IActionResult> CreateCandidateCategory([FromBody]CreateCandidateCategory request)
+        public async Task<IActionResult> CreateCandidate([FromForm]CreateCandidate request)
         {
-            var response =  await _categoryService.CreateCandidateCategory(request, Guid.Parse(HttpContext.Items["userId"].ToString()), int.Parse(HttpContext.Items["userType"].ToString()));
+            var response = await _service.CreateCandidate(request, Guid.Parse(HttpContext.Items["userId"].ToString()), int.Parse(HttpContext.Items["userType"].ToString()));
             if(response.IsSuccessful)
                 return Ok(response);
             return BadRequest(response);
         }
-        [HttpGet("get-categories")]
-        public async Task<IActionResult> GetAllCandidateCategory()
+        [HttpGet("get-all-candidates")]
+        public async Task<IActionResult> GetAllCandidates()
         {
-            var response = await _categoryService.GetAllCandidateCategory();
-            if (response.IsSuccessful)
+            var response = await _service.GetAllCandidates();
+            if(response.IsSuccessful)
                 return Ok(response);
             return BadRequest(response);
         }
-        [HttpGet("get-category/{id}")]
-        public async Task<IActionResult> GetAllCandidateCategory(string id)
+        [HttpGet("get-candidate/{id}")]
+        public async Task<IActionResult> GetCandidate(string id)
         {
-            var response = await _categoryService.GetCandidateCategory(Guid.Parse(id));
+            var response = await _service.GetCandidate(Guid.Parse(id));
             if (response.IsSuccessful)
                 return Ok(response);
             return BadRequest(response);
         }
         [HttpPost("update")]
-        public async Task<IActionResult> UpdateCandidateCategory()
+        public async Task<IActionResult> UpdateCandidate([FromForm]UpdateCandidate request)
         {
-            return Ok();
+            var response = await _service.UpdateCandidate(request);
+            if (response.IsSuccessful)
+                return Ok(response);
+            return BadRequest(response);
         }
         [HttpPost("delete")]
-        public async Task<IActionResult> DeleteCandidateCategory()
+        public async Task<IActionResult> DeleteCandidate([FromBody] SingleDelete request)
         {
-            return Ok();
+            var response = await _service.DeleteCandidate(request);
+            if (response.IsSuccessful)
+                return Ok(response);
+            return BadRequest(response);
         }
 
     }

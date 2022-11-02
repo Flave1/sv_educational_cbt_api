@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CBT.Contracts.Candidate
+namespace CBT.Contracts.Category
 {
     public class SelectCandidateCategory
     {
         public Guid CandidateCategoryId { get; set; }
         public string Name { get; set; }
-        public DateTime DateCreated { get; set; }
+        public string DateCreated { get; set; }
     }
 }
