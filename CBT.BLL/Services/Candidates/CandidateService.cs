@@ -188,7 +188,7 @@ namespace CBT.BLL.Services.Candidates
                 if (candidate == null)
                 {
                     res.IsSuccessful = false;
-                    res.Message.FriendlyMessage = "CandidateCategoryId doesn't exist";
+                    res.Message.FriendlyMessage = "CandidateId doesn't exist";
                     return res;
                 }
                 var filePath = _fileUpload.UploadImage(request.PassportPhoto);

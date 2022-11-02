@@ -10,5 +10,6 @@ namespace CBT.Contracts.Routes
     {
         public const string countrySelect = "fws/lookups/api/v1/get/country-select";
         public const string login = "fws/user/api/v1/login";
+        public const string subjectSelect = "";
     }
 }

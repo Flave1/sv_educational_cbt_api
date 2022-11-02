@@ -34,8 +34,8 @@ namespace CBT.Controllers.Category
                 return Ok(response);
             return BadRequest(response);
         }
-        [HttpGet("get-single-cetegory/{id}")]
-        public async Task<IActionResult> GetAllCandidateCategory(string id)
+        [HttpGet("get-single-category/{id}")]
+        public async Task<IActionResult> GetCandidateCategory(string id)
         {
             var response = await _service.GetCandidateCategory(Guid.Parse(id));
             if (response.IsSuccessful)
