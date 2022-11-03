@@ -21,17 +21,18 @@ namespace CBT.BLL.Services.Subject
             _webRequest = webRequest;
             _fwsOptions = fwsOptions.Value;
         }
-        public async Task<APIResponse<List<SelectSubjects>>> GetActiveSubjects()
+        public async Task<APIResponse<List<SelectSubjects>>> GetActiveSubjects(string productBaseurlSuffix)
         {
             var res = new APIResponse<List<SelectSubjects>>();
             try
             {
-               res = await _webRequest.GetAsync<APIResponse<List<SelectSubjects>>>($"{_fwsOptions.FwsBaseUrl}smp/development/subject/api/v1/getall/active-subject");
-
-               return res;
+               res = await _webRequest.GetAsync<APIResponse<List<SelectSubjects>>>($"{_fwsOptions.FwsBaseUrl}smp/{productBaseurlSuffix}{FwsRoutes.subjectSelect}");
+                res.IsSuccessful = true;
+                return res;
             }
             catch(Exception ex)
             {
+                res.IsSuccessful = false;
                 throw ex;
             }
         }

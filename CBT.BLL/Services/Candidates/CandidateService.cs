@@ -32,7 +32,7 @@ namespace CBT.BLL.Services.Candidates
 
             try
             {
-                var category = _context.CandidateCategory.Where(m => m.CandidateCategoryId == request.CandidateCategoryId).FirstOrDefaultAsync();
+                var category = await _context.CandidateCategory.Where(m => m.CandidateCategoryId == request.CandidateCategoryId).FirstOrDefaultAsync();
                 if (category == null)
                 {
                     res.IsSuccessful = false;

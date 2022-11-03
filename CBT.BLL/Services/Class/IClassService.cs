@@ -5,11 +5,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CBT.Contracts.Subject;
+using CBT.Contracts.Class;
 
 namespace CBT.BLL.Services.Class
 {
     public interface IClassService
     {
-        //Task<APIResponse<>> GetActiveClasses();
+        Task<APIResponse<List<SelectActiveClasses>>> GetActiveClasses(string productBaseurlSuffix);
     }
 }

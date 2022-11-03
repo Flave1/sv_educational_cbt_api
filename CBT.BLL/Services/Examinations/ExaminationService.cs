@@ -5,7 +5,7 @@ using CBT.Contracts.Common;
 using CBT.Contracts.Examination;
 using CBT.DAL;
 using CBT.DAL.Models.Candidates;
-using CBT.DAL.Models.Examination;
+using CBT.DAL.Models.Examinations;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -29,12 +29,19 @@ namespace CBT.BLL.Services.Examinations
 
             try
             {
+                TimeSpan duration;
+                if (!TimeSpan.TryParse(request.Duration, out duration))
+                {
+                    res.IsSuccessful = false;
+                    res.Message.FriendlyMessage = "Error! Duration format is invalid";
+                    return res;
+                }
                 var examination = new Examination
                 {
                     ExamName_SubjectId = request.ExamName_SubjectId,
                     ExamName_Subject = request.ExamName_Subject,
                     CandidateCategoryId_ClassId = request.CandidateCategoryId_ClassId,
-                    Duration = request.Duration,
+                    Duration = duration,
                     StartTime = request.StartTime,
                     EndTime = request.EndTime,
                     Instruction = request.Instruction,
@@ -161,10 +168,18 @@ namespace CBT.BLL.Services.Examinations
                     res.Message.FriendlyMessage = "CandidateCategoryId doesn't exist";
                     return res;
                 }
+
+                TimeSpan duration;
+                if (!TimeSpan.TryParse(request.Duration, out duration))
+                {
+                    res.IsSuccessful = false;
+                    res.Message.FriendlyMessage = "Error! Duration format is invalid";
+                    return res;
+                }
                 result.ExamName_SubjectId = request.ExamName_SubjectId;
                 result.ExamName_Subject = request.ExamName_Subject;
                 result.CandidateCategoryId_ClassId = request.CandidateCategoryId_ClassId;
-                result.Duration = request.Duration;
+                result.Duration = duration;
                 result.StartTime = request.StartTime;
                 result.EndTime = request.EndTime;
                 result.Instruction = request.Instruction;
