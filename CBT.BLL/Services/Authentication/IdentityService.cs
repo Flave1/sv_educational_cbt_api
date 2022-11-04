@@ -25,11 +25,7 @@ namespace CBT.BLL.Services.Authentication
         {
             try
             {
-                //var res = new APIResponse<LoginSuccessResponse>();
                 var result = await _webRequest.PostAsync<LoginSuccessResponse, LoginCommand>($"{_fwsOptions.FwsBaseUrl}{FwsRoutes.login}", user);
-
-                //res.IsSuccessful = true;
-                //res.Result = result;
 
                 return result;
             }

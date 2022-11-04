@@ -51,6 +51,7 @@ namespace CBT.BLL.Middleware
 
                 var userId = tokena.Claims.FirstOrDefault(x => x.Type == "userId").Value;
                 var smsClientId = tokena.Claims.FirstOrDefault(x => x.Type == "smsClientId").Value;
+                var productBaseurlSuffix = tokena.Claims.FirstOrDefault(x => x.Type == "productBaseurlSuffix").Value;
 
                 if (string.IsNullOrEmpty(userId))
                 {
@@ -68,6 +69,7 @@ namespace CBT.BLL.Middleware
                     context.HttpContext.Items["userType"] = (int)UserType.SMSUser;
                 }
                 context.HttpContext.Items["userId"] = userId;
+                context.HttpContext.Items["productBaseurlSuffix"] = productBaseurlSuffix;
 
                 await next();
                 return;

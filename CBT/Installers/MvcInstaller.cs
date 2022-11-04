@@ -1,9 +1,15 @@
 ﻿using CBT.BLL.Services.Authentication;
+using CBT.BLL.Services.CandidateAnswers;
 using CBT.BLL.Services.Candidates;
 using CBT.BLL.Services.Category;
+using CBT.BLL.Services.Class;
+using CBT.BLL.Services.Examinations;
 using CBT.BLL.Services.FileUpload;
+using CBT.BLL.Services.Questions;
+using CBT.BLL.Services.Subject;
 using CBT.BLL.Services.WebRequests;
 using CBT.Contracts.Options;
+using CBT.DAL.Models.Examinations;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.OpenApi.Models;
@@ -22,6 +28,11 @@ namespace CBT.Installers
             services.AddScoped<ICandidateCategoryService, CandidateCategoryService>();
             services.AddScoped<ICandidateService, CandidateService>();
             services.AddScoped<IFileUploadService, FileUploadService>();
+            services.AddScoped<ISubjectService, SubjectService>();
+            services.AddScoped<IExaminationService, ExaminationService>();
+            services.AddScoped<IClassService, ClassService>();
+            services.AddScoped<IQuestionService, QuestionService>();
+            services.AddScoped<ICandidateAnswerService, CandidateAnswerService>();
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();

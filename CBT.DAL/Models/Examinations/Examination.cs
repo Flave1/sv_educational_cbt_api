@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CBT.DAL.Models.Examination
+namespace CBT.DAL.Models.Examinations
 {
     public class Examination : CommonEntity
     {
