@@ -15,7 +15,7 @@ namespace CBT.BLL.Services.Candidates
         Task<APIResponse<string>> CreateCandidate(CreateCandidate request, Guid clientId, int userType);
         Task<APIResponse<List<SelectCandidates>>> GetAllCandidates();
         Task<APIResponse<SelectCandidates>> GetCandidate(Guid candidateId);
-        Task<string> GenerateExamId(int length);
+        Task<string> GenerateExamId();
         Task<APIResponse<string>> UpdateCandidate(UpdateCandidate request);
         Task<APIResponse<bool>> DeleteCandidate(SingleDelete request);
     }
