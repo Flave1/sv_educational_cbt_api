@@ -9,7 +9,6 @@ using CBT.BLL.Services.Questions;
 using CBT.BLL.Services.Subject;
 using CBT.BLL.Services.WebRequests;
 using CBT.Contracts.Options;
-using CBT.DAL.Models.Examinations;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.OpenApi.Models;
@@ -42,7 +41,7 @@ namespace CBT.Installers
             {
                 x.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Title = "FLAVE CBT",
+                    Title = "FLAVECONSOLE CBT APIS",
                     Version = "V1",
                     Description = "An API for computer base test.",
                     TermsOfService = new Uri("http://www.godp.co.uk/"),
@@ -66,7 +65,7 @@ namespace CBT.Installers
                 };
                 x.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
-                    Description = "FLAVE CBT Authorization header using bearer scheme",
+                    Description = "FWS Authorization header using bearer scheme",
                     Name = "Authorization",
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.ApiKey,
