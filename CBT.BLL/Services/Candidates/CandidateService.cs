@@ -167,7 +167,7 @@ namespace CBT.BLL.Services.Candidates
                 string newCandidateId = new string(Enumerable.Repeat(chars, 10)
                     .Select(s => s[random.Next(s.Length)]).ToArray());
 
-                //newCandidateId = $"{newCandidateId}-{candidateId}";
+                ////newCandidateId = $"{newCandidateId}-{candidateId}";
                 return newCandidateId;
             }
             catch(Exception ex)
