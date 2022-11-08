@@ -1,5 +1,6 @@
 ﻿using CBT.BLL.Constants;
 using CBT.BLL.Services.FileUpload;
+using CBT.BLL.Utilities;
 using CBT.Contracts;
 using CBT.Contracts.Candidates;
 using CBT.Contracts.Category;
@@ -40,7 +41,7 @@ namespace CBT.BLL.Services.Candidates
                     return res;
                 }
                 var filePath = _fileUpload.UploadImage(request.PassportPhoto);
-                string candidateExamId = await GenerateExamId(10);
+                string candidateExamId = await GenerateExamId();
                 if(candidateExamId == "")
                 {
                     res.IsSuccessful = false;
@@ -155,14 +156,19 @@ namespace CBT.BLL.Services.Candidates
             }
         }
 
-        public async Task<string> GenerateExamId(int length)
+        public async Task<string> GenerateExamId()
         {
             try
             {
+                string candidateId = CandidateExamId.Generate();
                 Random random = new();
                 const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-                return new string(Enumerable.Repeat(chars, length)
+
+                string newCandidateId = new string(Enumerable.Repeat(chars, 10)
                     .Select(s => s[random.Next(s.Length)]).ToArray());
+
+                ////newCandidateId = $"{newCandidateId}-{candidateId}";
+                return newCandidateId;
             }
             catch(Exception ex)
             {
