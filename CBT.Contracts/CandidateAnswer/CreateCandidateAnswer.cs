@@ -10,6 +10,6 @@ namespace CBT.Contracts.CandidateAnswer
     {
         public Guid QuestionId { get; set; }
         public Guid CandidateId { get; set; }
-        public string Answers { get; set; }
+        public int[] Answers { get; set; }
     }
 }
