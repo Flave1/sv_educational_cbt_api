@@ -37,9 +37,9 @@ namespace CBT.Controllers.CandidateController
             return BadRequest(response);
         }
         [HttpGet("get-candidate/{id}")]
-        public async Task<IActionResult> GetCandidate(string id)
+        public async Task<IActionResult> GetCandidate(int id)
         {
-            var response = await _service.GetCandidate(Guid.Parse(id));
+            var response = await _service.GetCandidate(id);
             if (response.IsSuccessful)
                 return Ok(response);
             return BadRequest(response);

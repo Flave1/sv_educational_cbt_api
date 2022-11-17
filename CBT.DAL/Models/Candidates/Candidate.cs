@@ -10,7 +10,7 @@ namespace CBT.DAL.Models.Candidates
     public class Candidate : CommonEntity
     {
         [Key]
-        public Guid CandidateId { get; set; }
+        public int CandidateId { get; set; }
         public string CandidateExamId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }

@@ -8,7 +8,7 @@ namespace CBT.Contracts.Candidates
 {
     public class SelectCandidates
     {
-        public Guid CandidateId { get; set; }
+        public int CandidateId { get; set; }
         public string CandidateExamId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }

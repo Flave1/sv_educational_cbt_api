@@ -9,7 +9,7 @@ namespace CBT.Contracts.CandidateAnswer
     public class CreateCandidateAnswer
     {
         public Guid QuestionId { get; set; }
-        public Guid CandidateId { get; set; }
+        public int CandidateId { get; set; }
         public int[] Answers { get; set; }
     }
 }

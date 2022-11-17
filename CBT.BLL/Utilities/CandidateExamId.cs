@@ -17,15 +17,19 @@ namespace CBT.BLL.Utilities
         {
             _context = context;
         }
-        public static string Generate()
+        public static string Generate(int candidateId)
         {
             try
             {
-                var lastCandidateExamId = _context.Candidate.Max(d => d.CandidateExamId) ?? "1";
-                var newCandidateExamId = (lastCandidateExamId == "1" ? 1 : long.Parse(lastCandidateExamId) + 1).ToString();
-
+                var newCandidateExamId = candidateId.ToString();
                 newCandidateExamId = number(newCandidateExamId);
 
+                Random random = new();
+                const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+                string rndChars = new string(Enumerable.Repeat(chars, 5)
+                    .Select(s => s[random.Next(s.Length)]).ToArray());
+
+                newCandidateExamId = $"{rndChars}-{newCandidateExamId}";
                 return newCandidateExamId;
             }
             catch (Exception)
@@ -33,24 +37,24 @@ namespace CBT.BLL.Utilities
                 throw new ArgumentException("Unable to Generate CandidateExamId");
             }
         }
-        private static string number(string regNo)
+        private static string number(string examId)
         {
-            if (regNo.Length == 1)
-                return "000000" + regNo;
-            if (regNo.Length == 2)
-                return "00000" + regNo;
-            if (regNo.Length == 3)
-                return "0000" + regNo;
-            if (regNo.Length == 4)
-                return "000" + regNo;
-            if (regNo.Length == 5)
-                return "00" + regNo;
-            if (regNo.Length == 6)
-                return "0" + regNo;
-            if (regNo.Length == 7)
-                return regNo;
+            if (examId.Length == 1)
+                return "000000" + examId;
+            if (examId.Length == 2)
+                return "00000" + examId;
+            if (examId.Length == 3)
+                return "0000" + examId;
+            if (examId.Length == 4)
+                return "000" + examId;
+            if (examId.Length == 5)
+                return "00" + examId;
+            if (examId.Length == 6)
+                return "0" + examId;
+            if (examId.Length == 7)
+                return examId;
             else
-                return regNo;
+                return examId;
 
         }
     }

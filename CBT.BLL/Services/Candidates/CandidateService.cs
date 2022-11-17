@@ -1,4 +1,5 @@
 ﻿using CBT.BLL.Constants;
+using CBT.BLL.Services.Category;
 using CBT.BLL.Services.FileUpload;
 using CBT.BLL.Utilities;
 using CBT.Contracts;
@@ -9,6 +10,7 @@ using CBT.DAL;
 using CBT.DAL.Models.Candidates;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,11 +23,15 @@ namespace CBT.BLL.Services.Candidates
     {
         private readonly DataContext _context;
         private readonly IFileUploadService _fileUpload;
+        private readonly IConfiguration _config;
+        private readonly ICandidateCategoryService _candidateCategoryService;
 
-        public CandidateService(DataContext context, IFileUploadService fileUpload)
+        public CandidateService(DataContext context, IFileUploadService fileUpload, IConfiguration config, ICandidateCategoryService candidateCategoryService)
         {
             _context = context;
             _fileUpload = fileUpload;
+            _config = config;
+            _candidateCategoryService = candidateCategoryService;
         }
         public async Task<APIResponse<string>> CreateCandidate(CreateCandidate request, Guid clientId, int userType)
         {
@@ -41,17 +47,9 @@ namespace CBT.BLL.Services.Candidates
                     return res;
                 }
                 var filePath = _fileUpload.UploadImage(request.PassportPhoto);
-                string candidateExamId = await GenerateExamId();
-                if(candidateExamId == "")
-                {
-                    res.IsSuccessful = false;
-                    res.Message.FriendlyMessage = "Error generating CandidateExamId";
-                    return res;
-                };
 
                 var candidate = new Candidate
                 {
-                    CandidateExamId = candidateExamId,
                     FirstName = request.FirstName,
                     LastName = request.LastName,
                     OtherName = request.OtherName,
@@ -60,10 +58,22 @@ namespace CBT.BLL.Services.Candidates
                     PassportPhoto = filePath,
                     UserType = userType,
                     ClientId = clientId,
+                    CandidateExamId = "",
                     CandidateCategoryId = request.CandidateCategoryId
                 };
 
                 _context.Candidate.Add(candidate);
+                await _context.SaveChangesAsync();
+
+                string candidateExamId = CandidateExamId.Generate(candidate.CandidateId);
+                if (candidateExamId == "")
+                {
+                    res.IsSuccessful = false;
+                    res.Message.FriendlyMessage = "Error generating CandidateExamId";
+                    return res;
+                };
+
+                candidate.CandidateExamId = candidateExamId;
                 await _context.SaveChangesAsync();
                 res.Result = candidate.CandidateId.ToString();
                 res.IsSuccessful = true;
@@ -83,6 +93,7 @@ namespace CBT.BLL.Services.Candidates
             var res = new APIResponse<List<SelectCandidates>>();
             try
             {
+                
                 var result = await _context.Candidate
                     .OrderByDescending(s => s.CreatedOn)
                     .Where(d => d.Deleted != true).Select(a => new SelectCandidates
@@ -113,7 +124,7 @@ namespace CBT.BLL.Services.Candidates
             }
         }
 
-        public async Task<APIResponse<SelectCandidates>> GetCandidate(Guid candidateId)
+        public async Task<APIResponse<SelectCandidates>> GetCandidate(int candidateId)
         {
             var res = new APIResponse<SelectCandidates>();
             try
@@ -156,25 +167,26 @@ namespace CBT.BLL.Services.Candidates
             }
         }
 
-        public async Task<string> GenerateExamId()
-        {
-            try
-            {
-                string candidateId = CandidateExamId.Generate();
-                Random random = new();
-                const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        //public async Task<string> GenerateExamId()
+        //{
+        //    try
+        //    {
 
-                string newCandidateId = new string(Enumerable.Repeat(chars, 10)
-                    .Select(s => s[random.Next(s.Length)]).ToArray());
+        //        string candidateId = CandidateExamId.Generate();
+        //        Random random = new();
+        //        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
-                ////newCandidateId = $"{newCandidateId}-{candidateId}";
-                return newCandidateId;
-            }
-            catch(Exception ex)
-            {
-                return "";
-            }
-        }
+        //        string newCandidateId = new string(Enumerable.Repeat(chars, 5)
+        //            .Select(s => s[random.Next(s.Length)]).ToArray());
+
+        //        newCandidateId = $"{newCandidateId}-{candidateId}";
+        //        return newCandidateId;
+        //    }
+        //    catch(Exception ex)
+        //    {
+        //        return "";
+        //    }
+        //}
 
         public async Task<APIResponse<string>> UpdateCandidate(UpdateCandidate request)
         {
@@ -227,7 +239,7 @@ namespace CBT.BLL.Services.Candidates
             var res = new APIResponse<bool>();
             try
             {
-                var category = await _context.Candidate.Where(d => d.Deleted != true && d.CandidateId == Guid.Parse(request.Item)).FirstOrDefaultAsync();
+                var category = await _context.Candidate.Where(d => d.Deleted != true && d.CandidateId == int.Parse(request.Item)).FirstOrDefaultAsync();
                 if (category == null)
                 {
                     res.Message.FriendlyMessage = "Candidate does not exist";
