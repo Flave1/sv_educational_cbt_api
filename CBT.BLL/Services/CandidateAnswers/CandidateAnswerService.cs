@@ -1,4 +1,5 @@
 ﻿using CBT.BLL.Constants;
+using CBT.BLL.Services.Questions;
 using CBT.Contracts;
 using CBT.Contracts.CandidateAnswer;
 using CBT.Contracts.Candidates;
@@ -19,10 +20,12 @@ namespace CBT.BLL.Services.CandidateAnswers
     public class CandidateAnswerService : ICandidateAnswerService
     {
         private readonly DataContext _context;
+        private readonly IQuestionService _questionService;
 
-        public CandidateAnswerService(DataContext context)
+        public CandidateAnswerService(DataContext context, IQuestionService questionService)
         {
             _context = context;
+            _questionService = questionService;
         }
         public async Task<APIResponse<CreateCandidateAnswer>> CreateCandidateAnswer(CreateCandidateAnswer request, Guid clientId)
         {
@@ -44,11 +47,17 @@ namespace CBT.BLL.Services.CandidateAnswers
                     return res;
                 }
 
+                string answers = "";
+                foreach(int item in request.Answers)
+                {
+                    answers = $"{answers}{item},";
+                }
+
                 var candidateAnswer = new CandidateAnswer
                 {
                     QuestionId = request.QuestionId,
                     CandidateId = request.CandidateId,
-                    Answers = request.Answers,
+                    Answers = answers,
                     ClientId = clientId
                 };
 
@@ -73,15 +82,17 @@ namespace CBT.BLL.Services.CandidateAnswers
             var res = new APIResponse<IEnumerable<SelectCandidateAnswer>>();
             try
             {
-                var result = await _context.CandidateAnswer
+                var answer = await _context.CandidateAnswer
                     .OrderByDescending(s => s.CreatedOn)
-                    .Where(d => d.Deleted != true).Select(a => new SelectCandidateAnswer
-                    {
+                    .Where(d => d.Deleted != true).ToListAsync();
+
+                var result = answer.Select( a => new SelectCandidateAnswer
+                {
                         AnswerId = a.AnswerId,
                         QuestionId = a.QuestionId,
                         CandidateId = a.CandidateId,
-                        Answers = a.Answers
-                    }).ToListAsync();
+                        Answers = _questionService.GetQuestion(a.QuestionId).Result.Result.Answers.ToArray()
+                });
 
                 res.IsSuccessful = true;
                 res.Result = result;
@@ -102,7 +113,11 @@ namespace CBT.BLL.Services.CandidateAnswers
             var res = new APIResponse<SelectCandidateAnswer>();
             try
             {
-                var answer = await _context.CandidateAnswer.Where(m => m.AnswerId == Id).FirstOrDefaultAsync();
+
+                var answer = await _context.CandidateAnswer
+                    .OrderByDescending(s => s.CreatedOn)
+                    .Where(d => d.Deleted != true && d.AnswerId == Id).FirstOrDefaultAsync();
+
                 if (answer == null)
                 {
                     res.IsSuccessful = false;
@@ -110,15 +125,13 @@ namespace CBT.BLL.Services.CandidateAnswers
                     return res;
                 }
 
-                var result = await _context.CandidateAnswer
-                    .OrderByDescending(s => s.CreatedOn)
-                    .Where(d => d.Deleted != true && d.AnswerId == Id).Select(a => new SelectCandidateAnswer
-                    {
-                        AnswerId = a.AnswerId,
-                        QuestionId = a.QuestionId,
-                        CandidateId = a.CandidateId,
-                        Answers = a.Answers
-                    }).FirstOrDefaultAsync();
+                var result = new SelectCandidateAnswer
+                {
+                    AnswerId = answer.AnswerId,
+                    QuestionId = answer.QuestionId,
+                    CandidateId = answer.CandidateId,
+                    Answers = _questionService.GetQuestion(answer.QuestionId).Result.Result.Answers.ToArray()
+                };
 
                 res.IsSuccessful = true;
                 res.Result = result;
@@ -163,9 +176,15 @@ namespace CBT.BLL.Services.CandidateAnswers
                     return res;
                 }
 
+                string answers = "";
+                foreach (int item in request.Answers)
+                {
+                    answers = $"{answers}{item},";
+                }
+
                 answer.QuestionId = request.QuestionId;
                 answer.CandidateId = request.CandidateId;
-                answer.Answers = request.Answers;
+                answer.Answers = answers;
                
                 await _context.SaveChangesAsync();
                 res.Result = request;

@@ -1,5 +1,6 @@
 ﻿using CBT.BLL.Constants;
 using CBT.Contracts;
+using CBT.Contracts.Authentication;
 using CBT.Contracts.Candidates;
 using CBT.Contracts.Category;
 using CBT.Contracts.Common;
@@ -8,6 +9,8 @@ using CBT.DAL;
 using CBT.DAL.Models.Candidate;
 using CBT.DAL.Models.Question;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,6 +41,8 @@ namespace CBT.BLL.Services.Questions
                 }
 
                 string options = "";
+                string answers = "";
+
                 foreach(string item in request.Options)
                 {
                     if(item.Contains("</option>"))
@@ -51,13 +56,18 @@ namespace CBT.BLL.Services.Questions
                     
                 }
 
+                foreach(int item in request.Answers)
+                {
+                   answers = $"{answers}{item},";
+                }
+
                 var question = new Question
                 {
                     QuestionText = request.QuestionText,
                     ExaminationId = request.ExaminationId,
                     Mark = request.Mark,
                     Options = options,
-                    Answers = request.Answers,
+                    Answers = answers,
                     QuestionType = request.QuestionType,
                     ClientId = clientId,
                     UserType = userType
@@ -88,6 +98,7 @@ namespace CBT.BLL.Services.Questions
                     .OrderByDescending(s => s.CreatedOn)
                     .Where(d => d.Deleted != true).ToListAsync();
 
+
                 var result = questions.Select(a => new SelectQuestion
                 {
                     QuestionId = a.QuestionId,
@@ -95,10 +106,27 @@ namespace CBT.BLL.Services.Questions
                     ExaminationId = a.ExaminationId,
                     Mark = a.Mark,
                     Options = a.Options.Split("</option>").SkipLast(1).ToArray(),
-                    Answers = a.Answers,
+                    Answers = a.Answers.Split(",").SkipLast(1).ToArray(),
                     QuestionType = a.QuestionType,
-                });
+                }).ToList();
+
                 
+
+                foreach(var item in result)
+                {
+                    string[] arr = new string[item.Answers.Count()];
+                    int count = 0;
+                    foreach (string answer in item.Answers)
+                    {
+                        //item.Answers = item.Answers.Append(item.Options[int.Parse(answer)]).ToArray();
+                        arr[count] = item.Options[int.Parse(answer)];
+                        //item.Answers = arr.Append(item.Options[int.Parse(answer)]).ToArray();
+                        count++;
+                    }
+                    item.Answers = arr;
+                    //Array.Clear(item.Answers, 0, count);
+                    //item.Answers.SkipWhile(x => x.IsNullOrEmpty());
+                }
 
                 res.IsSuccessful = true;
                 res.Result = result;
@@ -119,7 +147,7 @@ namespace CBT.BLL.Services.Questions
             var res = new APIResponse<SelectQuestion>();
             try
             {
-                var question = await _context.Question.Where(m => m.QuestionId == Id).FirstOrDefaultAsync();
+                var question = await _context.Question.Where(m => m.Deleted != true && m.QuestionId == Id).FirstOrDefaultAsync();
                 if (question == null)
                 {
                     res.IsSuccessful = false;
@@ -127,23 +155,29 @@ namespace CBT.BLL.Services.Questions
                     return res;
                 }
 
-                var result = await _context.Question
-                    .OrderByDescending(s => s.CreatedOn)
-                    .Where(d => d.Deleted != true && d.QuestionId == Id).FirstOrDefaultAsync();
-
-                var response =  new SelectQuestion
+                var result =  new SelectQuestion
                 {
-                    QuestionId = result.QuestionId,
-                    QuestionText = result.QuestionText,
-                    ExaminationId = result.ExaminationId,
-                    Mark = result.Mark,
-                    Options = result.Options.Split("</option>").SkipLast(1).ToArray(),
-                    Answers = result.Answers,
-                    QuestionType = result.QuestionType,
+                    QuestionId = question.QuestionId,
+                    QuestionText = question.QuestionText,
+                    ExaminationId = question.ExaminationId,
+                    Mark = question.Mark,
+                    Options = question.Options.Split("</option>").SkipLast(1).ToArray(),
+                    Answers = question.Answers.Split(",").SkipLast(1).ToArray(),
+                    QuestionType = question.QuestionType,
                 };
 
+
+                string[] arr = new string[result.Answers.Count()];
+                int count = 0;
+                foreach (string answer in result.Answers)
+                {
+                    arr[count] = result.Options[int.Parse(answer)];
+                    count++;
+                }
+                result.Answers = arr;
+
                 res.IsSuccessful = true;
-                res.Result = response;
+                res.Result = result;
                 res.Message.FriendlyMessage = Messages.GetSuccess;
                 return res;
             }
@@ -170,6 +204,8 @@ namespace CBT.BLL.Services.Questions
                 }
 
                 string options = "";
+                string answers = "";
+
                 foreach (string item in request.Options)
                 {
                     if (item.Contains("</option>"))
@@ -183,11 +219,16 @@ namespace CBT.BLL.Services.Questions
 
                 }
 
+                foreach (int item in request.Answers)
+                {
+                    answers = $"{answers}{item},";
+                }
+
                 question.QuestionText = request.QuestionText;
                 question.ExaminationId = request.ExaminationId;
                 question.Mark = request.Mark;
                 question.Options = options;
-                question.Answers = request.Answers;
+                question.Answers = answers;
                 question.QuestionType = request.QuestionType;
 
                 await _context.SaveChangesAsync();

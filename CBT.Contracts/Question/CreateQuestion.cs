@@ -12,7 +12,7 @@ namespace CBT.Contracts.Question
         public Guid ExaminationId { get; set; }
         public int Mark { get; set; }
         public List<string> Options { get; set; }
-        public string Answers { get; set; }
+        public List<int> Answers { get; set; }
         public int QuestionType { get; set; }
     }
 }
