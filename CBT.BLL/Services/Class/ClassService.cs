@@ -30,7 +30,7 @@ namespace CBT.BLL.Services.Class
             var res = new APIResponse<List<SelectActiveClasses>>();
             try
             {
-                var productBaseurlSuffix = Guid.Parse(_accessor.HttpContext.Items["productBaseurlSuffix"].ToString());
+                var productBaseurlSuffix = _accessor.HttpContext.Items["productBaseurlSuffix"].ToString();
                 res = await _webRequest.GetAsync<APIResponse<List<SelectActiveClasses>>>($"{_fwsOptions.FwsBaseUrl}smp/{productBaseurlSuffix}{FwsRoutes.classSelect}");
                 res.IsSuccessful = true;
                 return res;

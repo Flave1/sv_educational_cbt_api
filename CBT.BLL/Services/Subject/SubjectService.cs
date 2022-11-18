@@ -29,7 +29,7 @@ namespace CBT.BLL.Services.Subject
             var res = new APIResponse<List<SelectSubjects>>();
             try
             {
-                var productBaseurlSuffix = Guid.Parse(_accessor.HttpContext.Items["productBaseurlSuffix"].ToString());
+                var productBaseurlSuffix = _accessor.HttpContext.Items["productBaseurlSuffix"].ToString();
                 res = await _webRequest.GetAsync<APIResponse<List<SelectSubjects>>>($"{_fwsOptions.FwsBaseUrl}smp/{productBaseurlSuffix}{FwsRoutes.subjectSelect}");
                 res.IsSuccessful = true;
                 return res;
