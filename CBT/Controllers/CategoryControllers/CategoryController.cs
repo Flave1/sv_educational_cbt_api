@@ -21,7 +21,7 @@ namespace CBT.Controllers.Category
         [HttpPost("create")]
         public async Task<IActionResult> CreateCandidateCategory([FromBody] CreateCandidateCategory request)
         {
-            var response = await _service.CreateCandidateCategory(request, Guid.Parse(HttpContext.Items["userId"].ToString()), int.Parse(HttpContext.Items["userType"].ToString()));
+            var response = await _service.CreateCandidateCategory(request);
             if (response.IsSuccessful)
                 return Ok(response);
             return BadRequest(response);

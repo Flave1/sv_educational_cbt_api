@@ -11,7 +11,7 @@ namespace CBT.BLL.Services.Category
 {
     public interface ICandidateCategoryService
     {
-        Task<APIResponse<CreateCandidateCategory>> CreateCandidateCategory(CreateCandidateCategory request, Guid clientId, int userType);
+        Task<APIResponse<CreateCandidateCategory>> CreateCandidateCategory(CreateCandidateCategory request);
         Task<APIResponse<List<SelectCandidateCategory>>> GetAllCandidateCategory();
         Task<APIResponse<SelectCandidateCategory>> GetCandidateCategory(Guid Id);
         Task<APIResponse<UpdateCandidateCategory>> UpdateCandidateCategory(UpdateCandidateCategory request);

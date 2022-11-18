@@ -6,6 +6,7 @@ using CBT.Contracts.Examination;
 using CBT.DAL;
 using CBT.DAL.Models.Candidates;
 using CBT.DAL.Models.Examinations;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -18,17 +19,22 @@ namespace CBT.BLL.Services.Examinations
     public class ExaminationService : IExaminationService
     {
         private readonly DataContext _context;
+        private readonly IHttpContextAccessor _accessor;
 
-        public ExaminationService(DataContext context)
+        public ExaminationService(DataContext context, IHttpContextAccessor accessor)
         {
             _context = context;
+            _accessor = accessor;
         }
-        public async Task<APIResponse<CreateExamination>> CreateExamination(CreateExamination request, Guid clientId, int userType)
+        public async Task<APIResponse<CreateExamination>> CreateExamination(CreateExamination request)
         {
             var res = new APIResponse<CreateExamination>();
 
             try
             {
+                var clientId = Guid.Parse(_accessor.HttpContext.Items["userId"].ToString());
+                var userType = int.Parse(_accessor.HttpContext.Items["userType"].ToString());
+
                 TimeSpan duration;
                 if (!TimeSpan.TryParse(request.Duration, out duration))
                 {
@@ -76,11 +82,13 @@ namespace CBT.BLL.Services.Examinations
             var res = new APIResponse<List<SelectExamination>>();
             try
             {
+                var clientId = Guid.Parse(_accessor.HttpContext.Items["userId"].ToString());
+
                 var result = await _context.Examination
                     .OrderByDescending(s => s.CreatedOn)
-                    .Where(d => d.Deleted != true).Select(a => new SelectExamination
+                    .Where(d => d.Deleted != true && d.ClientId == clientId).Select(a => new SelectExamination
                     {
-                        ExaminationId = a.ExaminationId,
+                        ExaminationId = a.ExaminationId.ToString(),
                         ExamName_SubjectId = a.ExamName_SubjectId,
                         ExamName_Subject = a.ExamName_Subject,
                         CandidateCategoryId_ClassId = a.CandidateCategoryId_ClassId,
@@ -114,11 +122,13 @@ namespace CBT.BLL.Services.Examinations
             var res = new APIResponse<SelectExamination>();
             try
             {
+                var clientId = Guid.Parse(_accessor.HttpContext.Items["userId"].ToString());
+
                 var result = await _context.Examination
                     .OrderByDescending(s => s.CreatedOn)
-                    .Where(d => d.Deleted != true && d.ExaminationId == Id).Select(a => new SelectExamination
+                    .Where(d => d.Deleted != true && d.ExaminationId == Id && d.ClientId == clientId).Select(a => new SelectExamination
                     {
-                        ExaminationId = a.ExaminationId,
+                        ExaminationId = a.ExaminationId.ToString(),
                         ExamName_SubjectId = a.ExamName_SubjectId,
                         ExamName_Subject = a.ExamName_Subject,
                         CandidateCategoryId_ClassId = a.CandidateCategoryId_ClassId,
@@ -161,11 +171,13 @@ namespace CBT.BLL.Services.Examinations
 
             try
             {
-                var result = await _context.Examination.Where(m => m.ExaminationId == request.ExaminationId).FirstOrDefaultAsync();
+                var clientId = Guid.Parse(_accessor.HttpContext.Items["userId"].ToString());
+
+                var result = await _context.Examination.Where(m => m.ExaminationId == request.ExaminationId && m.ClientId == clientId).FirstOrDefaultAsync();
                 if (result == null)
                 {
                     res.IsSuccessful = false;
-                    res.Message.FriendlyMessage = "CandidateCategoryId doesn't exist";
+                    res.Message.FriendlyMessage = "ExaminationId doesn't exist";
                     return res;
                 }
 
@@ -209,7 +221,9 @@ namespace CBT.BLL.Services.Examinations
             var res = new APIResponse<bool>();
             try
             {
-                var examination = await _context.Examination.Where(d => d.Deleted != true && d.ExaminationId == Guid.Parse(request.Item)).FirstOrDefaultAsync();
+                var clientId = Guid.Parse(_accessor.HttpContext.Items["userId"].ToString());
+
+                var examination = await _context.Examination.Where(d => d.Deleted != true && d.ExaminationId == Guid.Parse(request.Item) && d.ClientId == clientId).FirstOrDefaultAsync();
                 if (examination == null)
                 {
                     res.Message.FriendlyMessage = "ExaminationId does not exist";

@@ -9,6 +9,6 @@ namespace CBT.Contracts.Candidates
 {
     public class UpdateCandidate : CreateCandidate
     {
-        public Guid CandidateId { get; set; }
+        public string CandidateId { get; set; }
     }
 }

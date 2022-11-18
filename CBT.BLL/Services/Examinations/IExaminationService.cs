@@ -12,7 +12,7 @@ namespace CBT.BLL.Services.Examinations
 {
     public interface IExaminationService
     {
-        Task<APIResponse<CreateExamination>> CreateExamination(CreateExamination request, Guid clientId, int userType);
+        Task<APIResponse<CreateExamination>> CreateExamination(CreateExamination request);
         Task<APIResponse<List<SelectExamination>>> GetAllExamination();
         Task<APIResponse<SelectExamination>> GetExamination(Guid Id);
         Task<APIResponse<UpdateExamination>> UpdateExamination(UpdateExamination request);

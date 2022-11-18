@@ -8,7 +8,7 @@ namespace CBT.Contracts.Candidates
 {
     public class SelectCandidates
     {
-        public Guid CandidateId { get; set; }
+        public string CandidateId { get; set; }
         public string CandidateExamId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -16,7 +16,7 @@ namespace CBT.Contracts.Candidates
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
         public string PassportPhoto { get; set; }
-        public Guid CandidateCategoryId { get; set; }
+        public string CandidateCategoryId { get; set; }
         public string DateCreated { get; set; }
     }
 }

@@ -23,7 +23,7 @@ namespace CBT.Controllers.CandidateController
         [HttpPost("create")]
         public async Task<IActionResult> CreateCandidate([FromForm]CreateCandidate request)
         {
-            var response = await _service.CreateCandidate(request, Guid.Parse(HttpContext.Items["userId"].ToString()), int.Parse(HttpContext.Items["userType"].ToString()));
+            var response = await _service.CreateCandidate(request);
             if(response.IsSuccessful)
                 return Ok(response);
             return BadRequest(response);
@@ -39,7 +39,7 @@ namespace CBT.Controllers.CandidateController
         [HttpGet("get-candidate/{id}")]
         public async Task<IActionResult> GetCandidate(string id)
         {
-            var response = await _service.GetCandidate(Guid.Parse(id));
+            var response = await _service.GetCandidate(id);
             if (response.IsSuccessful)
                 return Ok(response);
             return BadRequest(response);

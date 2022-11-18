@@ -11,6 +11,7 @@ namespace CBT.DAL.Models.Candidates
     {
         [Key]
         public Guid CandidateId { get; set; }
+        public string CandidateNo { get; set; }
         public string CandidateExamId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }

@@ -12,7 +12,7 @@ namespace CBT.BLL.Services.CandidateAnswers
 {
     public interface ICandidateAnswerService
     {
-        Task<APIResponse<CreateCandidateAnswer>> CreateCandidateAnswer(CreateCandidateAnswer request, Guid clientId);
+        Task<APIResponse<CreateCandidateAnswer>> CreateCandidateAnswer(CreateCandidateAnswer request);
         Task<APIResponse<IEnumerable<SelectCandidateAnswer>>> GetAllCandidateAnswers();
         Task<APIResponse<SelectCandidateAnswer>> GetCandidateAnswer(Guid Id);
         Task<APIResponse<UpdateCandidateAnswer>> UpdateCandidateAnswer(UpdateCandidateAnswer request);

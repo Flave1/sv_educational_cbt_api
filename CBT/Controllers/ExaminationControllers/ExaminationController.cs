@@ -31,7 +31,7 @@ namespace CBT.Controllers.Examination
         [HttpPost("create")]
         public async Task<IActionResult> CreateExamination([FromBody]CreateExamination request)
         {
-            var response = await _service.CreateExamination(request, Guid.Parse(HttpContext.Items["userId"].ToString()), int.Parse(HttpContext.Items["userType"].ToString()));
+            var response = await _service.CreateExamination(request);
             if(response.IsSuccessful)
                 return Ok(response);
             return BadRequest(response);

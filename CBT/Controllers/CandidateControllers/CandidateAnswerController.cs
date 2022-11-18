@@ -21,7 +21,7 @@ namespace CBT.Controllers.CandidateControllers
         [HttpPost("create")]
         public async Task<IActionResult> CreateCandidateAnswer([FromBody] CreateCandidateAnswer request)
         {
-            var response = await _service.CreateCandidateAnswer(request, Guid.Parse(HttpContext.Items["userId"].ToString()));
+            var response = await _service.CreateCandidateAnswer(request);
             if (response.IsSuccessful)
                 return Ok(response);
             return BadRequest(response);

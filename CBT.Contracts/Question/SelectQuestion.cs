@@ -8,9 +8,9 @@ namespace CBT.Contracts.Question
 {
     public class SelectQuestion
     {
-        public Guid QuestionId { get; set; }
+        public string QuestionId { get; set; }
         public string QuestionText { get; set; }
-        public Guid ExaminationId { get; set; }
+        public string ExaminationId { get; set; }
         public int Mark { get; set; }
         public string[] Options { get; set; }
         public string[] Answers { get; set; }
