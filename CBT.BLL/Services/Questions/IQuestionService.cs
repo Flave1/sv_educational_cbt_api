@@ -12,7 +12,7 @@ namespace CBT.BLL.Services.Questions
 {
     public interface IQuestionService
     {
-        Task<APIResponse<CreateQuestion>> CreateQuestion(CreateQuestion request, Guid clientId, int userType);
+        Task<APIResponse<CreateQuestion>> CreateQuestion(CreateQuestion request);
         Task<APIResponse<IEnumerable<SelectQuestion>>> GetAllQuestions();
         Task<APIResponse<SelectQuestion>> GetQuestion(Guid Id);
         Task<APIResponse<UpdateQuestion>> UpdateQuestion(UpdateQuestion request);

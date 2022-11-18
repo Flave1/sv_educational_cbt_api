@@ -8,8 +8,8 @@ namespace CBT.Contracts.CandidateAnswer
 {
     public class CreateCandidateAnswer
     {
-        public Guid QuestionId { get; set; }
-        public int CandidateId { get; set; }
+        public string QuestionId { get; set; }
+        public string CandidateId { get; set; }
         public int[] Answers { get; set; }
     }
 }

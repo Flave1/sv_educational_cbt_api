@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CBT.DAL.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20221113214541_InitialCreate")]
+    [Migration("20221118032233_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -106,8 +106,8 @@ namespace CBT.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CandidateId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CandidateId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ClientId")
                         .HasColumnType("uniqueidentifier");
@@ -175,16 +175,18 @@ namespace CBT.DAL.Migrations
 
             modelBuilder.Entity("CBT.DAL.Models.Candidates.Candidate", b =>
                 {
-                    b.Property<int>("CandidateId")
+                    b.Property<Guid>("CandidateId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CandidateId"), 1L, 1);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("CandidateCategoryId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CandidateExamId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CandidateNo")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

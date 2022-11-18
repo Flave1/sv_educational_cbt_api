@@ -11,18 +11,16 @@ namespace CBT.BLL.Utilities
 {
     public static class CandidateExamId
     {
-        public static DataContext _context;
-
-        public static void Initialize(DataContext context)
-        {
-            _context = context;
-        }
-        public static string Generate(int candidateId)
+        public static IDictionary<string, string> Generate()
         {
             try
             {
-                var newCandidateExamId = candidateId.ToString();
-                newCandidateExamId = number(newCandidateExamId);
+                var dictionary = new Dictionary<string, string>();
+                DataContext _context = new DataContext();
+                string lastCandidateId = _context.Candidate.Max(x => x.CandidateNo) ?? "0";
+               
+                var newCandidateNo = (int.Parse(lastCandidateId) + 1).ToString();
+                var newCandidateExamId = number(newCandidateNo);
 
                 Random random = new();
                 const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -30,7 +28,9 @@ namespace CBT.BLL.Utilities
                     .Select(s => s[random.Next(s.Length)]).ToArray());
 
                 newCandidateExamId = $"{rndChars}-{newCandidateExamId}";
-                return newCandidateExamId;
+
+                dictionary.Add(newCandidateNo, newCandidateExamId);
+                return dictionary;
             }
             catch (Exception)
             {

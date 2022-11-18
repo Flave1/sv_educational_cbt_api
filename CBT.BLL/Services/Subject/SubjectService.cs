@@ -3,6 +3,7 @@ using CBT.Contracts;
 using CBT.Contracts.Options;
 using CBT.Contracts.Routes;
 using CBT.Contracts.Subject;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -15,18 +16,21 @@ namespace CBT.BLL.Services.Subject
     public class SubjectService : ISubjectService
     {
         private readonly IWebRequest _webRequest;
+        private readonly IHttpContextAccessor _accessor;
         private readonly FwsConfigSettings _fwsOptions;
-        public SubjectService(IWebRequest webRequest, IOptions<FwsConfigSettings> fwsOptions)
+        public SubjectService(IWebRequest webRequest, IOptions<FwsConfigSettings> fwsOptions, IHttpContextAccessor accessor)
         {
             _webRequest = webRequest;
+            _accessor = accessor;
             _fwsOptions = fwsOptions.Value;
         }
-        public async Task<APIResponse<List<SelectSubjects>>> GetActiveSubjects(string productBaseurlSuffix)
+        public async Task<APIResponse<List<SelectSubjects>>> GetActiveSubjects()
         {
             var res = new APIResponse<List<SelectSubjects>>();
             try
             {
-               res = await _webRequest.GetAsync<APIResponse<List<SelectSubjects>>>($"{_fwsOptions.FwsBaseUrl}smp/{productBaseurlSuffix}{FwsRoutes.subjectSelect}");
+                var productBaseurlSuffix = Guid.Parse(_accessor.HttpContext.Items["productBaseurlSuffix"].ToString());
+                res = await _webRequest.GetAsync<APIResponse<List<SelectSubjects>>>($"{_fwsOptions.FwsBaseUrl}smp/{productBaseurlSuffix}{FwsRoutes.subjectSelect}");
                 res.IsSuccessful = true;
                 return res;
             }

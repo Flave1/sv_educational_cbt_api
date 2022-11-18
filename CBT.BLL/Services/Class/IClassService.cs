@@ -12,6 +12,6 @@ namespace CBT.BLL.Services.Class
 {
     public interface IClassService
     {
-        Task<APIResponse<List<SelectActiveClasses>>> GetActiveClasses(string productBaseurlSuffix);
+        Task<APIResponse<List<SelectActiveClasses>>> GetActiveClasses();
     }
 }

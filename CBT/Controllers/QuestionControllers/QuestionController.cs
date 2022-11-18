@@ -20,7 +20,7 @@ namespace CBT.Controllers.QuestionControllers
         [HttpPost("create")]
         public async Task<IActionResult> CreateQuestion([FromBody]CreateQuestion request)
         {
-            var response = await _service.CreateQuestion(request, Guid.Parse(HttpContext.Items["userId"].ToString()), int.Parse(HttpContext.Items["userType"].ToString()));
+            var response = await _service.CreateQuestion(request);
             if (response.IsSuccessful)
                 return Ok(response);
             return BadRequest(response);

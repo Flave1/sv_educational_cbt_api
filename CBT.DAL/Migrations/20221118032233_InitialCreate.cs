@@ -54,8 +54,8 @@ namespace CBT.DAL.Migrations
                 name: "Candidate",
                 columns: table => new
                 {
-                    CandidateId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CandidateId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CandidateNo = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CandidateExamId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -83,7 +83,7 @@ namespace CBT.DAL.Migrations
                 {
                     AnswerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     QuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CandidateId = table.Column<int>(type: "int", nullable: false),
+                    CandidateId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Answers = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Deleted = table.Column<bool>(type: "bit", nullable: false),

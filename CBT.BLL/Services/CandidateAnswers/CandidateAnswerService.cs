@@ -8,6 +8,7 @@ using CBT.Contracts.Question;
 using CBT.DAL;
 using CBT.DAL.Models.Candidate;
 using CBT.DAL.Models.Question;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -21,25 +22,28 @@ namespace CBT.BLL.Services.CandidateAnswers
     {
         private readonly DataContext _context;
         private readonly IQuestionService _questionService;
+        private readonly IHttpContextAccessor _accessor;
 
-        public CandidateAnswerService(DataContext context, IQuestionService questionService)
+        public CandidateAnswerService(DataContext context, IQuestionService questionService, IHttpContextAccessor accessor)
         {
             _context = context;
             _questionService = questionService;
+            _accessor = accessor;
         }
-        public async Task<APIResponse<CreateCandidateAnswer>> CreateCandidateAnswer(CreateCandidateAnswer request, Guid clientId)
+        public async Task<APIResponse<CreateCandidateAnswer>> CreateCandidateAnswer(CreateCandidateAnswer request)
         {
             var res = new APIResponse<CreateCandidateAnswer>();
             try
             {
-                var question = await _context.Question.Where(m => m.QuestionId == request.QuestionId).FirstOrDefaultAsync();
+                var clientId = Guid.Parse(_accessor.HttpContext.Items["userId"].ToString());
+                var question = await _context.Question.Where(m => m.QuestionId == Guid.Parse(request.QuestionId) && m.ClientId == clientId).FirstOrDefaultAsync();
                 if (question == null)
                 {
                     res.IsSuccessful = false;
                     res.Message.FriendlyMessage = "QuestionId doesn't exist";
                     return res;
                 }
-                var candidate = await _context.Candidate.Where(m => m.CandidateId == request.CandidateId).FirstOrDefaultAsync();
+                var candidate = await _context.Candidate.Where(m => m.CandidateId == Guid.Parse(request.CandidateId) && m.ClientId == clientId).FirstOrDefaultAsync();
                 if (candidate == null)
                 {
                     res.IsSuccessful = false;
@@ -55,8 +59,8 @@ namespace CBT.BLL.Services.CandidateAnswers
 
                 var candidateAnswer = new CandidateAnswer
                 {
-                    QuestionId = request.QuestionId,
-                    CandidateId = request.CandidateId,
+                    QuestionId = Guid.Parse(request.QuestionId),
+                    CandidateId = Guid.Parse(request.CandidateId),
                     Answers = answers,
                     ClientId = clientId
                 };
@@ -82,15 +86,17 @@ namespace CBT.BLL.Services.CandidateAnswers
             var res = new APIResponse<IEnumerable<SelectCandidateAnswer>>();
             try
             {
-                var answer = await _context.CandidateAnswer
-                    .OrderByDescending(s => s.CreatedOn)
-                    .Where(d => d.Deleted != true).ToListAsync();
+                var clientId = Guid.Parse(_accessor.HttpContext.Items["userId"].ToString());
 
-                var result = answer.Select( a => new SelectCandidateAnswer
+                var answers = await _context.CandidateAnswer
+                    .OrderByDescending(s => s.CreatedOn)
+                    .Where(d => d.Deleted != true && d.ClientId == clientId).ToListAsync();
+
+                var result = answers.Select( a => new SelectCandidateAnswer
                 {
-                        AnswerId = a.AnswerId,
-                        QuestionId = a.QuestionId,
-                        CandidateId = a.CandidateId,
+                        AnswerId = a.AnswerId.ToString(),
+                        QuestionId = a.QuestionId.ToString(),
+                        CandidateId = a.CandidateId.ToString(),
                         Answers = _questionService.GetQuestion(a.QuestionId).Result.Result.Answers.ToArray()
                 });
 
@@ -113,10 +119,11 @@ namespace CBT.BLL.Services.CandidateAnswers
             var res = new APIResponse<SelectCandidateAnswer>();
             try
             {
+                var clientId = Guid.Parse(_accessor.HttpContext.Items["userId"].ToString());
 
                 var answer = await _context.CandidateAnswer
                     .OrderByDescending(s => s.CreatedOn)
-                    .Where(d => d.Deleted != true && d.AnswerId == Id).FirstOrDefaultAsync();
+                    .Where(d => d.Deleted != true && d.AnswerId == Id && d.ClientId == clientId).FirstOrDefaultAsync();
 
                 if (answer == null)
                 {
@@ -127,9 +134,9 @@ namespace CBT.BLL.Services.CandidateAnswers
 
                 var result = new SelectCandidateAnswer
                 {
-                    AnswerId = answer.AnswerId,
-                    QuestionId = answer.QuestionId,
-                    CandidateId = answer.CandidateId,
+                    AnswerId = answer.AnswerId.ToString(),
+                    QuestionId = answer.QuestionId.ToString(),
+                    CandidateId = answer.CandidateId.ToString(),
                     Answers = _questionService.GetQuestion(answer.QuestionId).Result.Result.Answers.ToArray()
                 };
 
@@ -152,7 +159,8 @@ namespace CBT.BLL.Services.CandidateAnswers
             var res = new APIResponse<UpdateCandidateAnswer>();
             try
             {
-                var answer = await _context.CandidateAnswer.Where(m => m.AnswerId == request.AnswerId).FirstOrDefaultAsync();
+                var clientId = Guid.Parse(_accessor.HttpContext.Items["userId"].ToString());
+                var answer = await _context.CandidateAnswer.Where(m => m.AnswerId == request.AnswerId && m.ClientId == clientId).FirstOrDefaultAsync();
                 if (answer == null)
                 {
                     res.IsSuccessful = false;
@@ -160,7 +168,7 @@ namespace CBT.BLL.Services.CandidateAnswers
                     return res;
                 }
 
-                var question = await _context.Question.Where(m => m.QuestionId == request.QuestionId).FirstOrDefaultAsync();
+                var question = await _context.Question.Where(m => m.QuestionId == Guid.Parse(request.QuestionId)).FirstOrDefaultAsync();
                 if (question == null)
                 {
                     res.IsSuccessful = false;
@@ -168,7 +176,7 @@ namespace CBT.BLL.Services.CandidateAnswers
                     return res;
                 }
 
-                var candidate = await _context.Candidate.Where(m => m.CandidateId == request.CandidateId).FirstOrDefaultAsync();
+                var candidate = await _context.Candidate.Where(m => m.CandidateId == Guid.Parse(request.CandidateId)).FirstOrDefaultAsync();
                 if (candidate == null)
                 {
                     res.IsSuccessful = false;
@@ -182,8 +190,8 @@ namespace CBT.BLL.Services.CandidateAnswers
                     answers = $"{answers}{item},";
                 }
 
-                answer.QuestionId = request.QuestionId;
-                answer.CandidateId = request.CandidateId;
+                answer.QuestionId = Guid.Parse(request.QuestionId);
+                answer.CandidateId = Guid.Parse(request.CandidateId);
                 answer.Answers = answers;
                
                 await _context.SaveChangesAsync();
@@ -205,7 +213,8 @@ namespace CBT.BLL.Services.CandidateAnswers
             var res = new APIResponse<bool>();
             try
             {
-                var answer = await _context.CandidateAnswer.Where(d => d.Deleted != true && d.AnswerId == Guid.Parse(request.Item)).FirstOrDefaultAsync();
+                var clientId = Guid.Parse(_accessor.HttpContext.Items["userId"].ToString());
+                var answer = await _context.CandidateAnswer.Where(d => d.Deleted != true && d.AnswerId == Guid.Parse(request.Item) && d.ClientId == clientId).FirstOrDefaultAsync();
                 if (answer == null)
                 {
                     res.Message.FriendlyMessage = "AnswerId doesn't exist";

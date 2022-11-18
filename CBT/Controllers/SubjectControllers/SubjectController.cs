@@ -17,7 +17,7 @@ namespace CBT.Controllers.SubjectControllers
         [HttpGet("get-active-subjects")]
         public async Task<IActionResult> GetActiveSubjects()
         {
-            var response = await _service.GetActiveSubjects(HttpContext.Items["productBaseurlSuffix"].ToString());
+            var response = await _service.GetActiveSubjects();
             if (response.IsSuccessful)
                 return Ok(response);
             return BadRequest(response);

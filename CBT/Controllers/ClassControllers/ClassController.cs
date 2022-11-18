@@ -17,7 +17,7 @@ namespace CBT.Controllers.ClassControllers
         [HttpGet("get-active-classes")]
         public async Task<IActionResult> GetActiveSubjects()
         {
-            var response = await _service.GetActiveClasses(HttpContext.Items["productBaseurlSuffix"].ToString());
+            var response = await _service.GetActiveClasses();
             if(response.IsSuccessful)
                 return Ok(response);
             return BadRequest(response);

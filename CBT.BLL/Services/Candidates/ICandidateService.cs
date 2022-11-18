@@ -12,9 +12,9 @@ namespace CBT.BLL.Services.Candidates
 {
     public interface ICandidateService
     {
-        Task<APIResponse<string>> CreateCandidate(CreateCandidate request, Guid clientId, int userType);
+        Task<APIResponse<string>> CreateCandidate(CreateCandidate request);
         Task<APIResponse<List<SelectCandidates>>> GetAllCandidates();
-        Task<APIResponse<SelectCandidates>> GetCandidate(int candidateId);
+        Task<APIResponse<SelectCandidates>> GetCandidate(string candidateId);
         //Task<string> GenerateExamId();
         Task<APIResponse<string>> UpdateCandidate(UpdateCandidate request);
         Task<APIResponse<bool>> DeleteCandidate(SingleDelete request);
