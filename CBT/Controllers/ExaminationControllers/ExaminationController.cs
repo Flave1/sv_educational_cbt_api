@@ -1,18 +1,8 @@
 ﻿using CBT.BLL.Middleware;
 using CBT.BLL.Services.Examinations;
-using CBT.BLL.Services.Subject;
-using CBT.BLL.Services.WebRequests;
-using CBT.Contracts;
-using CBT.Contracts.Category;
 using CBT.Contracts.Common;
 using CBT.Contracts.Examination;
-using CBT.Contracts.Options;
-using CBT.Contracts.Routes;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.Options;
-using System.Web.Http.Controllers;
 
 namespace CBT.Controllers.Examination
 {
