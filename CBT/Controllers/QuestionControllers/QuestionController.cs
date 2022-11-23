@@ -1,8 +1,8 @@
 ﻿using CBT.BLL.Middleware;
 using CBT.BLL.Services.Questions;
 using CBT.Contracts.Common;
-using CBT.Contracts.Examination;
-using CBT.Contracts.Question;
+using CBT.Contracts.Examinations;
+using CBT.Contracts.Questions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CBT.Controllers.QuestionControllers

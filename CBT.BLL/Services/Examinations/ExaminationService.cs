@@ -1,8 +1,9 @@
 ﻿using CBT.BLL.Constants;
+using CBT.BLL.Services.Class;
 using CBT.Contracts;
 using CBT.Contracts.Candidates;
 using CBT.Contracts.Common;
-using CBT.Contracts.Examination;
+using CBT.Contracts.Examinations;
 using CBT.DAL;
 using CBT.DAL.Models.Candidates;
 using CBT.DAL.Models.Examinations;
@@ -42,11 +43,26 @@ namespace CBT.BLL.Services.Examinations
                     res.Message.FriendlyMessage = "Error! Duration format is invalid";
                     return res;
                 }
+                string asExamScoreSessionAndTerm = "";
+                string asAssessmentScoreSessionAndTerm = "";
+
+                if (request.UseAsExamScore)
+                {
+                    
+                }
+
+                if(request.UseAsAssessmentScore)
+                {
+
+                }
+
                 var examination = new Examination
                 {
                     ExamName_SubjectId = request.ExamName_SubjectId,
                     ExamName_Subject = request.ExamName_Subject,
                     CandidateCategoryId_ClassId = request.CandidateCategoryId_ClassId,
+                    CandidateCategory_Class = request.CandidateCategory_Class,
+                    ExamScore = request.ExamScore,
                     Duration = duration,
                     StartTime = request.StartTime,
                     EndTime = request.EndTime,
@@ -54,8 +70,8 @@ namespace CBT.BLL.Services.Examinations
                     ShuffleQuestions = request.ShuffleQuestions,
                     UseAsExamScore = request.UseAsExamScore,
                     UseAsAssessmentScore = request.UseAsAssessmentScore,
-                    AsExamScoreSessionAndTerm = request.AsExamScoreSessionAndTerm,
-                    AsAssessmentScoreSessionAndTerm = request.AsAssessmentScoreSessionAndTerm,
+                    AsExamScoreSessionAndTerm = asExamScoreSessionAndTerm,
+                    AsAssessmentScoreSessionAndTerm = asAssessmentScoreSessionAndTerm,
                     Status = request.Status,
                     UserType = userType,
                     ClientId = clientId
@@ -85,26 +101,12 @@ namespace CBT.BLL.Services.Examinations
                 var clientId = Guid.Parse(_accessor.HttpContext.Items["userId"].ToString());
 
                 var result = await _context.Examination
-                    .OrderByDescending(s => s.CreatedOn)
-                    .Where(d => d.Deleted != true && d.ClientId == clientId).Select(a => new SelectExamination
-                    {
-                        ExaminationId = a.ExaminationId.ToString(),
-                        ExamName_SubjectId = a.ExamName_SubjectId,
-                        ExamName_Subject = a.ExamName_Subject,
-                        CandidateCategoryId_ClassId = a.CandidateCategoryId_ClassId,
-                        Duration = a.Duration,
-                        StartTime = a.StartTime,
-                        EndTime = a.EndTime,
-                        Instruction = a.Instruction,
-                        ShuffleQuestions = a.ShuffleQuestions,
-                        UseAsExamScore = a.UseAsExamScore,
-                        UseAsAssessmentScore = a.UseAsAssessmentScore,
-                        AsExamScoreSessionAndTerm = a.AsExamScoreSessionAndTerm,
-                        AsAssessmentScoreSessionAndTerm = a.AsAssessmentScoreSessionAndTerm
-                    }).ToListAsync();
+                .OrderByDescending(s => s.CreatedOn)
+                .Where(d => d.Deleted != true && d.ClientId == clientId)
+                .Select(db => new SelectExamination(db)).ToListAsync();
 
-                res.IsSuccessful = true;
                 res.Result = result;
+                res.IsSuccessful = true;
                 res.Message.FriendlyMessage = Messages.GetSuccess;
                 return res;
             }
@@ -125,23 +127,9 @@ namespace CBT.BLL.Services.Examinations
                 var clientId = Guid.Parse(_accessor.HttpContext.Items["userId"].ToString());
 
                 var result = await _context.Examination
-                    .OrderByDescending(s => s.CreatedOn)
-                    .Where(d => d.Deleted != true && d.ExaminationId == Id && d.ClientId == clientId).Select(a => new SelectExamination
-                    {
-                        ExaminationId = a.ExaminationId.ToString(),
-                        ExamName_SubjectId = a.ExamName_SubjectId,
-                        ExamName_Subject = a.ExamName_Subject,
-                        CandidateCategoryId_ClassId = a.CandidateCategoryId_ClassId,
-                        Duration = a.Duration,
-                        StartTime = a.StartTime,
-                        EndTime = a.EndTime,
-                        Instruction = a.Instruction,
-                        ShuffleQuestions = a.ShuffleQuestions,
-                        UseAsExamScore = a.UseAsExamScore,
-                        UseAsAssessmentScore = a.UseAsAssessmentScore,
-                        AsExamScoreSessionAndTerm = a.AsExamScoreSessionAndTerm,
-                        AsAssessmentScoreSessionAndTerm = a.AsAssessmentScoreSessionAndTerm
-                    }).FirstOrDefaultAsync();
+                .OrderByDescending(s => s.CreatedOn)
+                .Where(d => d.Deleted != true && d.ExaminationId == Id && d.ClientId == clientId)
+                .Select(db => new SelectExamination(db)).FirstOrDefaultAsync();
 
                 if (result == null)
                 {
@@ -188,9 +176,25 @@ namespace CBT.BLL.Services.Examinations
                     res.Message.FriendlyMessage = "Error! Duration format is invalid";
                     return res;
                 }
+
+                string asExamScoreSessionAndTerm = "";
+                string asAssessmentScoreSessionAndTerm = "";
+
+                if (request.UseAsExamScore)
+                {
+
+                }
+
+                if (request.UseAsAssessmentScore)
+                {
+
+                }
+
                 result.ExamName_SubjectId = request.ExamName_SubjectId;
                 result.ExamName_Subject = request.ExamName_Subject;
                 result.CandidateCategoryId_ClassId = request.CandidateCategoryId_ClassId;
+                result.CandidateCategory_Class = request.CandidateCategory_Class;
+                result.ExamScore = request.ExamScore;
                 result.Duration = duration;
                 result.StartTime = request.StartTime;
                 result.EndTime = request.EndTime;
@@ -198,8 +202,8 @@ namespace CBT.BLL.Services.Examinations
                 result.ShuffleQuestions = request.ShuffleQuestions;
                 result.UseAsExamScore = request.UseAsExamScore;
                 result.UseAsAssessmentScore = request.UseAsAssessmentScore;
-                result.AsExamScoreSessionAndTerm = request.AsExamScoreSessionAndTerm;
-                result.AsAssessmentScoreSessionAndTerm = request.AsAssessmentScoreSessionAndTerm;
+                result.AsExamScoreSessionAndTerm = asExamScoreSessionAndTerm;
+                result.AsAssessmentScoreSessionAndTerm = asAssessmentScoreSessionAndTerm;
                 result.Status = request.Status;
 
                 await _context.SaveChangesAsync();

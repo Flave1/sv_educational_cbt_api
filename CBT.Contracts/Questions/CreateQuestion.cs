@@ -4,16 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CBT.Contracts.Question
+namespace CBT.Contracts.Questions
 {
-    public class SelectQuestion
+    public class CreateQuestion
     {
-        public string QuestionId { get; set; }
         public string QuestionText { get; set; }
-        public string ExaminationId { get; set; }
+        public Guid ExaminationId { get; set; }
         public int Mark { get; set; }
-        public string[] Options { get; set; }
-        public string[] Answers { get; set; }
+        public List<string> Options { get; set; }
+        public List<int> Answers { get; set; }
         public int QuestionType { get; set; }
     }
 }

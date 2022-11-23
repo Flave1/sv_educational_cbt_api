@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CBT.Contracts.Examination;
 using CBT.Contracts.Common;
+using CBT.Contracts.Examinations;
 
 namespace CBT.BLL.Services.Examinations
 {
