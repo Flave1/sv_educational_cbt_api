@@ -1,5 +1,6 @@
 ﻿using CBT.BLL.Constants;
 using CBT.BLL.Services.Class;
+using CBT.BLL.Services.Session;
 using CBT.Contracts;
 using CBT.Contracts.Candidates;
 using CBT.Contracts.Common;
@@ -21,11 +22,13 @@ namespace CBT.BLL.Services.Examinations
     {
         private readonly DataContext _context;
         private readonly IHttpContextAccessor _accessor;
+        private readonly ISessionService _sessionService;
 
-        public ExaminationService(DataContext context, IHttpContextAccessor accessor)
+        public ExaminationService(DataContext context, IHttpContextAccessor accessor, ISessionService sessionService)
         {
             _context = context;
             _accessor = accessor;
+            _sessionService = sessionService;
         }
         public async Task<APIResponse<CreateExamination>> CreateExamination(CreateExamination request)
         {
@@ -46,14 +49,17 @@ namespace CBT.BLL.Services.Examinations
                 string asExamScoreSessionAndTerm = "";
                 string asAssessmentScoreSessionAndTerm = "";
 
-                if (request.UseAsExamScore)
+                if (request.UseAsExamScore || request.UseAsAssessmentScore)
                 {
-                    
-                }
-
-                if(request.UseAsAssessmentScore)
-                {
-
+                    var service = await _sessionService.GetActiveSession(request.ExamScore, request.UseAsExamScore, request.UseAsAssessmentScore);
+                    if (service.Result == null)
+                    {
+                        res.IsSuccessful = false;
+                        res.Message.FriendlyMessage = service.Message.FriendlyMessage;
+                        return res;
+                    }
+                    asExamScoreSessionAndTerm = $"{service.Result.SessionId}|{service.Result.SessionTermId}";
+                    asAssessmentScoreSessionAndTerm = $"{service.Result.SessionId}|{service.Result.SessionTermId}";
                 }
 
                 var examination = new Examination
@@ -180,14 +186,17 @@ namespace CBT.BLL.Services.Examinations
                 string asExamScoreSessionAndTerm = "";
                 string asAssessmentScoreSessionAndTerm = "";
 
-                if (request.UseAsExamScore)
+                if (request.UseAsExamScore || request.UseAsAssessmentScore)
                 {
-
-                }
-
-                if (request.UseAsAssessmentScore)
-                {
-
+                    var service = await _sessionService.GetActiveSession(request.ExamScore, request.UseAsExamScore, request.UseAsAssessmentScore);
+                    if (service.Result == null)
+                    {
+                        res.IsSuccessful = false;
+                        res.Message.FriendlyMessage = service.Message.FriendlyMessage;
+                        return res;
+                    }
+                    asExamScoreSessionAndTerm = $"{service.Result.SessionId}|{service.Result.SessionTermId}";
+                    asAssessmentScoreSessionAndTerm = $"{service.Result.SessionId}|{service.Result.SessionTermId}";
                 }
 
                 result.ExamName_SubjectId = request.ExamName_SubjectId;

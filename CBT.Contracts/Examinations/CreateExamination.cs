@@ -12,7 +12,7 @@ namespace CBT.Contracts.Examinations
         public string ExamName_Subject { get; set; }
         public string CandidateCategoryId_ClassId { get; set; }
         public string CandidateCategory_Class { get; set; }
-        public decimal ExamScore { get; set; }
+        public int ExamScore { get; set; }
         public string Duration { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
