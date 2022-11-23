@@ -2,7 +2,7 @@
 using CBT.DAL.Models.Candidate;
 using CBT.DAL.Models.Candidates;
 using CBT.DAL.Models.Examinations;
-using CBT.DAL.Models.Question;
+using CBT.DAL.Models.Questions;
 using CBT.DAL.Models.Setting;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;

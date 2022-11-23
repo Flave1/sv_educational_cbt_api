@@ -1,13 +1,14 @@
 ﻿using CBT.BLL.Constants;
+using CBT.BLL.Services.Category;
 using CBT.Contracts;
 using CBT.Contracts.Authentication;
 using CBT.Contracts.Candidates;
 using CBT.Contracts.Category;
 using CBT.Contracts.Common;
-using CBT.Contracts.Question;
+using CBT.Contracts.Questions;
 using CBT.DAL;
 using CBT.DAL.Models.Candidate;
-using CBT.DAL.Models.Question;
+using CBT.DAL.Models.Questions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -104,36 +105,12 @@ namespace CBT.BLL.Services.Questions
 
                 var questions = await _context.Question
                     .OrderByDescending(s => s.CreatedOn)
-                    .Where(d => d.Deleted != true && d.ClientId == clientId).ToListAsync();
-
-
-                var result = questions.Select(a => new SelectQuestion
-                {
-                    QuestionId = a.QuestionId.ToString(),
-                    QuestionText = a.QuestionText,
-                    ExaminationId = a.ExaminationId.ToString(),
-                    Mark = a.Mark,
-                    Options = a.Options.Split("</option>").SkipLast(1).ToArray(),
-                    Answers = a.Answers.Split(",").SkipLast(1).ToArray(),
-                    QuestionType = a.QuestionType,
-                }).ToList();
-
-                
-
-                foreach(var item in result)
-                {
-                    string[] arr = new string[item.Answers.Count()];
-                    int count = 0;
-                    foreach (string answer in item.Answers)
-                    {
-                        arr[count] = item.Options[int.Parse(answer)];
-                        count++;
-                    }
-                    item.Answers = arr;
-                }
+                    .Where(d => d.Deleted != true && d.ClientId == clientId)
+                    .Select(db => new SelectQuestion(db, _context.Examination.FirstOrDefault(x => x.ExaminationId == db.ExaminationId)))
+                    .ToListAsync();
 
                 res.IsSuccessful = true;
-                res.Result = result;
+                res.Result = questions;
                 res.Message.FriendlyMessage = Messages.GetSuccess;
                 return res;
             }
@@ -161,26 +138,7 @@ namespace CBT.BLL.Services.Questions
                     return res;
                 }
 
-                var result =  new SelectQuestion
-                {
-                    QuestionId = question.QuestionId.ToString(),
-                    QuestionText = question.QuestionText,
-                    ExaminationId = question.ExaminationId.ToString(),
-                    Mark = question.Mark,
-                    Options = question.Options.Split("</option>").SkipLast(1).ToArray(),
-                    Answers = question.Answers.Split(",").SkipLast(1).ToArray(),
-                    QuestionType = question.QuestionType,
-                };
-
-
-                string[] arr = new string[result.Answers.Count()];
-                int count = 0;
-                foreach (string answer in result.Answers)
-                {
-                    arr[count] = result.Options[int.Parse(answer)];
-                    count++;
-                }
-                result.Answers = arr;
+                var result = new SelectQuestion(question, _context.Examination.FirstOrDefault(x => x.ExaminationId == question.ExaminationId));
 
                 res.IsSuccessful = true;
                 res.Result = result;

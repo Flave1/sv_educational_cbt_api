@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CBT.DAL.Models.Candidate;
+using CBT.DAL.Models.Candidates;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,6 +19,22 @@ namespace CBT.Contracts.Candidates
         public string Email { get; set; }
         public string PassportPhoto { get; set; }
         public string CandidateCategoryId { get; set; }
+        public string CandidateCategory { get; set; }
         public string DateCreated { get; set; }
+
+        public SelectCandidates(Candidate candidate, CandidateCategory category)
+        {
+            CandidateId = candidate.CandidateId.ToString();
+            CandidateExamId = candidate.CandidateExamId;
+            FirstName = candidate.FirstName;
+            LastName = candidate.LastName;
+            OtherName = candidate.OtherName;
+            PhoneNumber = candidate.PhoneNumber;
+            Email = candidate.Email;
+            PassportPhoto = candidate.PassportPhoto;
+            CandidateCategoryId = candidate.CandidateCategoryId.ToString();
+            CandidateCategory = category.Name;
+            DateCreated = candidate.CreatedOn.ToString();
+        }
     }
 }
