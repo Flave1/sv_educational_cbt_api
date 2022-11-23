@@ -14,6 +14,8 @@ namespace CBT.DAL.Models.Examinations
         public string ExamName_SubjectId { get; set; }
         public string ExamName_Subject { get; set; }
         public string CandidateCategoryId_ClassId { get; set; }
+        public string CandidateCategory_Class { get; set; }
+        public decimal ExamScore { get; set; }
         public TimeSpan Duration { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }

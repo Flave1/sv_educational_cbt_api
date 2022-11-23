@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CBT.DAL.Models.Question
+namespace CBT.DAL.Models.Questions
 {
     public class Question : CommonEntity
     {

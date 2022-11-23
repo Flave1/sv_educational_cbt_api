@@ -28,18 +28,16 @@ namespace CBT.BLL.Services.Candidates
         private readonly ICandidateCategoryService _candidateCategoryService;
         private readonly IHttpContextAccessor _accessor;
 
-        public CandidateService(DataContext context, IFileUploadService fileUpload, IConfiguration config, ICandidateCategoryService candidateCategoryService, IHttpContextAccessor accessor)
+        public CandidateService(DataContext context, IFileUploadService fileUpload, IConfiguration config, IHttpContextAccessor accessor)
         {
             _context = context;
             _fileUpload = fileUpload;
             _config = config;
-            _candidateCategoryService = candidateCategoryService;
             _accessor = accessor;
         }
         public async Task<APIResponse<string>> CreateCandidate(CreateCandidate request)
         {
             var res = new APIResponse<string>();
-
             try
             {
                 var clientId = Guid.Parse(_accessor.HttpContext.Items["userId"].ToString());
@@ -93,23 +91,10 @@ namespace CBT.BLL.Services.Candidates
             try
             {
                 var clientId = Guid.Parse(_accessor.HttpContext.Items["userId"].ToString());
-
                 var result = await _context.Candidate
-                    .OrderByDescending(s => s.CreatedOn)
-                    .Where(d => d.Deleted != true && d.ClientId == clientId).Select(a => new SelectCandidates
-                    {
-                        CandidateId = a.CandidateId.ToString(),
-                        CandidateExamId = a.CandidateExamId,
-                        FirstName = a.FirstName,
-                        LastName = a.LastName,
-                        OtherName = a.OtherName,
-                        PhoneNumber = a.PhoneNumber,
-                        Email = a.Email,
-                        PassportPhoto = a.PassportPhoto,
-                        CandidateCategoryId = a.CandidateCategoryId.ToString(),
-                        DateCreated = a.CreatedOn.ToString()
-                    }).ToListAsync();
-
+                    .OrderByDescending(c => c.CreatedOn)
+                    .Where(c => c.Deleted != true && c.ClientId == clientId)
+                    .Select(d => new SelectCandidates(d, _context.CandidateCategory.FirstOrDefault(x => x.CandidateCategoryId == d.CandidateCategoryId))).ToListAsync();
                 res.IsSuccessful = true;
                 res.Result = result;
                 res.Message.FriendlyMessage = Messages.GetSuccess;
@@ -130,22 +115,10 @@ namespace CBT.BLL.Services.Candidates
             try
             {
                 var clientId = Guid.Parse(_accessor.HttpContext.Items["userId"].ToString());
-
                 var result = await _context.Candidate
-                    .OrderByDescending(s => s.CreatedOn)
-                    .Where(d => d.Deleted != true && d.CandidateId == Guid.Parse(candidateId) && d.ClientId == clientId ).Select(a => new SelectCandidates
-                    {
-                        CandidateId = a.CandidateId.ToString(),
-                        CandidateExamId = a.CandidateExamId,
-                        FirstName = a.FirstName,
-                        LastName = a.LastName,
-                        OtherName = a.OtherName,
-                        PhoneNumber = a.PhoneNumber,
-                        Email = a.Email,
-                        PassportPhoto = a.PassportPhoto,
-                        CandidateCategoryId = a.CandidateCategoryId.ToString(),
-                        DateCreated = a.CreatedOn.ToString()
-                    }).FirstOrDefaultAsync();
+                    .OrderByDescending(c => c.CreatedOn)
+                    .Where(c => c.Deleted != true && c.CandidateId == Guid.Parse(candidateId) && c.ClientId == clientId)
+                    .Select(d => new SelectCandidates(d, _context.CandidateCategory.FirstOrDefault(x => x.CandidateCategoryId == d.CandidateCategoryId))).FirstOrDefaultAsync();
 
                 if (result == null)
                 {

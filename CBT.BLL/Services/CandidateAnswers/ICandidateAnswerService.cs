@@ -1,5 +1,5 @@
 ﻿using CBT.Contracts.Common;
-using CBT.Contracts.Question;
+using CBT.Contracts.Questions;
 using CBT.Contracts;
 using System;
 using System.Collections.Generic;

@@ -5,7 +5,7 @@ using CBT.BLL.Services.WebRequests;
 using CBT.Contracts;
 using CBT.Contracts.Category;
 using CBT.Contracts.Common;
-using CBT.Contracts.Examination;
+using CBT.Contracts.Examinations;
 using CBT.Contracts.Options;
 using CBT.Contracts.Routes;
 using Microsoft.AspNetCore.Builder;

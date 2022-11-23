@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CBT.Contracts.Question;
+using CBT.Contracts.Questions;
 using CBT.Contracts.Common;
 
 namespace CBT.BLL.Services.Questions
