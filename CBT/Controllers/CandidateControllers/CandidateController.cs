@@ -1,9 +1,6 @@
-﻿using CBT.Contracts.Routes;
-using CBT.Contracts;
+﻿using CBT.BLL.Middleware;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using CBT.BLL.Middleware;
-using CBT.BLL.Services.Category;
-using CBT.Contracts.Category;
 using CBT.BLL.Services.Candidates;
 using CBT.Contracts.Candidates;
 using CBT.Contracts.Common;
@@ -56,6 +53,16 @@ namespace CBT.Controllers.CandidateController
         public async Task<IActionResult> DeleteCandidate([FromBody] SingleDelete request)
         {
             var response = await _service.DeleteCandidate(request);
+            if (response.IsSuccessful)
+                return Ok(response);
+            return BadRequest(response);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody]CandidateLogin request)
+        {
+            var response = await _service.Login(request);
             if (response.IsSuccessful)
                 return Ok(response);
             return BadRequest(response);

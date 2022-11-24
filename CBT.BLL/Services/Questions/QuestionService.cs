@@ -243,5 +243,31 @@ namespace CBT.BLL.Services.Questions
             }
         }
 
+        public async Task<APIResponse<IEnumerable<SelectQuestion>>> GetQuestionByExamId(Guid examId)
+        {
+            var res = new APIResponse<IEnumerable<SelectQuestion>>();
+            try
+            {
+                var clientId = Guid.Parse(_accessor.HttpContext.Items["userId"].ToString());
+
+                var questions = await _context.Question
+                     .OrderByDescending(s => s.CreatedOn)
+                     .Where(d => d.Deleted != true && d.ExaminationId == examId && d.ClientId == clientId)
+                     .Select(db => new SelectQuestion(db, _context.Examination.FirstOrDefault(x => x.ExaminationId == db.ExaminationId)))
+                     .ToListAsync();
+
+                res.IsSuccessful = true;
+                res.Result = questions;
+                res.Message.FriendlyMessage = Messages.GetSuccess;
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.IsSuccessful = false;
+                res.Message.FriendlyMessage = Messages.FriendlyException;
+                res.Message.TechnicalMessage = ex.ToString();
+                return res;
+            }
+        }
     }
 }
