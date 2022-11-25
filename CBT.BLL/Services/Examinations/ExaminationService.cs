@@ -260,5 +260,45 @@ namespace CBT.BLL.Services.Examinations
                 return res;
             }
         }
+
+        public async Task<APIResponse<List<SelectExamination>>> GetExaminationByStatus(int examStatus)
+        {
+            var res = new APIResponse<List<SelectExamination>>();
+            try
+            {
+                var clientId = Guid.Parse(_accessor.HttpContext.Items["userId"].ToString());
+
+                if(examStatus == (int)ExaminationStatus.InProgress)
+                {
+                    var result = await _context.Examination
+                    .OrderByDescending(s => s.CreatedOn)
+                    .Where(d => d.Deleted != true && (d.StartTime <= DateTime.Now && d.EndTime > DateTime.Now) && d.ClientId == clientId)
+                    .Select(db => new SelectExamination(db)).ToListAsync();
+
+                    res.Result = result;
+                }
+
+                if (examStatus == (int)ExaminationStatus.Concluded)
+                {
+                    var result = await _context.Examination
+                    .OrderByDescending(s => s.CreatedOn)
+                    .Where(d => d.Deleted != true && (d.StartTime < DateTime.Now && d.EndTime < DateTime.Now) && d.ClientId == clientId)
+                    .Select(db => new SelectExamination(db)).ToListAsync();
+
+                    res.Result = result;
+                }
+
+                res.IsSuccessful = true;
+                res.Message.FriendlyMessage = Messages.GetSuccess;
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.IsSuccessful = false;
+                res.Message.FriendlyMessage = Messages.FriendlyException;
+                res.Message.TechnicalMessage = ex.ToString();
+                return res;
+            }
+        }
     }
 }

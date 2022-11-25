@@ -45,6 +45,14 @@ namespace CBT.Controllers.Examination
                 return Ok(response);
             return BadRequest(response);
         }
+        [HttpGet("get-all-examination/status/{status}")]
+        public async Task<IActionResult> GetExamination(int status)
+        {
+            var response = await _service.GetExaminationByStatus(status);
+            if (response.IsSuccessful)
+                return Ok(response);
+            return BadRequest(response);
+        }
         [HttpPost("update")]
         public async Task<IActionResult> UpdateExamination([FromBody]UpdateExamination request)
         {

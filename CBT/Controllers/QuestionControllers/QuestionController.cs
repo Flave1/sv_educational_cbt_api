@@ -42,6 +42,15 @@ namespace CBT.Controllers.QuestionControllers
                 return Ok(response);
             return BadRequest(response);
         }
+
+        [HttpGet("get-all-questions/exam/{examId}")]
+        public async Task<IActionResult> GetQuestionByExamId(string examId)
+        {
+            var response = await _service.GetQuestionByExamId(Guid.Parse(examId));
+            if (response.IsSuccessful)
+                return Ok(response);
+            return BadRequest(response);
+        }
         [HttpPost("update")]
         public async Task<IActionResult> UpdateGetQuestion([FromBody] UpdateQuestion request)
         {

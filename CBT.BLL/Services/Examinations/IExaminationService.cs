@@ -17,5 +17,6 @@ namespace CBT.BLL.Services.Examinations
         Task<APIResponse<SelectExamination>> GetExamination(Guid Id);
         Task<APIResponse<UpdateExamination>> UpdateExamination(UpdateExamination request);
         Task<APIResponse<bool>> DeleteExamination(SingleDelete request);
+        Task<APIResponse<List<SelectExamination>>> GetExaminationByStatus(int examStatus);
     }
 }

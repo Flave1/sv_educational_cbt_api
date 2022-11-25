@@ -44,7 +44,14 @@ namespace CBT.Contracts.Examinations
             UseAsAssessmentScore = examination.UseAsAssessmentScore;
             AsExamScoreSessionAndTerm = examination.AsExamScoreSessionAndTerm;
             AsAssessmentScoreSessionAndTerm = examination.AsAssessmentScoreSessionAndTerm;
-            Status = examination.Status;
+            if(examination.StartTime <= DateTime.Now && examination.EndTime > DateTime.Now)
+            {
+                Status = 1;
+            }
+            if (examination.StartTime < DateTime.Now && examination.EndTime < DateTime.Now)
+            {
+                Status = 2;
+            }
         }
     }
 }
