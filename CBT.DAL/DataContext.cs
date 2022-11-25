@@ -4,6 +4,7 @@ using CBT.DAL.Models.Candidates;
 using CBT.DAL.Models.Examinations;
 using CBT.DAL.Models.Questions;
 using CBT.DAL.Models.Setting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -12,8 +13,12 @@ namespace CBT.DAL
 {
     public class DataContext: IdentityDbContext<ApplicationUser>
     {
-        public DataContext(DbContextOptions<DataContext> options)
-            : base(options) { }
+        private readonly IHttpContextAccessor accessor;
+        public DataContext(DbContextOptions<DataContext> options, IHttpContextAccessor accessor)
+            : base(options)
+        {
+            this.accessor = accessor;
+        }
 
         public DataContext()
         {
@@ -41,19 +46,24 @@ namespace CBT.DAL
 
         public override int SaveChanges()
         {
-            var loggedInUserId = ""; // _accessor?.HttpContext?.User?.FindFirst(x => x?.Type == "userId")?.Value ?? "useradmin";
+            var clientId = accessor?.HttpContext?.User?.FindFirst(x => x?.Type == "smsClientId")?.Value ?? "";
+            var userId = accessor?.HttpContext?.User?.FindFirst(x => x?.Type == "userId")?.Value ?? "";
             foreach (var entry in ChangeTracker.Entries<CommonEntity>())
             {
                 if (entry.State == EntityState.Added)
                 {
                     entry.Entity.Deleted = false;
                     entry.Entity.CreatedOn = DateTime.Now;
-                    entry.Entity.CreatedBy = loggedInUserId;
+                    entry.Entity.CreatedBy = userId;
+                    entry.Entity.UserType = string.IsNullOrEmpty(clientId) ? 0 : 1;
+                    entry.Entity.ClientId = Guid.Parse(clientId);
                 }
                 else
                 {
                     entry.Entity.UpdatedOn = DateTime.Now;
-                    entry.Entity.UpdatedBy = loggedInUserId;
+                    entry.Entity.UpdatedBy = userId;
+                    entry.Entity.UserType = string.IsNullOrEmpty(clientId) ? 0 : 1;
+                    entry.Entity.ClientId = Guid.Parse(clientId);
                 }
             }
             return base.SaveChanges();
@@ -61,19 +71,24 @@ namespace CBT.DAL
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {
-            var loggedInUserId = ""; // _accessor?.HttpContext?.User?.FindFirst(x => x?.Type == "userId")?.Value ?? "useradmin";
+            var clientId =  accessor?.HttpContext?.User?.FindFirst(x => x?.Type == "smsClientId")?.Value ?? "";
+            var userId = accessor?.HttpContext?.User?.FindFirst(x => x?.Type == "userId")?.Value ?? "";
             foreach (var entry in ChangeTracker.Entries<CommonEntity>())
             {
                 if (entry.State == EntityState.Added)
                 {
                     entry.Entity.Deleted = false;
                     entry.Entity.CreatedOn = DateTime.Now;
-                    entry.Entity.CreatedBy = loggedInUserId;
+                    entry.Entity.CreatedBy = userId;
+                    entry.Entity.UserType = string.IsNullOrEmpty(clientId) ? 0 : 1;
+                    entry.Entity.ClientId = Guid.Parse(clientId);
                 }
                 else
                 {
                     entry.Entity.UpdatedOn = DateTime.Now;
-                    entry.Entity.UpdatedBy = loggedInUserId;
+                    entry.Entity.UpdatedBy = userId;
+                    entry.Entity.UserType = string.IsNullOrEmpty(clientId) ? 0 : 1;
+                    entry.Entity.ClientId = Guid.Parse(clientId);
                 }
             }
             return base.SaveChangesAsync(cancellationToken);

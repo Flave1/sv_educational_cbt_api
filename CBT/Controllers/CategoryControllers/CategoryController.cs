@@ -3,7 +3,6 @@ using CBT.BLL.Services.Category;
 using CBT.Contracts.Category;
 using CBT.Contracts.Common;
 using Microsoft.AspNetCore.Mvc;
-using System.Runtime.CompilerServices;
 
 namespace CBT.Controllers.Category
 {

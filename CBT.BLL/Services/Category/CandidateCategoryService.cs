@@ -1,18 +1,12 @@
 ﻿using CBT.BLL.Constants;
 using CBT.BLL.Utilities;
 using CBT.Contracts;
-using CBT.Contracts.Authentication;
 using CBT.Contracts.Category;
 using CBT.Contracts.Common;
 using CBT.DAL;
 using CBT.DAL.Models.Candidate;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CBT.BLL.Services.Category
 {
@@ -32,9 +26,8 @@ namespace CBT.BLL.Services.Category
 
             try
             {
-                var clientId = Guid.Parse(_accessor.HttpContext.Items["userId"].ToString());
-                var userType = int.Parse(_accessor.HttpContext.Items["userType"].ToString());
 
+                var clientId = Guid.Parse(_accessor.HttpContext.Items["smsClientId"].ToString());
                 if (_context.CandidateCategory.AsEnumerable().Any(r => UtilTools.ReplaceWhitespace(request.Name) == UtilTools.ReplaceWhitespace(r.Name) && r.Deleted == false && r.ClientId == clientId))
                 {
                     res.Message.FriendlyMessage = "Candidate Category Name Already Exist";
@@ -44,8 +37,6 @@ namespace CBT.BLL.Services.Category
                 var category = new CandidateCategory
                 {
                     Name = request.Name,
-                    ClientId = clientId,
-                    UserType = userType
                 };
 
                 _context.CandidateCategory.Add(category);
@@ -70,7 +61,7 @@ namespace CBT.BLL.Services.Category
             var res = new APIResponse<bool>();
             try
             {
-                var clientId = Guid.Parse(_accessor.HttpContext.Items["userId"].ToString());
+                var clientId = Guid.Parse(_accessor.HttpContext.Items["smsClientId"].ToString());
 
                 var category = await _context.CandidateCategory.Where(d => d.Deleted != true && d.CandidateCategoryId == Guid.Parse(request.Item) && d.ClientId == clientId).FirstOrDefaultAsync();
                 if (category == null)
@@ -102,7 +93,7 @@ namespace CBT.BLL.Services.Category
             var res = new APIResponse<List<SelectCandidateCategory>>();
             try
             {
-                var clientId = Guid.Parse(_accessor.HttpContext.Items["userId"].ToString());
+                var clientId = Guid.Parse(_accessor.HttpContext.Items["smsClientId"].ToString());
 
                 var result = await _context.CandidateCategory
                     .OrderByDescending(s => s.CreatedOn)
@@ -132,10 +123,11 @@ namespace CBT.BLL.Services.Category
             var res = new APIResponse<SelectCandidateCategory>();
             try
             {
-                var clientId = Guid.Parse(_accessor.HttpContext.Items["userId"].ToString());
+                var clientId = Guid.Parse(_accessor.HttpContext.Items["smsClientId"].ToString());
 
                 var result = await _context.CandidateCategory
-                    .Where(d => d.Deleted != true && d.CandidateCategoryId == Id && d.ClientId == clientId).Select(a => new SelectCandidateCategory
+                    .Where(d => d.Deleted != true && d.CandidateCategoryId == Id && d.ClientId == clientId)
+                    .Select(a => new SelectCandidateCategory
                     {
                         CandidateCategoryId = a.CandidateCategoryId.ToString(),
                         Name = a.Name,
@@ -167,7 +159,7 @@ namespace CBT.BLL.Services.Category
             var res = new APIResponse<UpdateCandidateCategory>();
             try
             {
-                var clientId = Guid.Parse(_accessor.HttpContext.Items["userId"].ToString());
+                var clientId = Guid.Parse(_accessor.HttpContext.Items["smsClientId"].ToString());
 
                 var category = await _context.CandidateCategory.Where(d => d.Deleted != true && d.CandidateCategoryId == request.CandidateCategoryId && d.ClientId == clientId).FirstOrDefaultAsync();
                 if (category == null)

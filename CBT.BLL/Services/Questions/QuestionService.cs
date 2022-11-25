@@ -1,23 +1,11 @@
 ﻿using CBT.BLL.Constants;
-using CBT.BLL.Services.Category;
 using CBT.Contracts;
-using CBT.Contracts.Authentication;
-using CBT.Contracts.Candidates;
-using CBT.Contracts.Category;
 using CBT.Contracts.Common;
 using CBT.Contracts.Questions;
 using CBT.DAL;
-using CBT.DAL.Models.Candidate;
 using CBT.DAL.Models.Questions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CBT.BLL.Services.Questions
 {
@@ -36,8 +24,7 @@ namespace CBT.BLL.Services.Questions
             var res = new APIResponse<CreateQuestion>();
             try
             {
-                var clientId = Guid.Parse(_accessor.HttpContext.Items["userId"].ToString());
-                var userType = int.Parse(_accessor.HttpContext.Items["userType"].ToString());
+                var clientId = Guid.Parse(_accessor.HttpContext.Items["smsClientId"].ToString());
 
                 var examination = await _context.Examination.Where(m => m.ExaminationId == request.ExaminationId && m.ClientId == clientId).FirstOrDefaultAsync();
                 if (examination == null)
@@ -76,8 +63,6 @@ namespace CBT.BLL.Services.Questions
                     Options = options,
                     Answers = answers,
                     QuestionType = request.QuestionType,
-                    ClientId = clientId,
-                    UserType = userType
                 };
 
                 _context.Question.Add(question);
@@ -101,11 +86,11 @@ namespace CBT.BLL.Services.Questions
             var res = new APIResponse<IEnumerable<SelectQuestion>>();
             try
             {
-                var clientId = Guid.Parse(_accessor.HttpContext.Items["userId"].ToString());
+                var clientId = Guid.Parse(_accessor.HttpContext.Items["smsClientId"].ToString());
 
                 var questions = await _context.Question
-                    .OrderByDescending(s => s.CreatedOn)
                     .Where(d => d.Deleted != true && d.ClientId == clientId)
+                    .OrderByDescending(s => s.CreatedOn)
                     .Select(db => new SelectQuestion(db, _context.Examination.FirstOrDefault(x => x.ExaminationId == db.ExaminationId)))
                     .ToListAsync();
 
@@ -128,7 +113,7 @@ namespace CBT.BLL.Services.Questions
             var res = new APIResponse<SelectQuestion>();
             try
             {
-                var clientId = Guid.Parse(_accessor.HttpContext.Items["userId"].ToString());
+                var clientId = Guid.Parse(_accessor.HttpContext.Items["smsClientId"].ToString());
 
                 var question = await _context.Question.Where(m => m.Deleted != true && m.QuestionId == Id && m.ClientId == clientId).FirstOrDefaultAsync();
                 if (question == null)
@@ -159,7 +144,7 @@ namespace CBT.BLL.Services.Questions
             var res = new APIResponse<UpdateQuestion>();
             try
             {
-                var clientId = Guid.Parse(_accessor.HttpContext.Items["userId"].ToString());
+                var clientId = Guid.Parse(_accessor.HttpContext.Items["smsClientId"].ToString());
 
                 var question = await _context.Question.Where(m => m.QuestionId == request.QuestionId && m.ClientId == clientId).FirstOrDefaultAsync();
                 if (question == null)
@@ -216,7 +201,7 @@ namespace CBT.BLL.Services.Questions
             var res = new APIResponse<bool>();
             try
             {
-                var clientId = Guid.Parse(_accessor.HttpContext.Items["userId"].ToString());
+                var clientId = Guid.Parse(_accessor.HttpContext.Items["smsClientId"].ToString());
 
                 var question = await _context.Question.Where(d => d.Deleted != true && d.QuestionId == Guid.Parse(request.Item) && d.ClientId == clientId).FirstOrDefaultAsync();
                 if (question == null)
@@ -248,7 +233,7 @@ namespace CBT.BLL.Services.Questions
             var res = new APIResponse<IEnumerable<SelectQuestion>>();
             try
             {
-                var clientId = Guid.Parse(_accessor.HttpContext.Items["userId"].ToString());
+                var clientId = Guid.Parse(_accessor.HttpContext.Items["smsClientId"].ToString());
 
                 var questions = await _context.Question
                      .OrderByDescending(s => s.CreatedOn)

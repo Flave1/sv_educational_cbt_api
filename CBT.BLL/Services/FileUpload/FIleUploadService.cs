@@ -58,9 +58,9 @@ namespace CBT.BLL.Services.FileUpload
                 }
                 throw new ArgumentException("Invalid Profile Image");
             }
-            catch(Exception ex)
+            catch(Exception)
             {
-                throw ex;
+                throw;
             }
             
         }

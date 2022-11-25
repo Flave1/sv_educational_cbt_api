@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using CBT.DAL.Models.Candidate;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CBT.DAL.Models.Candidates
 {
@@ -19,9 +16,9 @@ namespace CBT.DAL.Models.Candidates
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
         public string PassportPhoto { get; set; }
-        public int UserType { get; set; }
-        public Guid ClientId { get; set; }
         public Guid CandidateCategoryId { get; set; }
+        [ForeignKey("CandidateCategoryId")]
+        public CandidateCategory Category { get; set; }
 
     }
 }

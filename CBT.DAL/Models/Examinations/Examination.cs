@@ -25,8 +25,6 @@ namespace CBT.DAL.Models.Examinations
         public bool UseAsAssessmentScore { get; set; }
         public string AsExamScoreSessionAndTerm { get; set; }
         public string AsAssessmentScoreSessionAndTerm { get; set; }
-        public int UserType { get; set; }
         public int Status { get; set; }
-        public Guid ClientId { get; set; }
     }
 }

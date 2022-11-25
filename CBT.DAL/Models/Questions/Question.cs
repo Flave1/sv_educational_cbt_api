@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace CBT.DAL.Models.Questions
 {
@@ -17,7 +12,5 @@ namespace CBT.DAL.Models.Questions
         public string Options { get; set; }
         public string Answers { get; set; }
         public int QuestionType { get; set; }
-        public int UserType { get; set; }
-        public Guid ClientId { get; set; }
     }
 }

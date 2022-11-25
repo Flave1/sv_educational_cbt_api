@@ -36,8 +36,7 @@ namespace CBT.BLL.Services.Examinations
 
             try
             {
-                var clientId = Guid.Parse(_accessor.HttpContext.Items["userId"].ToString());
-                var userType = int.Parse(_accessor.HttpContext.Items["userType"].ToString());
+                var clientId = Guid.Parse(_accessor.HttpContext.Items["smsClientId"].ToString());
 
                 TimeSpan duration;
                 if (!TimeSpan.TryParse(request.Duration, out duration))
@@ -79,8 +78,6 @@ namespace CBT.BLL.Services.Examinations
                     AsExamScoreSessionAndTerm = asExamScoreSessionAndTerm,
                     AsAssessmentScoreSessionAndTerm = asAssessmentScoreSessionAndTerm,
                     Status = request.Status,
-                    UserType = userType,
-                    ClientId = clientId
                 };
 
                 _context.Examination.Add(examination);
@@ -104,7 +101,7 @@ namespace CBT.BLL.Services.Examinations
             var res = new APIResponse<List<SelectExamination>>();
             try
             {
-                var clientId = Guid.Parse(_accessor.HttpContext.Items["userId"].ToString());
+                var clientId = Guid.Parse(_accessor.HttpContext.Items["smsClientId"].ToString());
 
                 var result = await _context.Examination
                 .OrderByDescending(s => s.CreatedOn)
@@ -130,7 +127,7 @@ namespace CBT.BLL.Services.Examinations
             var res = new APIResponse<SelectExamination>();
             try
             {
-                var clientId = Guid.Parse(_accessor.HttpContext.Items["userId"].ToString());
+                var clientId = Guid.Parse(_accessor.HttpContext.Items["smsClientId"].ToString());
 
                 var result = await _context.Examination
                 .OrderByDescending(s => s.CreatedOn)
@@ -165,7 +162,7 @@ namespace CBT.BLL.Services.Examinations
 
             try
             {
-                var clientId = Guid.Parse(_accessor.HttpContext.Items["userId"].ToString());
+                var clientId = Guid.Parse(_accessor.HttpContext.Items["smsClientId"].ToString());
 
                 var result = await _context.Examination.Where(m => m.ExaminationId == request.ExaminationId && m.ClientId == clientId).FirstOrDefaultAsync();
                 if (result == null)
@@ -234,7 +231,7 @@ namespace CBT.BLL.Services.Examinations
             var res = new APIResponse<bool>();
             try
             {
-                var clientId = Guid.Parse(_accessor.HttpContext.Items["userId"].ToString());
+                var clientId = Guid.Parse(_accessor.HttpContext.Items["smsClientId"].ToString());
 
                 var examination = await _context.Examination.Where(d => d.Deleted != true && d.ExaminationId == Guid.Parse(request.Item) && d.ClientId == clientId).FirstOrDefaultAsync();
                 if (examination == null)
@@ -266,7 +263,7 @@ namespace CBT.BLL.Services.Examinations
             var res = new APIResponse<List<SelectExamination>>();
             try
             {
-                var clientId = Guid.Parse(_accessor.HttpContext.Items["userId"].ToString());
+                var clientId = Guid.Parse(_accessor.HttpContext.Items["smsClientId"].ToString());
 
                 if(examStatus == (int)ExaminationStatus.InProgress)
                 {

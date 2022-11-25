@@ -12,7 +12,5 @@ namespace CBT.DAL.Models.Candidate
         [Key]
         public Guid CandidateCategoryId { get; set; }
         public string Name { get; set; }
-        public int UserType { get; set; }
-        public Guid ClientId { get; set; }
     }
 }

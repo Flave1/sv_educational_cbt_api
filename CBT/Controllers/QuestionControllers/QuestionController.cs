@@ -24,7 +24,6 @@ namespace CBT.Controllers.QuestionControllers
             if (response.IsSuccessful)
                 return Ok(response);
             return BadRequest(response);
-            return Ok();
         }
         [HttpGet("get-all-questions")]
         public async Task<IActionResult> GetAllQuestions()
