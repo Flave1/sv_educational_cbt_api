@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CBT.DAL.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20221123010242_ModifiedExaminaton")]
-    partial class ModifiedExaminaton
+    [Migration("20221126215123_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -33,7 +33,6 @@ namespace CBT.DAL.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ClientId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -103,7 +102,6 @@ namespace CBT.DAL.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Answers")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("CandidateId")
@@ -113,7 +111,6 @@ namespace CBT.DAL.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CreatedBy")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedOn")
@@ -131,12 +128,78 @@ namespace CBT.DAL.Migrations
                     b.Property<DateTime>("UpdatedOn")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("UserType")
+                        .HasColumnType("int");
+
                     b.HasKey("AnswerId");
+
+                    b.HasIndex("QuestionId");
 
                     b.ToTable("CandidateAnswer");
                 });
 
-            modelBuilder.Entity("CBT.DAL.Models.Candidate.CandidateCategory", b =>
+            modelBuilder.Entity("CBT.DAL.Models.Candidates.Candidate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CandidateCategoryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CandidateId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CandidateNo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ClientId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OtherName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PassportPhoto")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserType")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CandidateCategoryId");
+
+                    b.ToTable("Candidate");
+                });
+
+            modelBuilder.Entity("CBT.DAL.Models.Candidates.CandidateCategory", b =>
                 {
                     b.Property<Guid>("CandidateCategoryId")
                         .ValueGeneratedOnAdd()
@@ -146,7 +209,6 @@ namespace CBT.DAL.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CreatedBy")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedOn")
@@ -156,7 +218,6 @@ namespace CBT.DAL.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UpdatedBy")
@@ -173,74 +234,6 @@ namespace CBT.DAL.Migrations
                     b.ToTable("CandidateCategory");
                 });
 
-            modelBuilder.Entity("CBT.DAL.Models.Candidates.Candidate", b =>
-                {
-                    b.Property<Guid>("CandidateId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CandidateCategoryId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CandidateExamId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CandidateNo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("ClientId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("Deleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("OtherName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PassportPhoto")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("UpdatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("UserType")
-                        .HasColumnType("int");
-
-                    b.HasKey("CandidateId");
-
-                    b.ToTable("Candidate");
-                });
-
             modelBuilder.Entity("CBT.DAL.Models.Examinations.Examination", b =>
                 {
                     b.Property<Guid>("ExaminationId")
@@ -248,26 +241,24 @@ namespace CBT.DAL.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("AsAssessmentScoreSessionAndTerm")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("AsExamScoreSessionAndTerm")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CandidateCategoryId_ClassId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CandidateCategory_Class")
-                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CandidateExaminationId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("ClientId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CreatedBy")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedOn")
@@ -283,18 +274,21 @@ namespace CBT.DAL.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ExamName_Subject")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ExamName_SubjectId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("ExamScore")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("ExamScore")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ExaminationNo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ExaminationType")
+                        .HasColumnType("int");
 
                     b.Property<string>("Instruction")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("ShuffleQuestions")
@@ -326,21 +320,19 @@ namespace CBT.DAL.Migrations
                     b.ToTable("Examination");
                 });
 
-            modelBuilder.Entity("CBT.DAL.Models.Question.Question", b =>
+            modelBuilder.Entity("CBT.DAL.Models.Questions.Question", b =>
                 {
                     b.Property<Guid>("QuestionId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Answers")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("ClientId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CreatedBy")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedOn")
@@ -356,11 +348,9 @@ namespace CBT.DAL.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Options")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("QuestionText")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("QuestionType")
@@ -377,6 +367,8 @@ namespace CBT.DAL.Migrations
 
                     b.HasKey("QuestionId");
 
+                    b.HasIndex("ExaminationId");
+
                     b.ToTable("Question");
                 });
 
@@ -386,8 +378,10 @@ namespace CBT.DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("ClientId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("CreatedBy")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedOn")
@@ -419,6 +413,9 @@ namespace CBT.DAL.Migrations
 
                     b.Property<bool>("UseWebCamCapture")
                         .HasColumnType("bit");
+
+                    b.Property<int>("UserType")
+                        .HasColumnType("int");
 
                     b.HasKey("SettingId");
 
@@ -562,6 +559,39 @@ namespace CBT.DAL.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("CBT.DAL.Models.Candidate.CandidateAnswer", b =>
+                {
+                    b.HasOne("CBT.DAL.Models.Questions.Question", "Question")
+                        .WithMany()
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Question");
+                });
+
+            modelBuilder.Entity("CBT.DAL.Models.Candidates.Candidate", b =>
+                {
+                    b.HasOne("CBT.DAL.Models.Candidates.CandidateCategory", "Category")
+                        .WithMany("Candidate")
+                        .HasForeignKey("CandidateCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("CBT.DAL.Models.Questions.Question", b =>
+                {
+                    b.HasOne("CBT.DAL.Models.Examinations.Examination", "Examination")
+                        .WithMany("Question")
+                        .HasForeignKey("ExaminationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Examination");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -611,6 +641,16 @@ namespace CBT.DAL.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("CBT.DAL.Models.Candidates.CandidateCategory", b =>
+                {
+                    b.Navigation("Candidate");
+                });
+
+            modelBuilder.Entity("CBT.DAL.Models.Examinations.Examination", b =>
+                {
+                    b.Navigation("Question");
                 });
 #pragma warning restore 612, 618
         }

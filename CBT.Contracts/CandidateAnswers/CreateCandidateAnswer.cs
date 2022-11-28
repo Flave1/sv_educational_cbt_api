@@ -4,13 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CBT.Contracts.CandidateAnswer
+namespace CBT.Contracts.CandidateAnswers
 {
-    public class SelectCandidateAnswer
+    public class CreateCandidateAnswer
     {
-        public string AnswerId { get; set; }
         public string QuestionId { get; set; }
         public string CandidateId { get; set; }
-        public string[] Answers { get; set; }
+        public int[] Answers { get; set; }
     }
 }

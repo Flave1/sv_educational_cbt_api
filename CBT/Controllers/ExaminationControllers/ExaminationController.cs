@@ -27,9 +27,9 @@ namespace CBT.Controllers.Examination
             return BadRequest(response);
         }
         [HttpGet("get-all-examination")]
-        public async Task<IActionResult> GetAllExamination()
+        public async Task<IActionResult> GetAllExamination(int examType)
         {
-            var response = await _service.GetAllExamination();
+            var response = await _service.GetAllExamination(examType);
             if (response.IsSuccessful)
                 return Ok(response);
             return BadRequest(response);

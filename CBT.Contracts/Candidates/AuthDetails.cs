@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CBT.Contracts.Examinations;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,4 +12,10 @@ namespace CBT.Contracts.Candidates
         public string Token { get; set; }
         public string Expires { get; set; }
     }
+    public class CandidateLoginDetails
+    {
+        public AuthDetails AuthDetails { get; set; }
+        public SelectExamination ExaminationDetails { get; set; }
+    }
+
 }

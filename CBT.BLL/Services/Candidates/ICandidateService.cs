@@ -15,10 +15,10 @@ namespace CBT.BLL.Services.Candidates
         Task<APIResponse<string>> CreateCandidate(CreateCandidate request);
         Task<APIResponse<List<SelectCandidates>>> GetAllCandidates();
         Task<APIResponse<SelectCandidates>> GetCandidate(string candidateId);
-        //Task<string> GenerateExamId();
         Task<APIResponse<string>> UpdateCandidate(UpdateCandidate request);
         Task<APIResponse<bool>> DeleteCandidate(SingleDelete request);
-        Task<APIResponse<object>> Login(CandidateLogin request);
-        Task<AuthDetails> GenerateAuthenticationToken(string candidateExamId, string candidateEmail);
+        Task<APIResponse<CandidateLoginDetails>> LoginByExamId(CandidateLoginExamId request);
+        Task<AuthDetails> GenerateAuthenticationToken(string examinationId);
+        Task<APIResponse<SelectCandidates>> LoginByEmail(CandidateLoginEmail request);
     }
 }

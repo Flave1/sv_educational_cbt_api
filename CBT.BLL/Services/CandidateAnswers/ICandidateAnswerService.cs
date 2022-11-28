@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CBT.Contracts.CandidateAnswer;
+using CBT.Contracts.CandidateAnswers;
 
 namespace CBT.BLL.Services.CandidateAnswers
 {
