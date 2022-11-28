@@ -173,7 +173,7 @@ namespace CBT.BLL.Services.Questions
                 if (question == null)
                 {
                     res.Message.FriendlyMessage = "QuestionId does not exist";
-                    res.IsSuccessful = true;
+                    res.IsSuccessful = false;
                     return res;
                 }
 

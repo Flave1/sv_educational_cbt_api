@@ -171,7 +171,7 @@ namespace CBT.BLL.Services.Candidates
                 if (category == null)
                 {
                     res.Message.FriendlyMessage = "Candidate does not exist";
-                    res.IsSuccessful = true;
+                    res.IsSuccessful = false;
                     return res;
                 }
 

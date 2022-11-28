@@ -233,7 +233,7 @@ namespace CBT.BLL.Services.Examinations
                 if (examination == null)
                 {
                     res.Message.FriendlyMessage = "ExaminationId does not exist";
-                    res.IsSuccessful = true;
+                    res.IsSuccessful = false;
                     return res;
                 }
 

@@ -65,7 +65,7 @@ namespace CBT.BLL.Services.Category
                 if (category == null)
                 {
                     res.Message.FriendlyMessage = "Candidate category does not exist";
-                    res.IsSuccessful = true;
+                    res.IsSuccessful = false;
                     return res;
                 }
 

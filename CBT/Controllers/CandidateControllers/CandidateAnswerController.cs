@@ -18,10 +18,18 @@ namespace CBT.Controllers.CandidateControllers
         {
             _service = service;
         }
-        [HttpPost("create")]
-        public async Task<IActionResult> CreateCandidateAnswer([FromBody] CreateCandidateAnswer request)
+        [HttpPost("submit")]
+        public async Task<IActionResult> SubmitCandidateAnswer([FromBody] CreateCandidateAnswer request)
         {
-            var response = await _service.CreateCandidateAnswer(request);
+            var response = await _service.SubmitCandidateAnswer(request);
+            if (response.IsSuccessful)
+                return Ok(response);
+            return BadRequest(response);
+        }
+        [HttpPost("submit-all")]
+        public async Task<IActionResult> SubmitAllCandidateAnswer([FromBody] SubmitAllAnswers request)
+        {
+            var response = await _service.SubmitAllCandidateAnswer(request);
             if (response.IsSuccessful)
                 return Ok(response);
             return BadRequest(response);
