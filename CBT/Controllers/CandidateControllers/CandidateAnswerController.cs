@@ -1,7 +1,7 @@
 ﻿using CBT.BLL.Middleware;
 using CBT.BLL.Services.CandidateAnswers;
 using CBT.BLL.Services.Candidates;
-using CBT.Contracts.CandidateAnswer;
+using CBT.Contracts.CandidateAnswers;
 using CBT.Contracts.Candidates;
 using CBT.Contracts.Common;
 using Microsoft.AspNetCore.Mvc;

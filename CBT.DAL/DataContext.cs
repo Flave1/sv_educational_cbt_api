@@ -71,8 +71,8 @@ namespace CBT.DAL
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {
-            var clientId =  accessor?.HttpContext?.User?.FindFirst(x => x?.Type == "smsClientId")?.Value ?? "";
-            var userId = accessor?.HttpContext?.User?.FindFirst(x => x?.Type == "userId")?.Value ?? "";
+            var clientId = accessor?.HttpContext?.Items["smsClientId"]?.ToString() ?? "";
+            var userId = accessor?.HttpContext?.Items["userId"]?.ToString() ?? "";
             foreach (var entry in ChangeTracker.Entries<CommonEntity>())
             {
                 if (entry.State == EntityState.Added)
@@ -81,7 +81,7 @@ namespace CBT.DAL
                     entry.Entity.CreatedOn = DateTime.Now;
                     entry.Entity.CreatedBy = userId;
                     entry.Entity.UserType = string.IsNullOrEmpty(clientId) ? 0 : 1;
-                    entry.Entity.ClientId = Guid.Parse(clientId);
+                    entry.Entity.ClientId = !string.IsNullOrEmpty(clientId) ? Guid.Parse(clientId) : Guid.Empty;
                 }
                 else
                 {

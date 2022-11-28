@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CBT.DAL.Models.Questions;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -15,7 +16,9 @@ namespace CBT.DAL.Models.Examinations
         public string ExamName_Subject { get; set; }
         public string CandidateCategoryId_ClassId { get; set; }
         public string CandidateCategory_Class { get; set; }
-        public decimal ExamScore { get; set; }
+        public string ExaminationNo { get; set; }
+        public string CandidateExaminationId { get; set; }
+        public int ExamScore { get; set; }
         public TimeSpan Duration { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
@@ -26,5 +29,7 @@ namespace CBT.DAL.Models.Examinations
         public string AsExamScoreSessionAndTerm { get; set; }
         public string AsAssessmentScoreSessionAndTerm { get; set; }
         public int Status { get; set; }
+        public  int ExaminationType { get; set; }
+        public virtual ICollection<Question> Question { get; set; }
     }
 }

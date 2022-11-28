@@ -23,19 +23,18 @@ namespace CBT.Contracts.Questions
         public string[] Answers { get; set; }
         public string[] AnswersValue { get; set; }
         public int QuestionType { get; set; }
-
-        public SelectQuestion(Question question, Examination examination)
+        public SelectQuestion(Question question)
         {
             QuestionId = question.QuestionId.ToString();
             QuestionText = question.QuestionText;
             ExaminationId = question.ExaminationId.ToString();
-            ExaminationName = examination.ExamName_Subject;
-            CandidateCategoryId = examination.CandidateCategoryId_ClassId.ToString();
-            CandidateCategory = examination.CandidateCategory_Class;
+            ExaminationName = question.Examination.ExamName_Subject;
+            CandidateCategoryId = question.Examination.CandidateCategoryId_ClassId.ToString();
+            CandidateCategory = question.Examination.CandidateCategory_Class;
             Mark = question.Mark;
-            Options = !string.IsNullOrEmpty(question.Options) ? question.Options.Split("</option>").SkipLast(1).ToArray() : Array.Empty<string>();
-            Answers = !string.IsNullOrEmpty(question.Answers) ? question.Answers.Split(",").SkipLast(1).ToArray() : Array.Empty<string>();
-            AnswersValue = question.Answers.Split(",").SkipLast(1).ToArray();
+            Options = !string.IsNullOrEmpty(question.Options) ? question.Options.Split("</option>").ToArray() : Array.Empty<string>();
+            Answers = !string.IsNullOrEmpty(question.Answers) ? question.Answers.Split(",").ToArray() : Array.Empty<string>();
+            AnswersValue = question.Answers.Split(",").ToArray();
             QuestionType = question.QuestionType;
 
             string[] arr = new string[AnswersValue.Count()];

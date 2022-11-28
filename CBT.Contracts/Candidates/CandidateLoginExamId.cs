@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace CBT.Contracts.Candidates
 {
-    public class CandidateLogin
+    public class CandidateLoginExamId
     {
-        public string CandidateExamId { get; set; }
-        public string CandidateEmail { get; set; }
+        public string ExaminationId { get; set; }
     }
 }

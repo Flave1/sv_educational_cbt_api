@@ -4,8 +4,8 @@ namespace CBT.Contracts.Candidates
 {
     public class SelectCandidates
     {
+        public string Id { get; set; }
         public string CandidateId { get; set; }
-        public string CandidateExamId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string OtherName { get; set; }
@@ -18,8 +18,8 @@ namespace CBT.Contracts.Candidates
 
         public SelectCandidates(Candidate candidate)
         {
-            CandidateId = candidate.CandidateId.ToString();
-            CandidateExamId = candidate.CandidateExamId;
+            Id = candidate.Id.ToString();
+            CandidateId = candidate.CandidateId;
             FirstName = candidate.FirstName;
             LastName = candidate.LastName;
             OtherName = candidate.OtherName;
@@ -28,7 +28,7 @@ namespace CBT.Contracts.Candidates
             PassportPhoto = candidate.PassportPhoto;
             CandidateCategoryId = candidate.CandidateCategoryId.ToString();
             CandidateCategory = candidate?.Category?.Name;
-            DateCreated = candidate.CreatedOn.ToString();
+            DateCreated = candidate.CreatedOn.ToString("dd-MM-yyy hh:mm"); ;
         }
     }
 }

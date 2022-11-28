@@ -21,5 +21,6 @@ namespace CBT.Contracts.Examinations
         public bool UseAsExamScore { get; set; }
         public bool UseAsAssessmentScore { get; set; }
         public int Status { get; set; }
+        public int ExaminationType { get; set; }
     }
 }

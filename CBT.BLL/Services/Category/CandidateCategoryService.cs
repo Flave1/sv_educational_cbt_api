@@ -4,7 +4,7 @@ using CBT.Contracts;
 using CBT.Contracts.Category;
 using CBT.Contracts.Common;
 using CBT.DAL;
-using CBT.DAL.Models.Candidate;
+using CBT.DAL.Models.Candidates;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,13 +12,13 @@ namespace CBT.BLL.Services.Category
 {
     public class CandidateCategoryService : ICandidateCategoryService
     {
-        private readonly DataContext _context;
-        private readonly IHttpContextAccessor _accessor;
+        private readonly DataContext context;
+        private readonly IHttpContextAccessor accessor;
 
         public CandidateCategoryService(DataContext context, IHttpContextAccessor accessor)
         {
-            _context = context;
-            _accessor = accessor;
+            this.context = context;
+            this.accessor = accessor;
         }
         public async Task<APIResponse<CreateCandidateCategory>> CreateCandidateCategory(CreateCandidateCategory request)
         {
@@ -26,9 +26,8 @@ namespace CBT.BLL.Services.Category
 
             try
             {
-
-                var clientId = Guid.Parse(_accessor.HttpContext.Items["smsClientId"].ToString());
-                if (_context.CandidateCategory.AsEnumerable().Any(r => UtilTools.ReplaceWhitespace(request.Name) == UtilTools.ReplaceWhitespace(r.Name) && r.Deleted == false && r.ClientId == clientId))
+                var clientId = Guid.Parse(accessor.HttpContext.Items["smsClientId"].ToString());
+                if (context.CandidateCategory.AsEnumerable().Any(r => UtilTools.ReplaceWhitespace(request.Name) == UtilTools.ReplaceWhitespace(r.Name) && r.Deleted == false && r.ClientId == clientId))
                 {
                     res.Message.FriendlyMessage = "Candidate Category Name Already Exist";
                     return res;
@@ -39,8 +38,8 @@ namespace CBT.BLL.Services.Category
                     Name = request.Name,
                 };
 
-                _context.CandidateCategory.Add(category);
-                await _context.SaveChangesAsync();
+                context.CandidateCategory.Add(category);
+                await context.SaveChangesAsync();
                 res.Result = request;
                 res.IsSuccessful = true;
                 res.Message.FriendlyMessage = Messages.Created;
@@ -61,9 +60,8 @@ namespace CBT.BLL.Services.Category
             var res = new APIResponse<bool>();
             try
             {
-                var clientId = Guid.Parse(_accessor.HttpContext.Items["smsClientId"].ToString());
-
-                var category = await _context.CandidateCategory.Where(d => d.Deleted != true && d.CandidateCategoryId == Guid.Parse(request.Item) && d.ClientId == clientId).FirstOrDefaultAsync();
+                var clientId = Guid.Parse(accessor.HttpContext.Items["smsClientId"].ToString());
+                var category = await context.CandidateCategory.Where(d => d.Deleted != true && d.CandidateCategoryId == Guid.Parse(request.Item) && d.ClientId == clientId).FirstOrDefaultAsync();
                 if (category == null)
                 {
                     res.Message.FriendlyMessage = "Candidate category does not exist";
@@ -72,7 +70,7 @@ namespace CBT.BLL.Services.Category
                 }
 
                 category.Deleted = true;
-                await _context.SaveChangesAsync();
+                await context.SaveChangesAsync();
 
                 res.IsSuccessful = true;
                 res.Message.FriendlyMessage = Messages.DeletedSuccess;
@@ -93,16 +91,12 @@ namespace CBT.BLL.Services.Category
             var res = new APIResponse<List<SelectCandidateCategory>>();
             try
             {
-                var clientId = Guid.Parse(_accessor.HttpContext.Items["smsClientId"].ToString());
-
-                var result = await _context.CandidateCategory
+                var clientId = Guid.Parse(accessor.HttpContext.Items["smsClientId"].ToString());
+                var result = await context.CandidateCategory
+                    .Where(d => d.Deleted != true && d.ClientId == clientId)
                     .OrderByDescending(s => s.CreatedOn)
-                    .Where(d => d.Deleted != true && d.ClientId == clientId).Select(a => new SelectCandidateCategory
-                    {
-                        CandidateCategoryId = a.CandidateCategoryId.ToString(),
-                        Name = a.Name,
-                        DateCreated = a.CreatedOn.ToString()
-                    }).ToListAsync();
+                    .Select(db => new SelectCandidateCategory(db))
+                    .ToListAsync();
 
                 res.IsSuccessful = true;
                 res.Result = result;
@@ -123,16 +117,12 @@ namespace CBT.BLL.Services.Category
             var res = new APIResponse<SelectCandidateCategory>();
             try
             {
-                var clientId = Guid.Parse(_accessor.HttpContext.Items["smsClientId"].ToString());
-
-                var result = await _context.CandidateCategory
+                var clientId = Guid.Parse(accessor.HttpContext.Items["smsClientId"].ToString());
+                var result = await context.CandidateCategory
                     .Where(d => d.Deleted != true && d.CandidateCategoryId == Id && d.ClientId == clientId)
-                    .Select(a => new SelectCandidateCategory
-                    {
-                        CandidateCategoryId = a.CandidateCategoryId.ToString(),
-                        Name = a.Name,
-                        DateCreated = a.CreatedOn.ToString()
-                    }).FirstOrDefaultAsync();
+                    .Select(db => new SelectCandidateCategory(db))
+                    .FirstOrDefaultAsync();
+
                 if (result == null)
                 {
                     res.Message.FriendlyMessage = Messages.FriendlyNOTFOUND;
@@ -159,9 +149,8 @@ namespace CBT.BLL.Services.Category
             var res = new APIResponse<UpdateCandidateCategory>();
             try
             {
-                var clientId = Guid.Parse(_accessor.HttpContext.Items["smsClientId"].ToString());
-
-                var category = await _context.CandidateCategory.Where(d => d.Deleted != true && d.CandidateCategoryId == request.CandidateCategoryId && d.ClientId == clientId).FirstOrDefaultAsync();
+                var clientId = Guid.Parse(accessor.HttpContext.Items["smsClientId"].ToString());
+                var category = await context.CandidateCategory.Where(d => d.Deleted != true && d.CandidateCategoryId == request.CandidateCategoryId && d.ClientId == clientId).FirstOrDefaultAsync();
                 if (category == null)
                 {
                     res.Message.FriendlyMessage = "Candidate category does not exist";
@@ -169,7 +158,7 @@ namespace CBT.BLL.Services.Category
                     return res;
                 }
 
-                if (_context.CandidateCategory.AsEnumerable().Any(r => UtilTools.ReplaceWhitespace(request.Name) == UtilTools.ReplaceWhitespace(r.Name)
+                if (context.CandidateCategory.AsEnumerable().Any(r => UtilTools.ReplaceWhitespace(request.Name) == UtilTools.ReplaceWhitespace(r.Name)
                && r.CandidateCategoryId != request.CandidateCategoryId && r.ClientId == clientId))
                 {
                     res.Message.FriendlyMessage = "Candidate Category Name Already Exist";
@@ -177,9 +166,8 @@ namespace CBT.BLL.Services.Category
                     return res;
                 }
 
-
                 category.Name = request.Name;
-                await _context.SaveChangesAsync();
+                await context.SaveChangesAsync();
 
                 res.IsSuccessful = true;
                 res.Message.FriendlyMessage = Messages.Updated;

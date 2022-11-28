@@ -59,10 +59,19 @@ namespace CBT.Controllers.CandidateController
         }
 
         [AllowAnonymous]
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody]CandidateLogin request)
+        [HttpPost("login/examId")]
+        public async Task<IActionResult> LoginByExamId([FromBody]CandidateLoginExamId request)
         {
-            var response = await _service.Login(request);
+            var response = await _service.LoginByExamId(request);
+            if (response.IsSuccessful)
+                return Ok(response);
+            return BadRequest(response);
+        }
+        [AllowAnonymous]
+        [HttpPost("login/email")]
+        public async Task<IActionResult> LoginByEmail([FromBody] CandidateLoginEmail request)
+        {
+            var response = await _service.LoginByEmail(request);
             if (response.IsSuccessful)
                 return Ok(response);
             return BadRequest(response);

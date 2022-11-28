@@ -29,7 +29,7 @@ namespace CBT.DAL.Migrations
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     UserType = table.Column<int>(type: "int", nullable: false),
-                    ClientId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ClientId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -51,65 +51,18 @@ namespace CBT.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Candidate",
-                columns: table => new
-                {
-                    CandidateId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CandidateNo = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CandidateExamId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    OtherName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PassportPhoto = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserType = table.Column<int>(type: "int", nullable: false),
-                    ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CandidateCategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Deleted = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Candidate", x => x.CandidateId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "CandidateAnswer",
-                columns: table => new
-                {
-                    AnswerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    QuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CandidateId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Answers = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Deleted = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CandidateAnswer", x => x.AnswerId);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "CandidateCategory",
                 columns: table => new
                 {
                     CandidateCategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserType = table.Column<int>(type: "int", nullable: false),
-                    ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Deleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserType = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -121,54 +74,35 @@ namespace CBT.DAL.Migrations
                 columns: table => new
                 {
                     ExaminationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ExamName_SubjectId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ExamName_Subject = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CandidateCategoryId_ClassId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ExamName_SubjectId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ExamName_Subject = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CandidateCategoryId_ClassId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CandidateCategory_Class = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ExaminationNo = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CandidateExaminationId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ExamScore = table.Column<int>(type: "int", nullable: false),
                     Duration = table.Column<TimeSpan>(type: "time", nullable: false),
                     StartTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Instruction = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Instruction = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ShuffleQuestions = table.Column<bool>(type: "bit", nullable: false),
                     UseAsExamScore = table.Column<bool>(type: "bit", nullable: false),
                     UseAsAssessmentScore = table.Column<bool>(type: "bit", nullable: false),
-                    AsExamScoreSessionAndTerm = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AsAssessmentScoreSessionAndTerm = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserType = table.Column<int>(type: "int", nullable: false),
+                    AsExamScoreSessionAndTerm = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AsAssessmentScoreSessionAndTerm = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: false),
-                    ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ExaminationType = table.Column<int>(type: "int", nullable: false),
                     Deleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserType = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Examination", x => x.ExaminationId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Question",
-                columns: table => new
-                {
-                    QuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    QuestionText = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ExaminationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Mark = table.Column<int>(type: "int", nullable: false),
-                    Options = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Answers = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    QuestionType = table.Column<int>(type: "int", nullable: false),
-                    UserType = table.Column<int>(type: "int", nullable: false),
-                    ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Deleted = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Question", x => x.QuestionId);
                 });
 
             migrationBuilder.CreateTable(
@@ -185,8 +119,10 @@ namespace CBT.DAL.Migrations
                     Deleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserType = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -299,6 +235,96 @@ namespace CBT.DAL.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Candidate",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CandidateNo = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CandidateId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OtherName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PassportPhoto = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CandidateCategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Deleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserType = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Candidate", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Candidate_CandidateCategory_CandidateCategoryId",
+                        column: x => x.CandidateCategoryId,
+                        principalTable: "CandidateCategory",
+                        principalColumn: "CandidateCategoryId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Question",
+                columns: table => new
+                {
+                    QuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    QuestionText = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ExaminationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Mark = table.Column<int>(type: "int", nullable: false),
+                    Options = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Answers = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    QuestionType = table.Column<int>(type: "int", nullable: false),
+                    Deleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserType = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Question", x => x.QuestionId);
+                    table.ForeignKey(
+                        name: "FK_Question_Examination_ExaminationId",
+                        column: x => x.ExaminationId,
+                        principalTable: "Examination",
+                        principalColumn: "ExaminationId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CandidateAnswer",
+                columns: table => new
+                {
+                    AnswerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    QuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CandidateId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Answers = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Deleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserType = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CandidateAnswer", x => x.AnswerId);
+                    table.ForeignKey(
+                        name: "FK_CandidateAnswer_Question_QuestionId",
+                        column: x => x.QuestionId,
+                        principalTable: "Question",
+                        principalColumn: "QuestionId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -337,6 +363,21 @@ namespace CBT.DAL.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Candidate_CandidateCategoryId",
+                table: "Candidate",
+                column: "CandidateCategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CandidateAnswer_QuestionId",
+                table: "CandidateAnswer",
+                column: "QuestionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Question_ExaminationId",
+                table: "Question",
+                column: "ExaminationId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -363,15 +404,6 @@ namespace CBT.DAL.Migrations
                 name: "CandidateAnswer");
 
             migrationBuilder.DropTable(
-                name: "CandidateCategory");
-
-            migrationBuilder.DropTable(
-                name: "Examination");
-
-            migrationBuilder.DropTable(
-                name: "Question");
-
-            migrationBuilder.DropTable(
                 name: "Setting");
 
             migrationBuilder.DropTable(
@@ -379,6 +411,15 @@ namespace CBT.DAL.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "CandidateCategory");
+
+            migrationBuilder.DropTable(
+                name: "Question");
+
+            migrationBuilder.DropTable(
+                name: "Examination");
         }
     }
 }
