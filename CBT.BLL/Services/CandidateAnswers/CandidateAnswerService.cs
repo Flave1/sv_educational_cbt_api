@@ -33,7 +33,7 @@ namespace CBT.BLL.Services.CandidateAnswers
             var res = new APIResponse<CreateCandidateAnswer>();
             try
             {
-                var clientId = Guid.Parse(accessor.HttpContext.Items["smsClientId"].ToString());
+                var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
                 var candidate = await context.Candidate.FirstOrDefaultAsync(m => m.Id == Guid.Parse(request.CandidateId) && m.ClientId == clientId);
                 if (candidate == null)
                 {
@@ -72,7 +72,7 @@ namespace CBT.BLL.Services.CandidateAnswers
             var res = new APIResponse<bool>();
             try
             {
-                var clientId = Guid.Parse(accessor.HttpContext.Items["smsClientId"].ToString());
+                var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
                 var candidate = await context.Candidate.FirstOrDefaultAsync(m => m.Id == Guid.Parse(request.CandidateId) && m.ClientId == clientId);
 
                 if (candidate == null)
@@ -114,7 +114,7 @@ namespace CBT.BLL.Services.CandidateAnswers
             var res = new APIResponse<IEnumerable<SelectCandidateAnswer>>();
             try
             {
-                var clientId = Guid.Parse(accessor.HttpContext.Items["smsClientId"].ToString());
+                var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
 
                 var result = await context.CandidateAnswer
                     .Where(d => d.Deleted != true && d.ClientId == clientId)
@@ -142,7 +142,7 @@ namespace CBT.BLL.Services.CandidateAnswers
             var res = new APIResponse<SelectCandidateAnswer>();
             try
             {
-                var clientId = Guid.Parse(accessor.HttpContext.Items["smsClientId"].ToString());
+                var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
 
                 var result = await context.CandidateAnswer
                     .Where(d => d.Deleted != true && d.AnswerId == Id && d.ClientId == clientId)
@@ -176,7 +176,7 @@ namespace CBT.BLL.Services.CandidateAnswers
             var res = new APIResponse<UpdateCandidateAnswer>();
             try
             {
-                var clientId = Guid.Parse(accessor.HttpContext.Items["smsClientId"].ToString());
+                var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
                 var answer = await context.CandidateAnswer.FirstOrDefaultAsync(m => m.AnswerId == request.AnswerId && m.ClientId == clientId);
                 if (answer == null)
                 {
@@ -218,7 +218,7 @@ namespace CBT.BLL.Services.CandidateAnswers
             var res = new APIResponse<bool>();
             try
             {
-                var clientId = Guid.Parse(accessor.HttpContext.Items["smsClientId"].ToString());
+                var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
                 var answer = await context.CandidateAnswer.Where(d => d.Deleted != true && d.AnswerId == Guid.Parse(request.Item) && d.ClientId == clientId).FirstOrDefaultAsync();
                 if (answer == null)
                 {

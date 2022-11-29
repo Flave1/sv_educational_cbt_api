@@ -26,7 +26,7 @@ namespace CBT.BLL.Services.Category
 
             try
             {
-                var clientId = Guid.Parse(accessor.HttpContext.Items["smsClientId"].ToString());
+                var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
                 if (context.CandidateCategory.AsEnumerable().Any(r => UtilTools.ReplaceWhitespace(request.Name) == UtilTools.ReplaceWhitespace(r.Name) && r.Deleted == false && r.ClientId == clientId))
                 {
                     res.Message.FriendlyMessage = "Candidate Category Name Already Exist";
@@ -60,7 +60,7 @@ namespace CBT.BLL.Services.Category
             var res = new APIResponse<bool>();
             try
             {
-                var clientId = Guid.Parse(accessor.HttpContext.Items["smsClientId"].ToString());
+                var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
                 var category = await context.CandidateCategory.Where(d => d.Deleted != true && d.CandidateCategoryId == Guid.Parse(request.Item) && d.ClientId == clientId).FirstOrDefaultAsync();
                 if (category == null)
                 {
@@ -91,7 +91,7 @@ namespace CBT.BLL.Services.Category
             var res = new APIResponse<List<SelectCandidateCategory>>();
             try
             {
-                var clientId = Guid.Parse(accessor.HttpContext.Items["smsClientId"].ToString());
+                var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
                 var result = await context.CandidateCategory
                     .Where(d => d.Deleted != true && d.ClientId == clientId)
                     .OrderByDescending(s => s.CreatedOn)
@@ -117,7 +117,7 @@ namespace CBT.BLL.Services.Category
             var res = new APIResponse<SelectCandidateCategory>();
             try
             {
-                var clientId = Guid.Parse(accessor.HttpContext.Items["smsClientId"].ToString());
+                var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
                 var result = await context.CandidateCategory
                     .Where(d => d.Deleted != true && d.CandidateCategoryId == Id && d.ClientId == clientId)
                     .Select(db => new SelectCandidateCategory(db))
@@ -149,7 +149,7 @@ namespace CBT.BLL.Services.Category
             var res = new APIResponse<UpdateCandidateCategory>();
             try
             {
-                var clientId = Guid.Parse(accessor.HttpContext.Items["smsClientId"].ToString());
+                var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
                 var category = await context.CandidateCategory.Where(d => d.Deleted != true && d.CandidateCategoryId == request.CandidateCategoryId && d.ClientId == clientId).FirstOrDefaultAsync();
                 if (category == null)
                 {

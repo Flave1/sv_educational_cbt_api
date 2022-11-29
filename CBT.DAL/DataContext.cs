@@ -46,22 +46,22 @@ namespace CBT.DAL
 
         public override int SaveChanges()
         {
-            var clientId = accessor?.HttpContext?.User?.FindFirst(x => x?.Type == "smsClientId")?.Value ?? "";
-            var userId = accessor?.HttpContext?.User?.FindFirst(x => x?.Type == "userId")?.Value ?? "";
+            var smsClientId = accessor?.HttpContext?.User?.FindFirst(x => x?.Type == "smsClientId")?.Value ?? "";
+            var clientId = accessor?.HttpContext?.User?.FindFirst(x => x?.Type == "userId")?.Value ?? "";
             foreach (var entry in ChangeTracker.Entries<CommonEntity>())
             {
                 if (entry.State == EntityState.Added)
                 {
                     entry.Entity.Deleted = false;
                     entry.Entity.CreatedOn = DateTime.Now;
-                    entry.Entity.CreatedBy = userId;
+                    entry.Entity.CreatedBy = clientId;
                     entry.Entity.UserType = string.IsNullOrEmpty(clientId) ? 0 : 1;
                     entry.Entity.ClientId = Guid.Parse(clientId);
                 }
                 else
                 {
                     entry.Entity.UpdatedOn = DateTime.Now;
-                    entry.Entity.UpdatedBy = userId;
+                    entry.Entity.UpdatedBy = clientId;
                     entry.Entity.UserType = string.IsNullOrEmpty(clientId) ? 0 : 1;
                     entry.Entity.ClientId = Guid.Parse(clientId);
                 }
@@ -71,23 +71,23 @@ namespace CBT.DAL
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {
-            var clientId = accessor?.HttpContext?.Items["smsClientId"]?.ToString() ?? "";
-            var userId = accessor?.HttpContext?.Items["userId"]?.ToString() ?? "";
+            var smsClientId = accessor?.HttpContext?.Items["smsClientId"]?.ToString() ?? "";
+            var clientId = accessor?.HttpContext?.Items["userId"]?.ToString() ?? "";
             foreach (var entry in ChangeTracker.Entries<CommonEntity>())
             {
                 if (entry.State == EntityState.Added)
                 {
                     entry.Entity.Deleted = false;
                     entry.Entity.CreatedOn = DateTime.Now;
-                    entry.Entity.CreatedBy = userId;
-                    entry.Entity.UserType = string.IsNullOrEmpty(clientId) ? 0 : 1;
-                    entry.Entity.ClientId = !string.IsNullOrEmpty(clientId) ? Guid.Parse(clientId) : Guid.Empty;
+                    entry.Entity.CreatedBy = clientId;
+                    entry.Entity.UserType = string.IsNullOrEmpty(smsClientId) ? 0 : 1;
+                    entry.Entity.ClientId = Guid.Parse(clientId);
                 }
                 else
                 {
                     entry.Entity.UpdatedOn = DateTime.Now;
-                    entry.Entity.UpdatedBy = userId;
-                    entry.Entity.UserType = string.IsNullOrEmpty(clientId) ? 0 : 1;
+                    entry.Entity.UpdatedBy = clientId;
+                    entry.Entity.UserType = string.IsNullOrEmpty(smsClientId) ? 0 : 1;
                     entry.Entity.ClientId = Guid.Parse(clientId);
                 }
             }
