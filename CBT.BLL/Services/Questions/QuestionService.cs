@@ -24,8 +24,8 @@ namespace CBT.BLL.Services.Questions
             var res = new APIResponse<CreateQuestion>();
             try
             {
-                var examination = await context.Examination.FirstOrDefaultAsync(x=>x.ExaminationId == request.ExaminationId);
-                int? questionMarks = context.Question?.Where(x => x.ExaminationId == request.ExaminationId)?.Sum(x => x.Mark);
+                var examination = await context.Examination.FirstOrDefaultAsync(x=>x.ExaminationId == Guid.Parse(request.ExaminationId));
+                int? questionMarks = context.Question?.Where(x => x.ExaminationId == Guid.Parse(request.ExaminationId))?.Sum(x => x.Mark);
 
                 if(questionMarks + request.Mark > examination.ExamScore)
                 {
@@ -41,7 +41,7 @@ namespace CBT.BLL.Services.Questions
                 var question = new Question
                 {
                     QuestionText = request.QuestionText,
-                    ExaminationId = request.ExaminationId,
+                    ExaminationId = Guid.Parse(request.ExaminationId),
                     Mark = request.Mark,
                     Options = options,
                     Answers = answers,
@@ -69,7 +69,7 @@ namespace CBT.BLL.Services.Questions
             var res = new APIResponse<IEnumerable<SelectQuestion>>();
             try
             {
-                var clientId = Guid.Parse(accessor.HttpContext.Items["smsClientId"].ToString());
+                var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
                 var questions = await context.Question
                     .Where(d => d.Deleted != true && d.ClientId == clientId)
                     .Include(e=>e.Examination)
@@ -96,7 +96,7 @@ namespace CBT.BLL.Services.Questions
             var res = new APIResponse<SelectQuestion>();
             try
             {
-                var clientId = Guid.Parse(accessor.HttpContext.Items["smsClientId"].ToString());
+                var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
 
                 var question = await context.Question.Where(m => m.Deleted != true && m.QuestionId == Id && m.ClientId == clientId)
                     .Include(e=>e.Examination)
@@ -128,7 +128,7 @@ namespace CBT.BLL.Services.Questions
             var res = new APIResponse<UpdateQuestion>();
             try
             {
-                var clientId = Guid.Parse(accessor.HttpContext.Items["smsClientId"].ToString());
+                var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
 
                 var question = await context.Question.FirstOrDefaultAsync(m => m.QuestionId == request.QuestionId && m.ClientId == clientId);
                 if (question == null)
@@ -142,7 +142,7 @@ namespace CBT.BLL.Services.Questions
                 string answers = String.Join(",", request.Answers);
 
                 question.QuestionText = request.QuestionText;
-                question.ExaminationId = request.ExaminationId;
+                question.ExaminationId = Guid.Parse(request.ExaminationId);
                 question.Mark = request.Mark;
                 question.Options = options;
                 question.Answers = answers;
@@ -167,13 +167,13 @@ namespace CBT.BLL.Services.Questions
             var res = new APIResponse<bool>();
             try
             {
-                var clientId = Guid.Parse(accessor.HttpContext.Items["smsClientId"].ToString());
+                var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
 
                 var question = await context.Question.Where(d => d.Deleted != true && d.QuestionId == Guid.Parse(request.Item) && d.ClientId == clientId).FirstOrDefaultAsync();
                 if (question == null)
                 {
                     res.Message.FriendlyMessage = "QuestionId does not exist";
-                    res.IsSuccessful = true;
+                    res.IsSuccessful = false;
                     return res;
                 }
 
@@ -199,7 +199,7 @@ namespace CBT.BLL.Services.Questions
             var res = new APIResponse<IEnumerable<SelectQuestion>>();
             try
             {
-                var clientId = Guid.Parse(accessor.HttpContext.Items["smsClientId"].ToString());
+                var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
 
                 var questions = await context.Question
                      .Where(d => d.Deleted != true && d.ExaminationId == examId && d.ClientId == clientId)

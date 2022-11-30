@@ -29,7 +29,7 @@ namespace CBT.BLL.Services.Examinations
             var res = new APIResponse<CreateExamination>();
             try
             {
-                var clientId = Guid.Parse(accessor.HttpContext.Items["smsClientId"].ToString());
+                var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
 
                 TimeSpan duration;
                 if (!TimeSpan.TryParse(request.Duration, out duration))
@@ -98,7 +98,7 @@ namespace CBT.BLL.Services.Examinations
             var res = new APIResponse<List<SelectExamination>>();
             try
             {
-                var clientId = Guid.Parse(accessor.HttpContext.Items["smsClientId"].ToString());
+                var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
                 var result = await context.Examination
                     .Where(d => d.Deleted != true && d.ExaminationType == examType && d.ClientId == clientId)
                     .OrderByDescending(s => s.CreatedOn)
@@ -123,7 +123,7 @@ namespace CBT.BLL.Services.Examinations
             var res = new APIResponse<SelectExamination>();
             try
             {
-                var clientId = Guid.Parse(accessor.HttpContext.Items["smsClientId"].ToString());
+                var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
 
                 var result = await context.Examination
                     .Where(d => d.Deleted != true && d.ExaminationId == Id && d.ClientId == clientId)
@@ -157,7 +157,7 @@ namespace CBT.BLL.Services.Examinations
 
             try
             {
-                var clientId = Guid.Parse(accessor.HttpContext.Items["smsClientId"].ToString());
+                var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
 
                 var result = await context.Examination.Where(m => m.ExaminationId == request.ExaminationId && m.ClientId == clientId).FirstOrDefaultAsync();
                 if (result == null)
@@ -197,8 +197,8 @@ namespace CBT.BLL.Services.Examinations
                 result.CandidateCategory_Class = request.CandidateCategory_Class;
                 result.ExamScore = request.ExamScore;
                 result.Duration = duration;
-                result.StartTime = request.StartTime;
-                result.EndTime = request.EndTime;
+                result.StartTime = DateTime.ParseExact(request.StartTime, "dd-MM-yyyy hh:mm", null);
+                result.EndTime = DateTime.ParseExact(request.EndTime, "dd-MM-yyyy hh:mm", null);
                 result.Instruction = request.Instruction;
                 result.ShuffleQuestions = request.ShuffleQuestions;
                 result.UseAsExamScore = request.UseAsExamScore;
@@ -227,13 +227,13 @@ namespace CBT.BLL.Services.Examinations
             var res = new APIResponse<bool>();
             try
             {
-                var clientId = Guid.Parse(accessor.HttpContext.Items["smsClientId"].ToString());
+                var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
 
                 var examination = await context.Examination.Where(d => d.Deleted != true && d.ExaminationId == Guid.Parse(request.Item) && d.ClientId == clientId).FirstOrDefaultAsync();
                 if (examination == null)
                 {
                     res.Message.FriendlyMessage = "ExaminationId does not exist";
-                    res.IsSuccessful = true;
+                    res.IsSuccessful = false;
                     return res;
                 }
 
@@ -259,7 +259,7 @@ namespace CBT.BLL.Services.Examinations
             var res = new APIResponse<List<SelectExamination>>();
             try
             {
-                var clientId = Guid.Parse(accessor.HttpContext.Items["smsClientId"].ToString());
+                var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
 
                 if(examStatus == (int)ExaminationStatus.InProgress)
                 {

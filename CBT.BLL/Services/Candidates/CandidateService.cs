@@ -53,7 +53,7 @@ namespace CBT.BLL.Services.Candidates
                 context.Candidate.Add(candidate);
                 await context.SaveChangesAsync();
 
-                res.Result = candidate.CandidateId.ToString();
+                res.Result = candidate.Id.ToString();
                 res.IsSuccessful = true;
                 res.Message.FriendlyMessage = Messages.Created;
                 return res;
@@ -71,7 +71,7 @@ namespace CBT.BLL.Services.Candidates
             var res = new APIResponse<List<SelectCandidates>>();
             try
             {
-                var clientId = Guid.Parse(accessor.HttpContext.Items["smsClientId"].ToString());
+                var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
                 var result = await context.Candidate
                     .Where(c => c.Deleted != true && c.ClientId == clientId)
                     .Include(c => c.Category)
@@ -96,7 +96,7 @@ namespace CBT.BLL.Services.Candidates
             var res = new APIResponse<SelectCandidates>();
             try
             {
-                var clientId = Guid.Parse(accessor.HttpContext.Items["smsClientId"].ToString());
+                var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
                 var result = await context.Candidate
                     .Where(c => c.Deleted != true && c.Id == Guid.Parse(candidateId) && c.ClientId == clientId)
                     .Include(c => c.Category)
@@ -129,7 +129,7 @@ namespace CBT.BLL.Services.Candidates
             var res = new APIResponse<string>();
             try
             {
-                var clientId = Guid.Parse(accessor.HttpContext.Items["smsClientId"].ToString());
+                var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
                 var candidate = await context.Candidate.Where(m => m.Id == Guid.Parse(request.CandidateId) && m.ClientId == clientId).FirstOrDefaultAsync();
                 if (candidate == null)
                 {
@@ -166,12 +166,12 @@ namespace CBT.BLL.Services.Candidates
             var res = new APIResponse<bool>();
             try
             {
-                var clientId = Guid.Parse(accessor.HttpContext.Items["smsClientId"].ToString());
+                var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
                 var category = await context.Candidate.Where(d => d.Deleted != true && d.Id == Guid.Parse(request.Item) && d.ClientId == clientId).FirstOrDefaultAsync();
                 if (category == null)
                 {
                     res.Message.FriendlyMessage = "Candidate does not exist";
-                    res.IsSuccessful = true;
+                    res.IsSuccessful = false;
                     return res;
                 }
 
