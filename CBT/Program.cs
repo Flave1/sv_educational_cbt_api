@@ -11,27 +11,19 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.InstallServicesInAssembly(builder.Configuration);
 
-builder.Services.AddCors(option =>
+builder.Services.AddCors(p => p.AddPolicy("DevCorsPolicy", builder =>
 {
-
-    builder.Services.AddCors(options =>
-    {
-        options.AddDefaultPolicy(builder =>
-        {
-            builder.AllowAnyOrigin()
-            .AllowAnyHeader()
-            .AllowAnyMethod();
-        });
-    });
-});
+    builder.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
+}));
 
 var app = builder.Build();
-
+app.UseCors("DevCorsPolicy");
 // Configure the HTTP request pipeline.
 app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
+
 app.UseAuthorization();
 
 app.MapControllers();
