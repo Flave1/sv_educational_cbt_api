@@ -10,6 +10,6 @@ namespace CBT.BLL.Services.Authentication
 {
     public interface IIdentityService
     {
-        Task<LoginSuccessResponse> LoginAsync(LoginCommand user);
+        Task<APIResponse<LoginDetails>> LoginAsync(LoginCommand user);
     }
 }
