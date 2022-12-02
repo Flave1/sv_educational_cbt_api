@@ -28,7 +28,7 @@ namespace CBT.Contracts.Candidates
             PassportPhoto = candidate.PassportPhoto;
             CandidateCategoryId = candidate.CandidateCategoryId.ToString();
             CandidateCategory = candidate?.Category?.Name;
-            DateCreated = candidate.CreatedOn.ToString("dd-MM-yyy hh:mm"); ;
+            DateCreated = candidate.CreatedOn.ToString("yyyy-MM-dd hh:mm"); ;
         }
     }
 }
