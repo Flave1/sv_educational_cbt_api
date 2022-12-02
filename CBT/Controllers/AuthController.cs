@@ -18,7 +18,10 @@ namespace CBT.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody]LoginCommand user)
         {
-            return Ok(await _identityService.LoginAsync(user));
+            var response = await _identityService.LoginAsync(user);
+            if(response.IsSuccessful)
+                return Ok(response);
+            return BadRequest(response);
         }
     }
 }

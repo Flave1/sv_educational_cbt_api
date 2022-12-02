@@ -197,8 +197,8 @@ namespace CBT.BLL.Services.Examinations
                 result.CandidateCategory_Class = request.CandidateCategory_Class;
                 result.ExamScore = request.ExamScore;
                 result.Duration = duration;
-                result.StartTime = DateTime.ParseExact(request.StartTime, "dd-MM-yyyy hh:mm", null);
-                result.EndTime = DateTime.ParseExact(request.EndTime, "dd-MM-yyyy hh:mm", null);
+                result.StartTime = DateTime.Parse(request.StartTime);
+                result.EndTime = DateTime.Parse(request.EndTime);
                 result.Instruction = request.Instruction;
                 result.ShuffleQuestions = request.ShuffleQuestions;
                 result.UseAsExamScore = request.UseAsExamScore;
