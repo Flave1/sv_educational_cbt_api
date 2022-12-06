@@ -74,7 +74,9 @@ namespace CBT.BLL.Services.Examinations
                     ExaminationNo = result.Keys.First(),
                     CandidateExaminationId = result.Values.First(),
                     Status = request.Status,
-                    ExaminationType = request.ExaminationType
+                    ExaminationType = request.ExaminationType,
+                    PassMark = request.PassMark,
+                    ProductBaseurlSuffix = accessor?.HttpContext?.Items["productBaseurlSuffix"].ToString() ?? ""
                 };
 
                 context.Examination.Add(examination);
@@ -101,6 +103,7 @@ namespace CBT.BLL.Services.Examinations
                 var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
                 var result = await context.Examination
                     .Where(d => d.Deleted != true && d.ExaminationType == examType && d.ClientId == clientId)
+                    .Include(q=>q.Question)
                     .OrderByDescending(s => s.CreatedOn)
                     .Select(db => new SelectExamination(db)).ToListAsync();
 
@@ -127,6 +130,7 @@ namespace CBT.BLL.Services.Examinations
 
                 var result = await context.Examination
                     .Where(d => d.Deleted != true && d.ExaminationId == Id && d.ClientId == clientId)
+                    .Include(q => q.Question)
                     .Select(db => new SelectExamination(db)).FirstOrDefaultAsync();
 
                 if (result == null)
@@ -207,6 +211,8 @@ namespace CBT.BLL.Services.Examinations
                 result.AsAssessmentScoreSessionAndTerm = asAssessmentScoreSessionAndTerm;
                 result.Status = request.Status;
                 result.ExaminationType = request.ExaminationType;
+                result.PassMark = request.PassMark;
+                result.ProductBaseurlSuffix = accessor?.HttpContext?.Items["productBaseurlSuffix"].ToString() ?? "";
 
                 await context.SaveChangesAsync();
                 res.Result = request;
@@ -266,6 +272,7 @@ namespace CBT.BLL.Services.Examinations
                     var result = await context.Examination
                     .OrderByDescending(s => s.CreatedOn)
                     .Where(d => d.Deleted != true && (d.StartTime <= DateTime.Now && d.EndTime > DateTime.Now) && d.ClientId == clientId)
+                    .Include(q=>q.Question)
                     .Select(db => new SelectExamination(db)).ToListAsync();
 
                     res.Result = result;

@@ -4,7 +4,11 @@ using CBT.Contracts.Class;
 using CBT.Contracts.Options;
 using CBT.Contracts.Routes;
 using CBT.Contracts.Subject;
+using CBT.DAL;
+using CBT.DAL.Models.Examinations;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -16,22 +20,43 @@ namespace CBT.BLL.Services.Class
 {
     public class ClassService : IClassService
     {
-        private readonly IWebRequest _webRequest;
-        private readonly IHttpContextAccessor _accessor;
-        private readonly FwsConfigSettings _fwsOptions;
-        public ClassService(IWebRequest webRequest, IOptions<FwsConfigSettings> fwsOptions, IHttpContextAccessor accessor)
+        private readonly IWebRequest webRequest;
+        private readonly IHttpContextAccessor accessor;
+        private readonly IConfiguration configuration;
+        private readonly DataContext context;
+        private readonly FwsConfigSettings fwsOptions;
+        public ClassService(IWebRequest webRequest, IOptions<FwsConfigSettings> fwsOptions, IHttpContextAccessor accessor,
+            IConfiguration configuration, DataContext context)
         {
-            _webRequest = webRequest;
-            _accessor = accessor;
-            _fwsOptions = fwsOptions.Value;
+            this.webRequest = webRequest;
+            this.accessor = accessor;
+            this.configuration = configuration;
+            this.context = context;
+            this.fwsOptions = fwsOptions.Value;
         }
+
         public async Task<APIResponse<List<SelectActiveClasses>>> GetActiveClasses()
         {
             var res = new APIResponse<List<SelectActiveClasses>>();
             try
             {
-                var productBaseurlSuffix = _accessor.HttpContext.Items["productBaseurlSuffix"].ToString();
-                res = await _webRequest.GetAsync<APIResponse<List<SelectActiveClasses>>>($"{_fwsOptions.FwsBaseUrl}smp/{productBaseurlSuffix}{FwsRoutes.classSelect}");
+                var productBaseurlSuffix = accessor.HttpContext.Items["productBaseurlSuffix"].ToString();
+                res = await webRequest.GetAsync<APIResponse<List<SelectActiveClasses>>>($"{fwsOptions.FwsBaseUrl}smp/{productBaseurlSuffix}{FwsRoutes.classSelect}");
+                res.IsSuccessful = true;
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.IsSuccessful = false;
+                throw ex;
+            }
+        }
+        public async Task<APIResponse<SelectActiveClasses>> GetActiveClassByRegNo(string registrationNo, string productBaseurlSuffix)
+        {
+            var res = new APIResponse<SelectActiveClasses>();
+            try
+            {
+                res = await webRequest.GetAsync<APIResponse<SelectActiveClasses>>($"{fwsOptions.FwsBaseUrl}smp/{productBaseurlSuffix}{FwsRoutes.classByRegNoSelect}{registrationNo}");
                 res.IsSuccessful = true;
                 return res;
             }

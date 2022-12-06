@@ -1,10 +1,13 @@
 ﻿using CBT.BLL.Constants;
+using CBT.BLL.Services.Class;
 using CBT.BLL.Services.FileUpload;
+using CBT.BLL.Services.Settings;
 using CBT.BLL.Utilities;
 using CBT.Contracts;
 using CBT.Contracts.Candidates;
 using CBT.Contracts.Common;
 using CBT.Contracts.Examinations;
+using CBT.Contracts.Settings;
 using CBT.DAL;
 using CBT.DAL.Models.Candidates;
 using Microsoft.AspNetCore.Http;
@@ -23,12 +26,16 @@ namespace CBT.BLL.Services.Candidates
         private readonly IFileUploadService fileUpload;
         private readonly IConfiguration config;
         private readonly IHttpContextAccessor accessor;
-        public CandidateService(DataContext context, IFileUploadService fileUpload, IConfiguration config, IHttpContextAccessor accessor)
+        private readonly IClassService classService;
+
+        public CandidateService(DataContext context, IFileUploadService fileUpload, IConfiguration config, 
+            IHttpContextAccessor accessor, IClassService classService)
         {
             this.context = context;
             this.fileUpload = fileUpload;
             this.config = config;
             this.accessor = accessor;
+            this.classService = classService;
         }
         public async Task<APIResponse<string>> CreateCandidate(CreateCandidate request)
         {
@@ -192,12 +199,14 @@ namespace CBT.BLL.Services.Candidates
             }
         }
 
-        public async Task<APIResponse<CandidateLoginDetails>> LoginByExamId(CandidateLoginExamId request)
+        public async Task<APIResponse<CandidateExamDetails>> LoginByExamId(CandidateLoginExamId request)
         {
-            var res = new APIResponse<CandidateLoginDetails>();
+            var res = new APIResponse<CandidateExamDetails>();
             try
             {
-                var examination = await context.Examination.Where(x=>x.CandidateExaminationId.ToLower() == request.ExaminationId.ToLower())
+                var examination = await context.Examination
+                    .Where(x=>x.CandidateExaminationId.ToLower() == request.ExaminationId.ToLower())
+                    .Include(q => q.Question)
                     .Select(db=> new SelectExamination(db)).FirstOrDefaultAsync();
 
                 if(examination == null || !(examination.Status == (int)ExaminationStatus.InProgress))
@@ -207,10 +216,15 @@ namespace CBT.BLL.Services.Candidates
                     return res;
                 }
 
-                var result = new CandidateLoginDetails
+                //var result = new CandidateLoginDetails
+                //{
+                //    AuthDetails = await GenerateAuthenticationToken(request.ExaminationId),
+                //    ExaminationDetails = examination,
+                //};
+
+                var result = new CandidateExamDetails
                 {
-                    AuthDetails = await GenerateAuthenticationToken(request.ExaminationId),
-                    ExaminationDetails = examination,
+                    ExaminationType = examination.ExamintionType
                 };
 
                 res.IsSuccessful = true;
@@ -229,9 +243,9 @@ namespace CBT.BLL.Services.Candidates
         }
 
 
-        public async Task<APIResponse<SelectCandidates>> LoginByEmail(CandidateLoginEmail request)
+        public async Task<APIResponse<CandidateLoginDetails>> LoginByEmail(CandidateLoginEmail request)
         {
-            var res = new APIResponse<SelectCandidates>();
+            var res = new APIResponse<CandidateLoginDetails>();
             try
             {
                 var candidate = await context.Candidate
@@ -246,18 +260,29 @@ namespace CBT.BLL.Services.Candidates
                     return res;
                 }
 
-                var examination = await context.Examination.Where(x=> x.CandidateCategoryId_ClassId == candidate.CandidateCategoryId).FirstOrDefaultAsync();
+                var examination = context.Examination.Where(x => x.CandidateCategoryId_ClassId == candidate.CandidateCategoryId);
+                    
+                var examinationDetails = await examination.Include(q=>q.Question).Select(db => new SelectExamination(db))
+                    .FirstOrDefaultAsync();
 
-                if (examination == null || !(examination.StartTime <= DateTime.Now && examination.EndTime > DateTime.Now))
+                if (examination == null || !(Convert.ToDateTime(examinationDetails.StartTime) <= DateTime.Now && Convert.ToDateTime(examinationDetails.EndTime) > DateTime.Now))
                 {
                     res.IsSuccessful = false;
                     res.Message.FriendlyMessage = "You do not have an active Examination!";
                     return res;
                 }
+                var clientId = examination.FirstOrDefault().ClientId;
+                var result = new CandidateLoginDetails
+                {
+                    AuthDetails = await GenerateAuthenticationToken(examinationDetails.CandidateExaminationId),
+                    ExaminationDetails = examinationDetails,
+                    Settings = await context.Setting?.Where(d => d.Deleted != true && d.ClientId == clientId)
+                    .Select(db => new SelectSettings(db)).FirstOrDefaultAsync()
+                };
 
                 res.IsSuccessful = true;
                 res.Message.FriendlyMessage = Messages.GetSuccess;
-                res.Result = candidate;
+                res.Result = result;
                 return res;
 
             }
@@ -291,6 +316,54 @@ namespace CBT.BLL.Services.Candidates
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
             return new AuthDetails { Token = tokenHandler.WriteToken(token), Expires = tokenDescriptor.Expires.ToString() };
+        }
+
+        public async Task<APIResponse<CandidateLoginDetails>> LoginByRegNo(CandidateLoginRegNo request)
+        {
+            var res = new APIResponse<CandidateLoginDetails>();
+            try
+            {
+                var examination = context.Examination.Where(x => x.CandidateExaminationId.ToLower() == request.ExaminationId.ToLower());
+                var examinationDetails = await examination.Include(q => q.Question).Select(db => new SelectExamination(db))
+                   .FirstOrDefaultAsync();
+
+                if (examination == null || !(Convert.ToDateTime(examinationDetails.StartTime) <= DateTime.Now && Convert.ToDateTime(examinationDetails.EndTime) > DateTime.Now))
+                {
+                    res.IsSuccessful = false;
+                    res.Message.FriendlyMessage = "You do not have an active Examination!";
+                    return res;
+                }
+
+                var studentClass = await classService.GetActiveClassByRegNo(request.RegistrationNo, examination.FirstOrDefault().ProductBaseurlSuffix);
+                if(studentClass.Result == null)
+                {
+                    res.IsSuccessful = false;
+                    res.Message.FriendlyMessage = studentClass.Message.FriendlyMessage;
+                    return res;
+                }
+
+                var clientId = examination.FirstOrDefault().ClientId;
+                var result = new CandidateLoginDetails
+                {
+                    AuthDetails = await GenerateAuthenticationToken(examinationDetails.CandidateExaminationId),
+                    ExaminationDetails = examinationDetails,
+                    Settings = await context.Setting?.Where(d => d.Deleted != true && d.ClientId == clientId)
+                    .Select(db => new SelectSettings(db)).FirstOrDefaultAsync()
+                };
+
+                res.IsSuccessful = true;
+                res.Message.FriendlyMessage = Messages.GetSuccess;
+                res.Result = result;
+                return res;
+
+            }
+            catch (Exception ex)
+            {
+                res.IsSuccessful = false;
+                res.Message.FriendlyMessage = Messages.FriendlyException;
+                res.Message.TechnicalMessage = ex.ToString();
+                return res;
+            }
         }
     }
 }

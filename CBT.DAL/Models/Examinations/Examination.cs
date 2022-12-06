@@ -30,6 +30,8 @@ namespace CBT.DAL.Models.Examinations
         public string AsAssessmentScoreSessionAndTerm { get; set; }
         public int Status { get; set; }
         public  int ExaminationType { get; set; }
+        public int PassMark { get; set; }
+        public string ProductBaseurlSuffix { get; set; }
         public virtual ICollection<Question> Question { get; set; }
     }
 }

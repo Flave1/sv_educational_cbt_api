@@ -17,8 +17,9 @@ namespace CBT.BLL.Services.Candidates
         Task<APIResponse<SelectCandidates>> GetCandidate(string candidateId);
         Task<APIResponse<string>> UpdateCandidate(UpdateCandidate request);
         Task<APIResponse<bool>> DeleteCandidate(SingleDelete request);
-        Task<APIResponse<CandidateLoginDetails>> LoginByExamId(CandidateLoginExamId request);
+        Task<APIResponse<CandidateExamDetails>> LoginByExamId(CandidateLoginExamId request);
         Task<AuthDetails> GenerateAuthenticationToken(string examinationId);
-        Task<APIResponse<SelectCandidates>> LoginByEmail(CandidateLoginEmail request);
+        Task<APIResponse<CandidateLoginDetails>> LoginByEmail(CandidateLoginEmail request);
+        Task<APIResponse<CandidateLoginDetails>> LoginByRegNo(CandidateLoginRegNo request);
     }
 }

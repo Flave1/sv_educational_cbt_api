@@ -1,4 +1,5 @@
 ﻿using CBT.Contracts.Examinations;
+using CBT.Contracts.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,8 @@ namespace CBT.Contracts.Candidates
     {
         public AuthDetails AuthDetails { get; set; }
         public SelectExamination ExaminationDetails { get; set; }
+        public SelectSettings Settings { get; set; }
+
     }
 
 }
