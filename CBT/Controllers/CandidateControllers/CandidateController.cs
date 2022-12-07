@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using CBT.BLL.Services.Candidates;
 using CBT.Contracts.Candidates;
 using CBT.Contracts.Common;
+using CBT.BLL.Filters;
 
 namespace CBT.Controllers.CandidateController
 {
@@ -26,9 +27,9 @@ namespace CBT.Controllers.CandidateController
             return BadRequest(response);
         }
         [HttpGet("get-all-candidates")]
-        public async Task<IActionResult> GetAllCandidates()
+        public async Task<IActionResult> GetAllCandidates(PaginationFilter filter)
         {
-            var response = await _service.GetAllCandidates();
+            var response = await _service.GetAllCandidates(filter);
             if(response.IsSuccessful)
                 return Ok(response);
             return BadRequest(response);

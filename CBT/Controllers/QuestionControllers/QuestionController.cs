@@ -1,4 +1,5 @@
-﻿using CBT.BLL.Middleware;
+﻿using CBT.BLL.Filters;
+using CBT.BLL.Middleware;
 using CBT.BLL.Services.Questions;
 using CBT.Contracts.Common;
 using CBT.Contracts.Examinations;
@@ -26,9 +27,9 @@ namespace CBT.Controllers.QuestionControllers
             return BadRequest(response);
         }
         [HttpGet("get-all-questions")]
-        public async Task<IActionResult> GetAllQuestions()
+        public async Task<IActionResult> GetAllQuestions(PaginationFilter filter)
         {
-            var response = await _service.GetAllQuestions();
+            var response = await _service.GetAllQuestions(filter);
             if (response.IsSuccessful)
                 return Ok(response);
             return BadRequest(response);
@@ -43,9 +44,9 @@ namespace CBT.Controllers.QuestionControllers
         }
 
         [HttpGet("get-all-questions/exam/{examId}")]
-        public async Task<IActionResult> GetQuestionByExamId(string examId)
+        public async Task<IActionResult> GetQuestionByExamId(PaginationFilter filter, string examId)
         {
-            var response = await _service.GetQuestionByExamId(Guid.Parse(examId));
+            var response = await _service.GetQuestionByExamId(filter, Guid.Parse(examId));
             if (response.IsSuccessful)
                 return Ok(response);
             return BadRequest(response);

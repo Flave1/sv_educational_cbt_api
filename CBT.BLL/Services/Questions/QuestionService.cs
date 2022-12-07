@@ -1,4 +1,7 @@
 ﻿using CBT.BLL.Constants;
+using CBT.BLL.Filters;
+using CBT.BLL.Services.Pagination;
+using CBT.BLL.Wrappers;
 using CBT.Contracts;
 using CBT.Contracts.Common;
 using CBT.Contracts.Questions;
@@ -13,11 +16,13 @@ namespace CBT.BLL.Services.Questions
     {
         private readonly DataContext context;
         private readonly IHttpContextAccessor accessor;
+        private readonly IPaginationService paginationService;
 
-        public QuestionService(DataContext context, IHttpContextAccessor accessor)
+        public QuestionService(DataContext context, IHttpContextAccessor accessor, IPaginationService paginationService)
         {
             this.context = context;
             this.accessor = accessor;
+            this.paginationService = paginationService;
         }
         public async Task<APIResponse<CreateQuestion>> CreateQuestion(CreateQuestion request)
         {
@@ -64,21 +69,22 @@ namespace CBT.BLL.Services.Questions
             }
         }
 
-        public async Task<APIResponse<IEnumerable<SelectQuestion>>> GetAllQuestions()
+        public async Task<APIResponse<PagedResponse<List<SelectQuestion>>>> GetAllQuestions(PaginationFilter filter)
         {
-            var res = new APIResponse<IEnumerable<SelectQuestion>>();
+            var res = new APIResponse<PagedResponse<List<SelectQuestion>>>();
             try
             {
                 var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
-                var questions = await context.Question
+                var query = context.Question
                     .Where(d => d.Deleted != true && d.ClientId == clientId)
-                    .Include(e=>e.Examination)
-                    .OrderByDescending(s => s.CreatedOn)
-                    .Select(db => new SelectQuestion(db))
-                    .ToListAsync();
+                    .Include(e => e.Examination)
+                    .OrderByDescending(s => s.CreatedOn);
+
+                var totalRecord = query.Count();
+                var result = await paginationService.GetPagedResult(query, filter).Select(db => new SelectQuestion(db)).ToListAsync();
+                res.Result = paginationService.CreatePagedReponse(result, filter, totalRecord);
 
                 res.IsSuccessful = true;
-                res.Result = questions;
                 res.Message.FriendlyMessage = Messages.GetSuccess;
                 return res;
             }
@@ -194,22 +200,22 @@ namespace CBT.BLL.Services.Questions
             }
         }
 
-        public async Task<APIResponse<IEnumerable<SelectQuestion>>> GetQuestionByExamId(Guid examId)
+        public async Task<APIResponse<PagedResponse<List<SelectQuestion>>>> GetQuestionByExamId(PaginationFilter filter, Guid examId)
         {
-            var res = new APIResponse<IEnumerable<SelectQuestion>>();
+            var res = new APIResponse<PagedResponse<List<SelectQuestion>>>();
             try
             {
                 var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
-
-                var questions = await context.Question
+                var query = context.Question
                      .Where(d => d.Deleted != true && d.ExaminationId == examId && d.ClientId == clientId)
-                     .Include(e=>e.Examination)
-                     .OrderByDescending(s => s.CreatedOn)
-                     .Select(db => new SelectQuestion(db))
-                     .ToListAsync();
+                     .Include(e => e.Examination)
+                     .OrderByDescending(s => s.CreatedOn);
+
+                var totalRecord = query.Count();
+                var result = await paginationService.GetPagedResult(query, filter).Select(db => new SelectQuestion(db)).ToListAsync();
+                res.Result = paginationService.CreatePagedReponse(result, filter, totalRecord);
 
                 res.IsSuccessful = true;
-                res.Result = questions;
                 res.Message.FriendlyMessage = Messages.GetSuccess;
                 return res;
             }
