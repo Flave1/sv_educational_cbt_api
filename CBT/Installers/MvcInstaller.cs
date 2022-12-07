@@ -7,6 +7,7 @@ using CBT.BLL.Services.Examinations;
 using CBT.BLL.Services.FileUpload;
 using CBT.BLL.Services.Questions;
 using CBT.BLL.Services.Session;
+using CBT.BLL.Services.Settings;
 using CBT.BLL.Services.Subject;
 using CBT.BLL.Services.WebRequests;
 using CBT.Contracts.Options;
@@ -34,6 +35,7 @@ namespace CBT.Installers
             services.AddScoped<IQuestionService, QuestionService>();
             services.AddScoped<ICandidateAnswerService, CandidateAnswerService>();
             services.AddScoped<ISessionService, SessionService>();
+            services.AddScoped<ISettingService, SettingService>();
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();

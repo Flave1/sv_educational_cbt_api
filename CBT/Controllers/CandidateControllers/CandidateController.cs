@@ -76,6 +76,15 @@ namespace CBT.Controllers.CandidateController
                 return Ok(response);
             return BadRequest(response);
         }
+        [AllowAnonymous]
+        [HttpPost("login/reg-no")]
+        public async Task<IActionResult> LoginByRegNo([FromBody] CandidateLoginRegNo request)
+        {
+            var response = await _service.LoginByRegNo(request);
+            if (response.IsSuccessful)
+                return Ok(response);
+            return BadRequest(response);
+        }
 
     }
 }

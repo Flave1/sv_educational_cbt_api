@@ -4,6 +4,7 @@ using CBT.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CBT.DAL.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20221205055838_AddedPassMark")]
+    partial class AddedPassMark
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -292,9 +294,6 @@ namespace CBT.DAL.Migrations
                     b.Property<int>("PassMark")
                         .HasColumnType("int");
 
-                    b.Property<string>("ProductBaseurlSuffix")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("ShuffleQuestions")
                         .HasColumnType("bit");
 
@@ -376,7 +375,7 @@ namespace CBT.DAL.Migrations
                     b.ToTable("Question");
                 });
 
-            modelBuilder.Entity("CBT.DAL.Models.Settings.Setting", b =>
+            modelBuilder.Entity("CBT.DAL.Models.Setting.Setting", b =>
                 {
                     b.Property<Guid>("SettingId")
                         .ValueGeneratedOnAdd()

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CBT.DAL.Models.Setting
+namespace CBT.DAL.Models.Settings
 {
     public class Setting : CommonEntity
     {

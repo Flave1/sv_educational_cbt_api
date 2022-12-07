@@ -28,6 +28,8 @@ namespace CBT.Contracts.Examinations
         public string AsAssessmentScoreSessionAndTerm { get; set; }
         public int Status { get; set; }
         public int ExamintionType { get; set; }
+        public int PassMark { get; set; }
+        public int UnsedMarks { get; set; }
 
         public SelectExamination(Examination examination)
         {
@@ -48,6 +50,8 @@ namespace CBT.Contracts.Examinations
             AsExamScoreSessionAndTerm = examination.AsExamScoreSessionAndTerm;
             AsAssessmentScoreSessionAndTerm = examination.AsAssessmentScoreSessionAndTerm;
             ExamintionType = examination.ExaminationType;
+            PassMark = examination.PassMark;
+            UnsedMarks = (examination.ExamScore - examination.Question.Sum(x => x.Mark));
             if(examination.StartTime <= DateTime.Now && examination.EndTime > DateTime.Now)
             {
                 Status = 1;

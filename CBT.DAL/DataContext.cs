@@ -3,7 +3,7 @@ using CBT.DAL.Models.Candidate;
 using CBT.DAL.Models.Candidates;
 using CBT.DAL.Models.Examinations;
 using CBT.DAL.Models.Questions;
-using CBT.DAL.Models.Setting;
+using CBT.DAL.Models.Settings;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -55,14 +55,14 @@ namespace CBT.DAL
                     entry.Entity.Deleted = false;
                     entry.Entity.CreatedOn = DateTime.Now;
                     entry.Entity.CreatedBy = clientId;
-                    entry.Entity.UserType = string.IsNullOrEmpty(clientId) ? 0 : 1;
+                    entry.Entity.UserType = string.IsNullOrEmpty(clientId) ? 1 : 0;
                     entry.Entity.ClientId = Guid.Parse(clientId);
                 }
                 else
                 {
                     entry.Entity.UpdatedOn = DateTime.Now;
                     entry.Entity.UpdatedBy = clientId;
-                    entry.Entity.UserType = string.IsNullOrEmpty(clientId) ? 0 : 1;
+                    entry.Entity.UserType = string.IsNullOrEmpty(clientId) ? 1 : 0;
                     entry.Entity.ClientId = Guid.Parse(clientId);
                 }
             }
@@ -80,14 +80,14 @@ namespace CBT.DAL
                     entry.Entity.Deleted = false;
                     entry.Entity.CreatedOn = DateTime.Now;
                     entry.Entity.CreatedBy = clientId;
-                    entry.Entity.UserType = string.IsNullOrEmpty(smsClientId) ? 0 : 1;
+                    entry.Entity.UserType = string.IsNullOrEmpty(smsClientId) ? 1 : 0;
                     entry.Entity.ClientId = Guid.Parse(clientId);
                 }
                 else
                 {
                     entry.Entity.UpdatedOn = DateTime.Now;
                     entry.Entity.UpdatedBy = clientId;
-                    entry.Entity.UserType = string.IsNullOrEmpty(smsClientId) ? 0 : 1;
+                    entry.Entity.UserType = string.IsNullOrEmpty(smsClientId) ? 1 : 0;
                     entry.Entity.ClientId = Guid.Parse(clientId);
                 }
             }
