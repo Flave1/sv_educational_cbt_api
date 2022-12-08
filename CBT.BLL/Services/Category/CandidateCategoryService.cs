@@ -1,5 +1,8 @@
 ﻿using CBT.BLL.Constants;
+using CBT.BLL.Filters;
+using CBT.BLL.Services.Pagination;
 using CBT.BLL.Utilities;
+using CBT.BLL.Wrappers;
 using CBT.Contracts;
 using CBT.Contracts.Category;
 using CBT.Contracts.Common;
@@ -14,11 +17,13 @@ namespace CBT.BLL.Services.Category
     {
         private readonly DataContext context;
         private readonly IHttpContextAccessor accessor;
+        private readonly IPaginationService paginationService;
 
-        public CandidateCategoryService(DataContext context, IHttpContextAccessor accessor)
+        public CandidateCategoryService(DataContext context, IHttpContextAccessor accessor, IPaginationService paginationService)
         {
             this.context = context;
             this.accessor = accessor;
+            this.paginationService = paginationService;
         }
         public async Task<APIResponse<CreateCandidateCategory>> CreateCandidateCategory(CreateCandidateCategory request)
         {
@@ -86,20 +91,20 @@ namespace CBT.BLL.Services.Category
             }
         }
 
-        public async Task<APIResponse<List<SelectCandidateCategory>>> GetAllCandidateCategory()
+        public async Task<APIResponse<PagedResponse<List<SelectCandidateCategory>>>> GetAllCandidateCategory(PaginationFilter filter)
         {
-            var res = new APIResponse<List<SelectCandidateCategory>>();
+            var res = new APIResponse<PagedResponse<List<SelectCandidateCategory>>>();
             try
             {
                 var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
-                var result = await context.CandidateCategory
-                    .Where(d => d.Deleted != true && d.ClientId == clientId)
-                    .OrderByDescending(s => s.CreatedOn)
-                    .Select(db => new SelectCandidateCategory(db))
-                    .ToListAsync();
+                var query = context.CandidateCategory
+                    .Where(d => d.Deleted != true && d.ClientId == clientId).OrderByDescending(x=>x.CreatedOn);
 
+                var totalRecord = query.Count();
+                var result = await paginationService.GetPagedResult(query, filter).Select(db => new SelectCandidateCategory(db)).ToListAsync();
+                res.Result = paginationService.CreatePagedReponse(result, filter, totalRecord);
+                    
                 res.IsSuccessful = true;
-                res.Result = result;
                 res.Message.FriendlyMessage = Messages.GetSuccess;
                 return res;
             }

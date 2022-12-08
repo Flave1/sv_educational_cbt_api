@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CBT.Contracts.CandidateAnswers;
+using CBT.BLL.Wrappers;
+using CBT.BLL.Filters;
 
 namespace CBT.BLL.Services.CandidateAnswers
 {
@@ -14,7 +16,7 @@ namespace CBT.BLL.Services.CandidateAnswers
     {
         Task<APIResponse<CreateCandidateAnswer>> SubmitCandidateAnswer(CreateCandidateAnswer request);
         Task<APIResponse<bool>> SubmitAllCandidateAnswer(SubmitAllAnswers request);
-        Task<APIResponse<IEnumerable<SelectCandidateAnswer>>> GetAllCandidateAnswers();
+        Task<APIResponse<PagedResponse<List<SelectCandidateAnswer>>>> GetAllCandidateAnswers(PaginationFilter filter);
         Task<APIResponse<SelectCandidateAnswer>> GetCandidateAnswer(Guid Id);
         Task<APIResponse<UpdateCandidateAnswer>> UpdateCandidateAnswer(UpdateCandidateAnswer request);
         Task<APIResponse<bool>> DeleteCandidateAnswer(SingleDelete request);

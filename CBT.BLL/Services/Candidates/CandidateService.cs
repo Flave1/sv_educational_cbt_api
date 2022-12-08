@@ -1,8 +1,11 @@
 ﻿using CBT.BLL.Constants;
+using CBT.BLL.Filters;
 using CBT.BLL.Services.Class;
 using CBT.BLL.Services.FileUpload;
+using CBT.BLL.Services.Pagination;
 using CBT.BLL.Services.Settings;
 using CBT.BLL.Utilities;
+using CBT.BLL.Wrappers;
 using CBT.Contracts;
 using CBT.Contracts.Candidates;
 using CBT.Contracts.Common;
@@ -27,15 +30,17 @@ namespace CBT.BLL.Services.Candidates
         private readonly IConfiguration config;
         private readonly IHttpContextAccessor accessor;
         private readonly IClassService classService;
+        private readonly IPaginationService paginationService;
 
         public CandidateService(DataContext context, IFileUploadService fileUpload, IConfiguration config, 
-            IHttpContextAccessor accessor, IClassService classService)
+            IHttpContextAccessor accessor, IClassService classService, IPaginationService paginationService)
         {
             this.context = context;
             this.fileUpload = fileUpload;
             this.config = config;
             this.accessor = accessor;
             this.classService = classService;
+            this.paginationService = paginationService;
         }
         public async Task<APIResponse<string>> CreateCandidate(CreateCandidate request)
         {
@@ -73,19 +78,22 @@ namespace CBT.BLL.Services.Candidates
                 return res;
             }
         }
-        public async Task<APIResponse<List<SelectCandidates>>> GetAllCandidates()
+        public async Task<APIResponse<PagedResponse<List<SelectCandidates>>>> GetAllCandidates(PaginationFilter filter)
         {
-            var res = new APIResponse<List<SelectCandidates>>();
+            var res = new APIResponse<PagedResponse<List<SelectCandidates>>>();
             try
             {
                 var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
-                var result = await context.Candidate
+                var query = context.Candidate
                     .Where(c => c.Deleted != true && c.ClientId == clientId)
                     .Include(c => c.Category)
-                    .OrderByDescending(c => c.CreatedOn)
-                    .Select(d => new SelectCandidates(d)).ToListAsync();
+                    .OrderByDescending(c => c.CreatedOn);
+
+                 var totalRecord = query.Count();
+                var result = await paginationService.GetPagedResult(query, filter).Select(d => new SelectCandidates(d)).ToListAsync();
+                res.Result = paginationService.CreatePagedReponse(result, filter, totalRecord);
+
                 res.IsSuccessful = true;
-                res.Result = result;
                 res.Message.FriendlyMessage = Messages.GetSuccess;
                 return res;
             }
@@ -326,8 +334,13 @@ namespace CBT.BLL.Services.Candidates
                 var examination = context.Examination.Where(x => x.CandidateExaminationId.ToLower() == request.ExaminationId.ToLower());
                 var examinationDetails = await examination.Include(q => q.Question).Select(db => new SelectExamination(db))
                    .FirstOrDefaultAsync();
-
-                if (examination == null || !(Convert.ToDateTime(examinationDetails.StartTime) <= DateTime.Now && Convert.ToDateTime(examinationDetails.EndTime) > DateTime.Now))
+                if(examinationDetails == null)
+                {
+                    res.IsSuccessful = false;
+                    res.Message.FriendlyMessage = "Invalid Examination Id!";
+                    return res;
+                }
+                if (!(Convert.ToDateTime(examinationDetails.StartTime) <= DateTime.Now && Convert.ToDateTime(examinationDetails.EndTime) > DateTime.Now))
                 {
                     res.IsSuccessful = false;
                     res.Message.FriendlyMessage = "You do not have an active Examination!";

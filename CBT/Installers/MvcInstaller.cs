@@ -5,6 +5,7 @@ using CBT.BLL.Services.Category;
 using CBT.BLL.Services.Class;
 using CBT.BLL.Services.Examinations;
 using CBT.BLL.Services.FileUpload;
+using CBT.BLL.Services.Pagination;
 using CBT.BLL.Services.Questions;
 using CBT.BLL.Services.Session;
 using CBT.BLL.Services.Settings;
@@ -36,6 +37,14 @@ namespace CBT.Installers
             services.AddScoped<ICandidateAnswerService, CandidateAnswerService>();
             services.AddScoped<ISessionService, SessionService>();
             services.AddScoped<ISettingService, SettingService>();
+            services.AddSingleton<IPaginationService, PaginationService>();
+            services.AddSingleton<IUriService>(o =>
+            {
+                var accessor = o.GetRequiredService<IHttpContextAccessor>();
+                var request = accessor.HttpContext.Request;
+                var uri = string.Concat(request.Scheme, "://", request.Host.ToUriComponent());
+                return new UriService(uri);
+            });
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();

@@ -1,4 +1,5 @@
-﻿using CBT.BLL.Middleware;
+﻿using CBT.BLL.Filters;
+using CBT.BLL.Middleware;
 using CBT.BLL.Services.Category;
 using CBT.Contracts.Category;
 using CBT.Contracts.Common;
@@ -26,9 +27,9 @@ namespace CBT.Controllers.Category
             return BadRequest(response);
         }
         [HttpGet("get-all-categories")]
-        public async Task<IActionResult> GetAllCandidateCategory()
+        public async Task<IActionResult> GetAllCandidateCategory(PaginationFilter filter)
         {
-            var response = await _service.GetAllCandidateCategory();
+            var response = await _service.GetAllCandidateCategory(filter);
             if (response.IsSuccessful)
                 return Ok(response);
             return BadRequest(response);

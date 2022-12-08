@@ -1,4 +1,5 @@
-﻿using CBT.BLL.Middleware;
+﻿using CBT.BLL.Filters;
+using CBT.BLL.Middleware;
 using CBT.BLL.Services.Examinations;
 using CBT.Contracts.Common;
 using CBT.Contracts.Examinations;
@@ -27,9 +28,9 @@ namespace CBT.Controllers.Examination
             return BadRequest(response);
         }
         [HttpGet("get-all-examination")]
-        public async Task<IActionResult> GetAllExamination(int examType)
+        public async Task<IActionResult> GetAllExamination(PaginationFilter filter, int examType)
         {
-            var response = await _service.GetAllExamination(examType);
+            var response = await _service.GetAllExamination(filter, examType);
             if (response.IsSuccessful)
                 return Ok(response);
             return BadRequest(response);
@@ -43,9 +44,9 @@ namespace CBT.Controllers.Examination
             return BadRequest(response);
         }
         [HttpGet("get-all-examination/status/{status}")]
-        public async Task<IActionResult> GetExamination(int status)
+        public async Task<IActionResult> GetExamination(PaginationFilter filter, int status)
         {
-            var response = await _service.GetExaminationByStatus(status);
+            var response = await _service.GetExaminationByStatus(filter, status);
             if (response.IsSuccessful)
                 return Ok(response);
             return BadRequest(response);

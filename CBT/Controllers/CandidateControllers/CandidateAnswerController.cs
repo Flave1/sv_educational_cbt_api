@@ -1,4 +1,5 @@
-﻿using CBT.BLL.Middleware;
+﻿using CBT.BLL.Filters;
+using CBT.BLL.Middleware;
 using CBT.BLL.Services.CandidateAnswers;
 using CBT.BLL.Services.Candidates;
 using CBT.Contracts.CandidateAnswers;
@@ -35,9 +36,9 @@ namespace CBT.Controllers.CandidateControllers
             return BadRequest(response);
         }
         [HttpGet("get-all-candidate-answers")]
-        public async Task<IActionResult> GetAllCandidatesAnswer()
+        public async Task<IActionResult> GetAllCandidatesAnswer(PaginationFilter filter)
         {
-            var response = await _service.GetAllCandidateAnswers();
+            var response = await _service.GetAllCandidateAnswers(filter);
             if (response.IsSuccessful)
                 return Ok(response);
             return BadRequest(response);

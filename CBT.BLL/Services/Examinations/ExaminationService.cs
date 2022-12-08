@@ -1,6 +1,9 @@
 ﻿using CBT.BLL.Constants;
+using CBT.BLL.Filters;
+using CBT.BLL.Services.Pagination;
 using CBT.BLL.Services.Session;
 using CBT.BLL.Utilities;
+using CBT.BLL.Wrappers;
 using CBT.Contracts;
 using CBT.Contracts.Authentication;
 using CBT.Contracts.Common;
@@ -9,6 +12,7 @@ using CBT.DAL;
 using CBT.DAL.Models.Examinations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace CBT.BLL.Services.Examinations
 {
@@ -17,12 +21,14 @@ namespace CBT.BLL.Services.Examinations
         private readonly DataContext context;
         private readonly IHttpContextAccessor accessor;
         private readonly ISessionService sessionService;
+        private readonly IPaginationService paginationService;
 
-        public ExaminationService(DataContext context, IHttpContextAccessor accessor, ISessionService sessionService)
+        public ExaminationService(DataContext context, IHttpContextAccessor accessor, ISessionService sessionService, IPaginationService paginationService)
         {
             this.context = context;
             this.accessor = accessor;
             this.sessionService = sessionService;
+            this.paginationService = paginationService;
         }
         public async Task<APIResponse<CreateExamination>> CreateExamination(CreateExamination request)
         {
@@ -95,19 +101,21 @@ namespace CBT.BLL.Services.Examinations
             }
         }
 
-        public async Task<APIResponse<List<SelectExamination>>> GetAllExamination(int examType)
+        public async Task<APIResponse<PagedResponse<List<SelectExamination>>>> GetAllExamination(PaginationFilter filter, int examType)
         {
-            var res = new APIResponse<List<SelectExamination>>();
+            var res = new APIResponse<PagedResponse<List<SelectExamination>>>();
             try
             {
                 var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
-                var result = await context.Examination
+                var query = context.Examination
                     .Where(d => d.Deleted != true && d.ExaminationType == examType && d.ClientId == clientId)
-                    .Include(q=>q.Question)
-                    .OrderByDescending(s => s.CreatedOn)
-                    .Select(db => new SelectExamination(db)).ToListAsync();
+                    .Include(q => q.Question)
+                    .OrderByDescending(s => s.CreatedOn);
 
-                res.Result = result;
+                var totalRecord = query.Count();
+                var result = await paginationService.GetPagedResult(query, filter).Select(db => new SelectExamination(db)).ToListAsync();
+                res.Result = paginationService.CreatePagedReponse(result, filter, totalRecord);
+
                 res.IsSuccessful = true;
                 res.Message.FriendlyMessage = Messages.GetSuccess;
                 return res;
@@ -260,32 +268,35 @@ namespace CBT.BLL.Services.Examinations
             }
         }
 
-        public async Task<APIResponse<List<SelectExamination>>> GetExaminationByStatus(int examStatus)
+        public async Task<APIResponse<PagedResponse<List<SelectExamination>>>> GetExaminationByStatus(PaginationFilter filter, int examStatus)
         {
-            var res = new APIResponse<List<SelectExamination>>();
+            var res = new APIResponse<PagedResponse<List<SelectExamination>>>();
             try
             {
                 var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
 
                 if(examStatus == (int)ExaminationStatus.InProgress)
                 {
-                    var result = await context.Examination
-                    .OrderByDescending(s => s.CreatedOn)
+                    var query = context.Examination
                     .Where(d => d.Deleted != true && (d.StartTime <= DateTime.Now && d.EndTime > DateTime.Now) && d.ClientId == clientId)
                     .Include(q=>q.Question)
-                    .Select(db => new SelectExamination(db)).ToListAsync();
+                    .OrderByDescending(s => s.CreatedOn);
 
-                    res.Result = result;
+                    var totalRecord = query.Count();
+                    var result = await paginationService.GetPagedResult(query, filter).Select(db => new SelectExamination(db)).ToListAsync();
+                    res.Result = paginationService.CreatePagedReponse(result, filter, totalRecord);
                 }
 
                 if (examStatus == (int)ExaminationStatus.Concluded)
                 {
-                    var result = await context.Examination
-                    .OrderByDescending(s => s.CreatedOn)
+                    var query = context.Examination
                     .Where(d => d.Deleted != true && (d.StartTime < DateTime.Now && d.EndTime < DateTime.Now) && d.ClientId == clientId)
-                    .Select(db => new SelectExamination(db)).ToListAsync();
+                    .Include(q => q.Question)
+                    .OrderByDescending(s => s.CreatedOn);
 
-                    res.Result = result;
+                    var totalRecord = query.Count();
+                    var result = await paginationService.GetPagedResult(query, filter).Select(db => new SelectExamination(db)).ToListAsync();
+                    res.Result = paginationService.CreatePagedReponse(result, filter, totalRecord);
                 }
 
                 res.IsSuccessful = true;
