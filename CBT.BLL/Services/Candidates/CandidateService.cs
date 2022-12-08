@@ -282,7 +282,7 @@ namespace CBT.BLL.Services.Candidates
                 var clientId = examination.FirstOrDefault().ClientId;
                 var result = new CandidateLoginDetails
                 {
-                    AuthDetails = await GenerateAuthenticationToken(examinationDetails.CandidateExaminationId),
+                    AuthDetails = await GenerateAuthenticationToken(examinationDetails.ExaminationId, candidate.Id),
                     ExaminationDetails = examinationDetails,
                     Settings = await context.Setting?.Where(d => d.Deleted != true && d.ClientId == clientId)
                     .Select(db => new SelectSettings(db)).FirstOrDefaultAsync()
@@ -303,13 +303,15 @@ namespace CBT.BLL.Services.Candidates
             }
         }
 
-        public async Task<AuthDetails> GenerateAuthenticationToken(string examinationId)
+        private async Task<AuthDetails> GenerateAuthenticationToken(string examinationId, string candidateId_regNo)
         {
             var claims = new List<Claim>
             {
-               new Claim(JwtRegisteredClaimNames.Sub, examinationId),
+               new Claim(JwtRegisteredClaimNames.Sub, candidateId_regNo),
                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-               new Claim(JwtRegisteredClaimNames.Email, examinationId)
+               new Claim(JwtRegisteredClaimNames.Email, candidateId_regNo),
+               new Claim("examinationId", examinationId),
+               new Claim("candidateId_regNo", candidateId_regNo)
             };
            
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetSection("Jwt:Key").Value));
@@ -358,7 +360,7 @@ namespace CBT.BLL.Services.Candidates
                 var clientId = examination.FirstOrDefault().ClientId;
                 var result = new CandidateLoginDetails
                 {
-                    AuthDetails = await GenerateAuthenticationToken(examinationDetails.CandidateExaminationId),
+                    AuthDetails = await GenerateAuthenticationToken(examinationDetails.ExaminationId, request.RegistrationNo),
                     ExaminationDetails = examinationDetails,
                     Settings = await context.Setting?.Where(d => d.Deleted != true && d.ClientId == clientId)
                     .Select(db => new SelectSettings(db)).FirstOrDefaultAsync()

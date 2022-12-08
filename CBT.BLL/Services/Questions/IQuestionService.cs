@@ -20,6 +20,7 @@ namespace CBT.BLL.Services.Questions
         Task<APIResponse<PagedResponse<List<SelectQuestion>>>> GetQuestionByExamId(PaginationFilter filter, Guid examId);
         Task<APIResponse<UpdateQuestion>> UpdateQuestion(UpdateQuestion request);
         Task<APIResponse<bool>> DeleteQuestion(SingleDelete request);
+        Task<APIResponse<PagedResponse<List<SelectQuestion>>>> GetCandidateQuestions(PaginationFilter filter);
     }
 }
 
