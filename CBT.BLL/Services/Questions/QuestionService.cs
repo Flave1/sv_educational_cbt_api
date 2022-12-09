@@ -227,5 +227,33 @@ namespace CBT.BLL.Services.Questions
                 return res;
             }
         }
+
+        public async Task<APIResponse<PagedResponse<List<SelectQuestion>>>> GetCandidateQuestions(PaginationFilter filter)
+        {
+            var res = new APIResponse<PagedResponse<List<SelectQuestion>>>();
+            try
+            {
+                var examinationId = Guid.Parse(accessor.HttpContext.Items["examinationId"].ToString());
+                var query = context.Question
+                     .Where(d => d.Deleted != true && d.ExaminationId == examinationId)
+                     .Include(e => e.Examination)
+                     .OrderByDescending(s => s.CreatedOn);
+
+                var totalRecord = query.Count();
+                var result = await paginationService.GetPagedResult(query, filter).Select(db => new SelectQuestion(db)).ToListAsync();
+                res.Result = paginationService.CreatePagedReponse(result, filter, totalRecord);
+
+                res.IsSuccessful = true;
+                res.Message.FriendlyMessage = Messages.GetSuccess;
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.IsSuccessful = false;
+                res.Message.FriendlyMessage = Messages.FriendlyException;
+                res.Message.TechnicalMessage = ex.ToString();
+                return res;
+            }
+        }
     }
 }
