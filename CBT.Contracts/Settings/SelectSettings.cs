@@ -13,6 +13,7 @@ namespace CBT.Contracts.Settings
         public bool NotifyBySMS { get; set; }
         public bool ShowPreviousBtn { get; set; }
         public bool ShowPreviewBtn { get; set; }
+        public bool ShowResult { get; set; }
         public bool UseWebCamCapture { get; set; }
         public bool SubmitExamWhenUserLeavesScreen { get; set; }
         public SelectSettings(Setting setting)
@@ -21,6 +22,7 @@ namespace CBT.Contracts.Settings
             NotifyBySMS = setting.NotifyBySMS;
             ShowPreviousBtn = setting.ShowPreviousBtn;
             ShowPreviewBtn = setting.ShowPreviewBtn;
+            ShowResult = setting.ShowResult;
             UseWebCamCapture = setting.UseWebCamCapture;
             SubmitExamWhenUserLeavesScreen = setting.SubmitExamWhenUserLeavesScreen;
         }

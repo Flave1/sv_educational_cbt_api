@@ -11,7 +11,7 @@ namespace CBT.DAL.Models.Candidate
         public Guid AnswerId { get; set; }
         public Guid QuestionId { get; set; }
         [ForeignKey("QuestionId")]
-        public Guid CandidateId { get; set; }
+        public string CandidateId { get; set; }
         public string Answers { get; set; }
         public Question Question { get; set; }
     }

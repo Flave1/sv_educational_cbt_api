@@ -228,11 +228,12 @@ namespace CBT.BLL.Services.Questions
             }
         }
 
-        public async Task<APIResponse<PagedResponse<List<SelectQuestion>>>> GetCandidateQuestions(PaginationFilter filter)
+        public async Task<APIResponse<PagedResponse<List<SelectCandidateQuestions>>>> GetCandidateQuestions(PaginationFilter filter)
         {
-            var res = new APIResponse<PagedResponse<List<SelectQuestion>>>();
+            var res = new APIResponse<PagedResponse<List<SelectCandidateQuestions>>>();
             try
             {
+                var candidateId_regNo = accessor.HttpContext.Items["candidateId_regNo"].ToString();
                 var examinationId = Guid.Parse(accessor.HttpContext.Items["examinationId"].ToString());
                 var query = context.Question
                      .Where(d => d.Deleted != true && d.ExaminationId == examinationId)
@@ -240,7 +241,7 @@ namespace CBT.BLL.Services.Questions
                      .OrderByDescending(s => s.CreatedOn);
 
                 var totalRecord = query.Count();
-                var result = await paginationService.GetPagedResult(query, filter).Select(db => new SelectQuestion(db)).ToListAsync();
+                var result = await paginationService.GetPagedResult(query, filter).Select(db => new SelectCandidateQuestions(db, context.CandidateAnswer.FirstOrDefault(x => x.QuestionId == db.QuestionId && x.CandidateId == candidateId_regNo))).ToListAsync();
                 res.Result = paginationService.CreatePagedReponse(result, filter, totalRecord);
 
                 res.IsSuccessful = true;
