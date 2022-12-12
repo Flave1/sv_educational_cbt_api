@@ -241,7 +241,8 @@ namespace CBT.BLL.Services.Questions
                      .OrderByDescending(s => s.CreatedOn);
 
                 var totalRecord = query.Count();
-                var result = await paginationService.GetPagedResult(query, filter).Select(db => new SelectCandidateQuestions(db, context.CandidateAnswer.FirstOrDefault(x => x.QuestionId == db.QuestionId && x.CandidateId == candidateId_regNo))).ToListAsync();
+                var result = await paginationService.GetPagedResult(query, filter)
+                    .Select(db => new SelectCandidateQuestions(db, context.CandidateAnswer.FirstOrDefault(x => x.QuestionId == db.QuestionId && x.CandidateId == candidateId_regNo))).ToListAsync();
                 res.Result = paginationService.CreatePagedReponse(result, filter, totalRecord);
 
                 res.IsSuccessful = true;
