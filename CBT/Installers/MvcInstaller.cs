@@ -7,6 +7,7 @@ using CBT.BLL.Services.Examinations;
 using CBT.BLL.Services.FileUpload;
 using CBT.BLL.Services.Pagination;
 using CBT.BLL.Services.Questions;
+using CBT.BLL.Services.Result;
 using CBT.BLL.Services.Session;
 using CBT.BLL.Services.Settings;
 using CBT.BLL.Services.Subject;
@@ -37,6 +38,7 @@ namespace CBT.Installers
             services.AddScoped<ICandidateAnswerService, CandidateAnswerService>();
             services.AddScoped<ISessionService, SessionService>();
             services.AddScoped<ISettingService, SettingService>();
+            services.AddScoped<IResultService, ResultService>();
             services.AddSingleton<IPaginationService, PaginationService>();
             services.AddSingleton<IUriService>(o =>
             {

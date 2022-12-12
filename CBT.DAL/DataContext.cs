@@ -81,14 +81,14 @@ namespace CBT.DAL
                     entry.Entity.CreatedOn = DateTime.Now;
                     entry.Entity.CreatedBy = clientId;
                     entry.Entity.UserType = string.IsNullOrEmpty(smsClientId) ? 1 : 0;
-                    entry.Entity.ClientId = Guid.Parse(clientId);
+                    entry.Entity.ClientId = clientId != "" ? Guid.Parse(clientId) : Guid.Empty;
                 }
                 else
                 {
                     entry.Entity.UpdatedOn = DateTime.Now;
                     entry.Entity.UpdatedBy = clientId;
                     entry.Entity.UserType = string.IsNullOrEmpty(smsClientId) ? 1 : 0;
-                    entry.Entity.ClientId = Guid.Parse(clientId);
+                    entry.Entity.ClientId = clientId != "" ? Guid.Parse(clientId) : Guid.Empty;
                 }
             }
             return base.SaveChangesAsync(cancellationToken);

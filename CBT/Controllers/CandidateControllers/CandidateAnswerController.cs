@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CBT.Controllers.CandidateControllers
 {
-    [CbtAuthorize]
+    [CandidateAuthorize]
     [Route("cbt/api/v1/candidate-answer")]
     public class CandidateAnswerController: Controller
     {
@@ -47,14 +47,6 @@ namespace CBT.Controllers.CandidateControllers
         public async Task<IActionResult> GetCandidateAnswer(string id)
         {
             var response = await _service.GetCandidateAnswer(Guid.Parse(id));
-            if (response.IsSuccessful)
-                return Ok(response);
-            return BadRequest(response);
-        }
-        [HttpPost("update")]
-        public async Task<IActionResult> UpdateCandidateAnswer([FromBody]UpdateCandidateAnswer request)
-        {
-            var response = await _service.UpdateCandidateAnswer(request);
             if (response.IsSuccessful)
                 return Ok(response);
             return BadRequest(response);

@@ -46,6 +46,7 @@ namespace CBT.BLL.Services.Settings
                         NotifyBySMS = request.NotifyBySMS,
                         ShowPreviousBtn = request.ShowPreviousBtn,
                         ShowPreviewBtn = request.ShowPreviewBtn,
+                        ShowResult = request.ShowResult,
                         UseWebCamCapture = request.UseWebCamCapture,
                         SubmitExamWhenUserLeavesScreen = request.SubmitExamWhenUserLeavesScreen
                     };
@@ -57,6 +58,7 @@ namespace CBT.BLL.Services.Settings
                     setting.NotifyBySMS = request.NotifyBySMS;
                     setting.ShowPreviousBtn = request.ShowPreviousBtn;
                     setting.ShowPreviewBtn = request.ShowPreviewBtn;
+                    setting.ShowResult = request.ShowResult;
                     setting.UseWebCamCapture = request.UseWebCamCapture;
                     setting.SubmitExamWhenUserLeavesScreen = request.SubmitExamWhenUserLeavesScreen;
                 }
