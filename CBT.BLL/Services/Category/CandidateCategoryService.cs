@@ -32,18 +32,20 @@ namespace CBT.BLL.Services.Category
             try
             {
                 var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
-                if (context.CandidateCategory.AsEnumerable().Any(r => UtilTools.ReplaceWhitespace(request.Name) == UtilTools.ReplaceWhitespace(r.Name) && r.Deleted == false && r.ClientId == clientId))
+                var categoryName = await context.CandidateCategory.Where(r => r.Name.ToLower() == request.Name.ToLower() && r.Deleted == false && r.ClientId == clientId).FirstOrDefaultAsync();
+
+                if (categoryName != null)
                 {
                     res.Message.FriendlyMessage = "Candidate Category Name Already Exist";
                     return res;
                 }
 
-                var category = new CandidateCategory
+                var newCategory = new CandidateCategory
                 {
                     Name = request.Name,
                 };
 
-                context.CandidateCategory.Add(category);
+                context.CandidateCategory.Add(newCategory);
                 await context.SaveChangesAsync();
                 res.Result = request;
                 res.IsSuccessful = true;
@@ -73,7 +75,13 @@ namespace CBT.BLL.Services.Category
                     res.IsSuccessful = false;
                     return res;
                 }
-
+                var candidate = context.Candidate.AsEnumerable().Any(c => c.CandidateCategoryId == Guid.Parse(request.Item) && c.Deleted != true && c.ClientId == clientId);
+                if (candidate)
+                {
+                    res.Message.FriendlyMessage = "Error! Category cannot be deleted. Category has been allocated to candidates";
+                    res.IsSuccessful = false;
+                    return res;
+                }
                 category.Deleted = true;
                 await context.SaveChangesAsync();
 
@@ -162,12 +170,15 @@ namespace CBT.BLL.Services.Category
                     res.IsSuccessful = true;
                     return res;
                 }
+                var categoryName = await context.CandidateCategory.Where(r => r.Name.ToLower() == request.Name.ToLower() && r.Deleted == false 
+                && r.ClientId == clientId && r.CandidateCategoryId != request.CandidateCategoryId).FirstOrDefaultAsync();
 
-                if (context.CandidateCategory.AsEnumerable().Any(r => UtilTools.ReplaceWhitespace(request.Name) == UtilTools.ReplaceWhitespace(r.Name)
-               && r.CandidateCategoryId != request.CandidateCategoryId && r.ClientId == clientId))
+               // context.CandidateCategory.AsEnumerable().Any(r => UtilTools.ReplaceWhitespace(request.Name) == UtilTools.ReplaceWhitespace(r.Name)
+               //&& r.CandidateCategoryId != request.CandidateCategoryId && r.ClientId == clientId)
+                if (categoryName != null)
                 {
                     res.Message.FriendlyMessage = "Candidate Category Name Already Exist";
-                    res.IsSuccessful = true;
+                    res.IsSuccessful = false;
                     return res;
                 }
 
