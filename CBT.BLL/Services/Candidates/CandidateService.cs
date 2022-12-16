@@ -273,7 +273,14 @@ namespace CBT.BLL.Services.Candidates
                 var examinationDetails = await examination.Include(q=>q.Question).Select(db => new SelectExamination(db))
                     .FirstOrDefaultAsync();
 
-                if (examination == null || !(Convert.ToDateTime(examinationDetails?.StartTime) <= DateTime.Now && Convert.ToDateTime(examinationDetails?.EndTime) > DateTime.Now))
+                if (examination == null)
+                {
+                    res.IsSuccessful = false;
+                    res.Message.FriendlyMessage = "You do not have an active Examination!";
+                    return res;
+                }
+
+                if (!(Convert.ToDateTime(examinationDetails?.StartTime) <= DateTime.Now && Convert.ToDateTime(examinationDetails?.EndTime) > DateTime.Now))
                 {
                     res.IsSuccessful = false;
                     res.Message.FriendlyMessage = "You do not have an active Examination!";
