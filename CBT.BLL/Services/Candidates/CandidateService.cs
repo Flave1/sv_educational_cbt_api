@@ -273,7 +273,7 @@ namespace CBT.BLL.Services.Candidates
                 var examinationDetails = await examination.Include(q=>q.Question).Select(db => new SelectExamination(db))
                     .FirstOrDefaultAsync();
 
-                if (examination == null)
+                if (examinationDetails == null)
                 {
                     res.IsSuccessful = false;
                     res.Message.FriendlyMessage = "You do not have an active Examination!";
