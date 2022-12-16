@@ -48,7 +48,16 @@ namespace CBT.BLL.Services.Settings
                         ShowPreviewBtn = request.ShowPreviewBtn,
                         ShowResult = request.ShowResult,
                         UseWebCamCapture = request.UseWebCamCapture,
-                        SubmitExamWhenUserLeavesScreen = request.SubmitExamWhenUserLeavesScreen
+                        SubmitExamWhenUserLeavesScreen = request.SubmitExamWhenUserLeavesScreen,
+                        ViewCategory = request.ViewCategory,
+                        Calculator = request.Calculator,
+                        SendToEmail = request.SendToEmail,
+                        UploadToSmpAsAssessment = request.UploadToSmpAsAssessment,
+                        UploadToSmpAsExam = request.UploadToSmpAsExam,
+                        GeoLocation = request.GeoLocation,
+                        ImageCasting = request.ImageCasting,
+                        ScreenRecording = request.ScreenRecording,
+                        VideoRecording = request.VideoRecording,
                     };
                     context.Setting.Add(newSetting);
                 }
@@ -61,6 +70,15 @@ namespace CBT.BLL.Services.Settings
                     setting.ShowResult = request.ShowResult;
                     setting.UseWebCamCapture = request.UseWebCamCapture;
                     setting.SubmitExamWhenUserLeavesScreen = request.SubmitExamWhenUserLeavesScreen;
+                    setting.ViewCategory = request.ViewCategory;
+                    setting.Calculator = request.Calculator;
+                    setting.SendToEmail = request.SendToEmail;
+                    setting.UploadToSmpAsAssessment = request.UploadToSmpAsAssessment;
+                    setting.UploadToSmpAsExam = request.UploadToSmpAsExam;
+                    setting.GeoLocation = request.GeoLocation;
+                    setting.ImageCasting = request.ImageCasting;
+                    setting.ScreenRecording = request.ScreenRecording;
+                    setting.VideoRecording = request.VideoRecording;
                 }
                 
                 await context.SaveChangesAsync();

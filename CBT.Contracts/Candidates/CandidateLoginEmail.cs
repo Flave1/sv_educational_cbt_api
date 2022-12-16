@@ -9,5 +9,6 @@ namespace CBT.Contracts.Candidates
     public class CandidateLoginEmail
     {
         public string Email { get; set; }
+        public string ExaminationId { get; set; }
     }
 }

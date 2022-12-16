@@ -268,12 +268,12 @@ namespace CBT.BLL.Services.Candidates
                     return res;
                 }
 
-                var examination = context.Examination.Where(x => x.CandidateCategoryId_ClassId == candidate.CandidateCategoryId);
+                var examination = context.Examination?.Where(x => x.CandidateExaminationId.ToLower() == request.ExaminationId.ToLower() && x.CandidateCategoryId_ClassId == candidate.CandidateCategoryId);
                     
                 var examinationDetails = await examination.Include(q=>q.Question).Select(db => new SelectExamination(db))
                     .FirstOrDefaultAsync();
 
-                if (examination == null || !(Convert.ToDateTime(examinationDetails.StartTime) <= DateTime.Now && Convert.ToDateTime(examinationDetails.EndTime) > DateTime.Now))
+                if (examination == null || !(Convert.ToDateTime(examinationDetails?.StartTime) <= DateTime.Now && Convert.ToDateTime(examinationDetails?.EndTime) > DateTime.Now))
                 {
                     res.IsSuccessful = false;
                     res.Message.FriendlyMessage = "You do not have an active Examination!";
