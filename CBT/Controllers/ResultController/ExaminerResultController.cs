@@ -4,24 +4,24 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CBT.Controllers.ResultController
 {
-    [CandidateAuthorize]
-    [Route("cbt/api/v1/result")]
-    public class ResultController: Controller
+    [CbtAuthorize]
+    [Route("cbt/api/v1/examiner-result")]
+    public class ExaminerResultController: Controller
     {
         private readonly IResultService service;
 
-        public ResultController(IResultService service)
+        public ExaminerResultController(IResultService service)
         {
             this.service = service;
         }
-        [HttpGet("get-result")]
-        public async Task<IActionResult> GetResult()
+
+        [HttpGet("get-all-candidate-result")]
+        public async Task<IActionResult> GetAllCandidateResult(string examinationId)
         {
-            var response = await service.GetCandidateResult();
+            var response = await service.GetAllCandidateResult(examinationId);
             if (response.IsSuccessful)
                 return Ok(response);
             return BadRequest(response);
         }
-
     }
 }

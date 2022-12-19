@@ -23,7 +23,55 @@ namespace CBT.BLL.Services.Result
             this.context = context;
             this.accessor = accessor;
         }
-        public async Task<APIResponse<SelectResult>> GetResult()
+
+        public async Task<APIResponse<List<SelectAllCandidateResult>>> GetAllCandidateResult(string examinationId)
+        {
+            var res = new APIResponse<List<SelectAllCandidateResult>>();
+            try
+            {
+                var examination = await context.Examination?.Where(x => x.ExaminationId == Guid.Parse(examinationId))?.FirstOrDefaultAsync();
+
+                var questionIds = context.Question?.Where(x => x.ExaminationId == examination.ExaminationId)
+                    .Select(x => x.QuestionId)
+                    .ToList();
+
+                if (examination.ExaminationType == (int)ExaminationType.ExternalExam)
+                {
+                    var candidates = await context.Candidate.Where(x => x.CandidateCategoryId == Guid.Parse(examination.CandidateCategoryId_ClassId))
+                   .ToListAsync();
+
+                    var result = candidates.Select(x => new SelectAllCandidateResult
+                    {
+                        CandidateId = x.CandidateId,
+                        CandidateName = $"{x.FirstName} {x.LastName}",
+                        ExaminationName = examination.ExamName_Subject,
+                        TotalScore = GetTotalScore(questionIds, x.Id.ToString()),
+                        Status = GetTotalScore(questionIds, x.Id.ToString()) >= examination.PassMark ? "Passed" : "Failed"
+                    }).ToList();
+
+                    res.Result = result;
+                }
+
+                if (examination.ExaminationType == (int)ExaminationType.InternalExam)
+                {
+                   //Implement for Internal Exams
+                }
+
+                res.IsSuccessful = true;;
+                res.Message.FriendlyMessage = Messages.GetSuccess;
+                return res;
+
+            }
+            catch (Exception ex)
+            {
+                res.IsSuccessful = false;
+                res.Message.FriendlyMessage = Messages.FriendlyException;
+                res.Message.TechnicalMessage = ex.ToString();
+                return res;
+            }
+        }
+
+        public async Task<APIResponse<SelectResult>> GetCandidateResult()
         {
             var res = new APIResponse<SelectResult>();
             try
@@ -83,6 +131,23 @@ namespace CBT.BLL.Services.Result
                 return res;
             }
 
+        }
+
+        private int GetTotalScore(List<Guid> questionIds, string candidateId_regNo)
+        {
+            int totalScore = 0;
+            foreach (var item in questionIds)
+            {
+                var answer = context.Question?.Where(x => x.QuestionId == item)?.FirstOrDefault();
+                var candidateAnswer = context.CandidateAnswer?.Where(x => x.QuestionId == item && x.CandidateId.ToLower() == candidateId_regNo.ToLower())?.FirstOrDefault();
+
+                if (answer?.Answers == candidateAnswer?.Answers)
+                {
+                    totalScore += answer.Mark;
+                }
+
+            }
+            return totalScore;
         }
     }
 }

@@ -224,12 +224,6 @@ namespace CBT.BLL.Services.Candidates
                     return res;
                 }
 
-                //var result = new CandidateLoginDetails
-                //{
-                //    AuthDetails = await GenerateAuthenticationToken(request.ExaminationId),
-                //    ExaminationDetails = examination,
-                //};
-
                 var result = new CandidateExamDetails
                 {
                     ExaminationType = examination.ExamintionType

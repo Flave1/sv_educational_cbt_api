@@ -16,7 +16,7 @@ namespace CBT.Contracts.Category
         {
             CandidateCategoryId = category.CandidateCategoryId.ToString();
             Name = category.Name;
-            DateCreated = category.CreatedOn.ToString("yyyy-MM-dd hh:mm");
+            DateCreated = category.CreatedOn.ToString("yyyy-MM-dd HH:mm");
         }
     }
 }
