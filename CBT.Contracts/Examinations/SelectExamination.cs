@@ -41,8 +41,8 @@ namespace CBT.Contracts.Examinations
             ExamScore = examination.ExamScore;
             CandidateExaminationId = examination.CandidateExaminationId;
             Duration = examination.Duration;
-            StartTime = examination.StartTime.ToString("yyyy-MM-dd hh:mm");
-            EndTime = examination.EndTime.ToString("yyyy-MM-dd hh:mm");
+            StartTime = examination.StartTime.ToString("yyyy-MM-dd HH:mm");
+            EndTime = examination.EndTime.ToString("yyyy-MM-dd HH:mm");
             Instruction = examination.Instruction;
             ShuffleQuestions = examination.ShuffleQuestions;
             UseAsExamScore = examination.UseAsExamScore;

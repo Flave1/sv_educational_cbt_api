@@ -11,6 +11,7 @@ namespace CBT.BLL.Services.Result
 {
     public interface IResultService
     {
-        Task<APIResponse<SelectResult>> GetResult();
+        Task<APIResponse<SelectResult>> GetCandidateResult();
+        Task<APIResponse<List<SelectAllCandidateResult>>> GetAllCandidateResult(string examinationId);
     }
 }
