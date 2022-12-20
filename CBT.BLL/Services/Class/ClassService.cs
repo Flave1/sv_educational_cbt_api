@@ -22,16 +22,11 @@ namespace CBT.BLL.Services.Class
     {
         private readonly IWebRequest webRequest;
         private readonly IHttpContextAccessor accessor;
-        private readonly IConfiguration configuration;
-        private readonly DataContext context;
         private readonly FwsConfigSettings fwsOptions;
-        public ClassService(IWebRequest webRequest, IOptions<FwsConfigSettings> fwsOptions, IHttpContextAccessor accessor,
-            IConfiguration configuration, DataContext context)
+        public ClassService(IWebRequest webRequest, IOptions<FwsConfigSettings> fwsOptions, IHttpContextAccessor accessor)
         {
             this.webRequest = webRequest;
             this.accessor = accessor;
-            this.configuration = configuration;
-            this.context = context;
             this.fwsOptions = fwsOptions.Value;
         }
 

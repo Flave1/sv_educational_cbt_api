@@ -19,5 +19,6 @@ namespace CBT.BLL.Services.CandidateAnswers
         Task<APIResponse<PagedResponse<List<SelectCandidateAnswer>>>> GetAllCandidateAnswers(PaginationFilter filter);
         Task<APIResponse<SelectCandidateAnswer>> GetCandidateAnswer(Guid Id);
         Task<APIResponse<bool>> DeleteCandidateAnswer(SingleDelete request);
+        Task<APIResponse<bool>> SubmitExamination();
     }
 }

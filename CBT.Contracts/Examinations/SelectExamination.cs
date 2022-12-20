@@ -30,6 +30,7 @@ namespace CBT.Contracts.Examinations
         public int ExamintionType { get; set; }
         public int PassMark { get; set; }
         public int? UnsedMarks { get; set; }
+        public string CandidateIds { get; set; }
 
         public SelectExamination(Examination examination)
         {
@@ -52,11 +53,12 @@ namespace CBT.Contracts.Examinations
             ExamintionType = examination.ExaminationType;
             PassMark = examination.PassMark;
             UnsedMarks = (examination.ExamScore - examination?.Question?.Sum(x => x.Mark));
-            if(examination.StartTime <= DateTime.Now && examination.EndTime > DateTime.Now)
+            CandidateIds = examination.CandidateIds;
+            if((DateTime.Compare(examination.StartTime, DateTime.Now) == -1 || DateTime.Compare(examination.StartTime, DateTime.Now) == 0) && DateTime.Compare(examination.EndTime, DateTime.Now) == 1)
             {
                 Status = 1;
             }
-            if (examination.StartTime < DateTime.Now && examination.EndTime < DateTime.Now)
+            if (DateTime.Compare(examination.StartTime, DateTime.Now) == -1 && DateTime.Compare(examination.EndTime, DateTime.Now) == -1)
             {
                 Status = 2;
             }
