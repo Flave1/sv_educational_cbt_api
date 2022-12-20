@@ -59,5 +59,13 @@ namespace CBT.Controllers.CandidateControllers
                 return Ok(response);
             return BadRequest(response);
         }
+        [HttpPost("submit-exam")]
+        public async Task<IActionResult> SubmitExamination()
+        {
+            var response = await _service.SubmitExamination();
+            if (response.IsSuccessful)
+                return Ok(response);
+            return BadRequest(response);
+        }
     }
 }

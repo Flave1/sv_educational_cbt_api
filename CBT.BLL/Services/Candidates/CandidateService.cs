@@ -280,6 +280,12 @@ namespace CBT.BLL.Services.Candidates
                     res.Message.FriendlyMessage = "You do not have an active Examination!";
                     return res;
                 }
+                if(!string.IsNullOrEmpty(examinationDetails.CandidateIds) && examinationDetails.CandidateIds.Split(",").Contains(candidate.Id))
+                {
+                    res.IsSuccessful = false;
+                    res.Message.FriendlyMessage = "This examination has been previously submitted!";
+                    return res;
+                }
                 var clientId = examination.FirstOrDefault().ClientId;
                 var result = new CandidateLoginDetails
                 {
@@ -343,7 +349,7 @@ namespace CBT.BLL.Services.Candidates
                     res.Message.FriendlyMessage = "Invalid Examination Id!";
                     return res;
                 }
-                if (!(Convert.ToDateTime(examinationDetails.StartTime) <= DateTime.Now && Convert.ToDateTime(examinationDetails.EndTime) > DateTime.Now))
+                if (!(examinationDetails.Status == (int)ExaminationStatus.InProgress))
                 {
                     res.IsSuccessful = false;
                     res.Message.FriendlyMessage = "You do not have an active Examination!";
@@ -358,6 +364,18 @@ namespace CBT.BLL.Services.Candidates
                     return res;
                 }
 
+                if(Guid.Parse(studentClass.Result.ClassId) != Guid.Parse(examinationDetails.CandidateCategoryId_ClassId))
+                {
+                    res.IsSuccessful = false;
+                    res.Message.FriendlyMessage = "You do not have an active Examination!";
+                    return res;
+                }
+                if (!string.IsNullOrEmpty(examinationDetails.CandidateIds) && examinationDetails.CandidateIds.Split(",").Contains(request.RegistrationNo))
+                {
+                    res.IsSuccessful = false;
+                    res.Message.FriendlyMessage = "This examination has been previously submitted!";
+                    return res;
+                }
                 var clientId = examination.FirstOrDefault().ClientId;
                 var result = new CandidateLoginDetails
                 {

@@ -1,4 +1,6 @@
 ﻿using CBT.BLL.Constants;
+using CBT.BLL.Services.Class;
+using CBT.BLL.Services.Student;
 using CBT.Contracts;
 using CBT.Contracts.Authentication;
 using CBT.Contracts.Result;
@@ -17,11 +19,14 @@ namespace CBT.BLL.Services.Result
     {
         private readonly DataContext context;
         private readonly IHttpContextAccessor accessor;
+        private readonly IStudentService studentService;
 
-        public ResultService(DataContext context, IHttpContextAccessor accessor)
+        public ResultService(DataContext context, IHttpContextAccessor accessor,
+            IStudentService studentService)
         {
             this.context = context;
             this.accessor = accessor;
+            this.studentService = studentService;
         }
 
         public async Task<APIResponse<List<SelectAllCandidateResult>>> GetAllCandidateResult(string examinationId)
@@ -54,7 +59,14 @@ namespace CBT.BLL.Services.Result
 
                 if (examination.ExaminationType == (int)ExaminationType.InternalExam)
                 {
-                   //Implement for Internal Exams
+                    //var result = candidates.Select(x => new SelectAllCandidateResult
+                    //{
+                    //    CandidateId = x.CandidateId,
+                    //    CandidateName = $"{x.FirstName} {x.LastName}",
+                    //    ExaminationName = examination.ExamName_Subject,
+                    //    TotalScore = GetTotalScore(questionIds, x.Id.ToString()),
+                    //    Status = GetTotalScore(questionIds, x.Id.ToString()) >= examination.PassMark ? "Passed" : "Failed"
+                    //}).ToList();
                 }
 
                 res.IsSuccessful = true;;
@@ -99,18 +111,27 @@ namespace CBT.BLL.Services.Result
                 }
 
                 string status = "";
+                string candidateName = "";
 
                 if(examination.ExaminationType == (int)ExaminationType.InternalExam)
                 {
                     status = totalScore >= examination.ExamScore ? "Passed" : "Failed";
+                    var student = await studentService.GetStudentDetails(candidateId_regNo, examination.ProductBaseurlSuffix);
+                    if(student.Result != null)
+                    {
+                        candidateName = $"{student.Result.FirstName} {student.Result.LastName}";
+                    }
                 }
                 else
                 {
                     status = totalScore >= examination.PassMark ? "Passed" : "Failed";
+                    var candidate = await context.Candidate?.Where(x => x.Id == Guid.Parse(candidateId_regNo))?.FirstOrDefaultAsync();
+                    candidateName = $"{ candidate?.FirstName} {candidate?.LastName}";
                 }
 
                 var result = new SelectResult
                 {
+                    CandidateName = candidateName,
                     CandidateId = candidateId_regNo,
                     ExaminationName = examination.ExamName_Subject,
                     TotalScore = totalScore,

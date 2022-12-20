@@ -32,6 +32,7 @@ namespace CBT.DAL.Models.Examinations
         public  int ExaminationType { get; set; }
         public int PassMark { get; set; }
         public string ProductBaseurlSuffix { get; set; }
+        public string CandidateIds { get; set; }
         public virtual ICollection<Question> Question { get; set; }
     }
 }

@@ -115,6 +115,7 @@ namespace CBT.BLL.Services.CandidateAnswers
             var res = new APIResponse<PagedResponse<List<SelectCandidateAnswer>>>();
             try
             {
+
                 var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
 
                 var query = context.CandidateAnswer
@@ -189,6 +190,43 @@ namespace CBT.BLL.Services.CandidateAnswers
                 res.IsSuccessful = true;
                 res.Message.FriendlyMessage = Messages.DeletedSuccess;
                 res.Result = true;
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.IsSuccessful = false;
+                res.Message.FriendlyMessage = Messages.FriendlyException;
+                res.Message.TechnicalMessage = ex.ToString();
+                return res;
+            }
+        }
+
+        public async Task<APIResponse<bool>> SubmitExamination()
+        {
+            var res = new APIResponse<bool>();
+            try
+            {
+                var candidateId_regNo = accessor.HttpContext.Items["candidateId_regNo"].ToString();
+                var examinationId = Guid.Parse(accessor.HttpContext.Items["examinationId"].ToString());
+
+                var examination = await context.Examination?.FirstOrDefaultAsync(a => a.ExaminationId == examinationId);
+                
+                if(string.IsNullOrEmpty(examination.CandidateIds))
+                {
+                    examination.CandidateIds += candidateId_regNo;
+                }
+                else
+                {
+                    if (!examination.CandidateIds.Split(",").Contains(candidateId_regNo))
+                    {
+                        examination.CandidateIds += $",{candidateId_regNo}";
+                    }
+                }
+                
+                await context.SaveChangesAsync();
+                res.Result = true;
+                res.IsSuccessful = true;
+                res.Message.FriendlyMessage = Messages.Created;
                 return res;
             }
             catch (Exception ex)

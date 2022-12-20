@@ -11,6 +11,7 @@ using CBT.BLL.Services.Questions;
 using CBT.BLL.Services.Result;
 using CBT.BLL.Services.Session;
 using CBT.BLL.Services.Settings;
+using CBT.BLL.Services.Student;
 using CBT.BLL.Services.Subject;
 using CBT.BLL.Services.WebRequests;
 using CBT.Contracts.Options;
@@ -42,6 +43,7 @@ namespace CBT.Installers
             services.AddScoped<IResultService, ResultService>();
             services.AddSingleton<IPaginationService, PaginationService>();
             services.AddScoped<IDashboardService, DashboardService>();
+            services.AddScoped<IStudentService, StudentService>();
             services.AddSingleton<IUriService>(o =>
             {
                 var accessor = o.GetRequiredService<IHttpContextAccessor>();
