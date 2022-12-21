@@ -11,5 +11,6 @@ namespace CBT.BLL.Services.Subject
     public interface ISubjectService
     {
         Task<APIResponse<List<SelectSubjects>>> GetActiveSubjects();
+        Task<APIResponse<List<SelectSessionClassSubjects>>> GetActiveSessionClassSubjects(string sessionClassId);
     }
 }

@@ -14,25 +14,29 @@ namespace CBT.Contracts.CandidateAnswers
         public string QuestionId { get; set; }
         public string QuestionText { get; set; }
         public string CandidateId { get; set; }
+        public string[] Options { get; set; }
         public string[] Answers { get; set; }
-        public string[] AnswersValue { get; set; }
+        public string[] CandidateAnswers { get; set; }
         public SelectCandidateAnswer(CandidateAnswer answer)
         {
             AnswerId = answer.AnswerId.ToString();
             QuestionId = answer.QuestionId.ToString();
             QuestionText = answer.Question.QuestionText;
             CandidateId = answer.CandidateId.ToString();
-            Answers = !string.IsNullOrEmpty(answer.Answers) ? answer.Answers.Split(",").ToArray() : Array.Empty<string>();
-            AnswersValue = answer.Answers.Split(",").ToArray();
+            Options = !string.IsNullOrEmpty(answer.Question.Options) ? answer.Question.Options.Split(",").ToArray() : Array.Empty<string>();
+            Answers = !string.IsNullOrEmpty(answer.Question.Answers) ? answer.Question.Answers.Split(",").ToArray() : Array.Empty<string>();
+            CandidateAnswers = !string.IsNullOrEmpty(answer.Answers) ? answer.Answers.Split(",").ToArray() : Array.Empty<string>();
 
-            string[] arr = new string[AnswersValue.Count()];
-            int count = 0;
-            foreach (string item in AnswersValue)
-            {
-                arr[count] = answer.Question.Options.Split("</option>").ToArray()[int.Parse(item)];
-                count++;
-            }
-            AnswersValue = arr;
+            //AnswersValue = answer.Answers.Split(",").ToArray();
+
+            //string[] arr = new string[AnswersValue.Count()];
+            //int count = 0;
+            //foreach (string item in AnswersValue)
+            //{
+            //    arr[count] = answer.Question.Options.Split("</option>").ToArray()[int.Parse(item)];
+            //    count++;
+            //}
+            //AnswersValue = arr;
         }
     }
 }

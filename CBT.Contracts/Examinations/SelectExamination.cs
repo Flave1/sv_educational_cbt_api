@@ -54,11 +54,11 @@ namespace CBT.Contracts.Examinations
             PassMark = examination.PassMark;
             UnsedMarks = (examination.ExamScore - examination?.Question?.Sum(x => x.Mark));
             CandidateIds = examination.CandidateIds;
-            if((DateTime.Compare(examination.StartTime, DateTime.Now) == -1 || DateTime.Compare(examination.StartTime, DateTime.Now) == 0) && DateTime.Compare(examination.EndTime, DateTime.Now) == 1)
+            if((DateTime.Compare(examination.StartTime, DateTime.UtcNow.ToLocalTime()) == -1 || DateTime.Compare(examination.StartTime, DateTime.UtcNow.ToLocalTime()) == 0) && DateTime.Compare(examination.EndTime, DateTime.UtcNow.ToLocalTime()) == 1)
             {
                 Status = 1;
             }
-            if (DateTime.Compare(examination.StartTime, DateTime.Now) == -1 && DateTime.Compare(examination.EndTime, DateTime.Now) == -1)
+            if (DateTime.Compare(examination.StartTime, DateTime.UtcNow.ToLocalTime()) == -1 && DateTime.Compare(examination.EndTime, DateTime.UtcNow.ToLocalTime()) == -1)
             {
                 Status = 2;
             }
