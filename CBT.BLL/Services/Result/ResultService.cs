@@ -1,6 +1,9 @@
 ﻿using CBT.BLL.Constants;
+using CBT.BLL.Filters;
 using CBT.BLL.Services.Class;
+using CBT.BLL.Services.Pagination;
 using CBT.BLL.Services.Student;
+using CBT.BLL.Wrappers;
 using CBT.Contracts;
 using CBT.Contracts.Authentication;
 using CBT.Contracts.Result;
@@ -12,6 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace CBT.BLL.Services.Result
 {
@@ -20,18 +24,20 @@ namespace CBT.BLL.Services.Result
         private readonly DataContext context;
         private readonly IHttpContextAccessor accessor;
         private readonly IStudentService studentService;
+        private readonly IPaginationService paginationService;
 
         public ResultService(DataContext context, IHttpContextAccessor accessor,
-            IStudentService studentService)
+            IStudentService studentService, IPaginationService paginationService)
         {
             this.context = context;
             this.accessor = accessor;
             this.studentService = studentService;
+            this.paginationService = paginationService;
         }
 
-        public async Task<APIResponse<List<SelectAllCandidateResult>>> GetAllCandidateResult(string examinationId)
+        public async Task<APIResponse<PagedResponse<List<SelectAllCandidateResult>>>> GetAllCandidateResult(PaginationFilter filter, string examinationId)
         {
-            var res = new APIResponse<List<SelectAllCandidateResult>>();
+            var res = new APIResponse<PagedResponse<List<SelectAllCandidateResult>>>();
             try
             {
                 var examination = await context.Examination?.Where(x => x.ExaminationId == Guid.Parse(examinationId))?.FirstOrDefaultAsync();
@@ -42,34 +48,27 @@ namespace CBT.BLL.Services.Result
 
                 if (examination.ExaminationType == (int)ExaminationType.ExternalExam)
                 {
-                    var candidates = await context.Candidate.Where(x => x.CandidateCategoryId == Guid.Parse(examination.CandidateCategoryId_ClassId))
-                   .ToListAsync();
+                    var query = context.Candidate.Where(x => x.CandidateCategoryId == Guid.Parse(examination.CandidateCategoryId_ClassId));
 
-                    var result = candidates.Select(x => new SelectAllCandidateResult
-                    {
-                        CandidateId = x.CandidateId,
-                        CandidateName = $"{x.FirstName} {x.LastName}",
-                        ExaminationName = examination.ExamName_Subject,
-                        TotalScore = GetTotalScore(questionIds, x.Id.ToString()),
-                        Status = GetTotalScore(questionIds, x.Id.ToString()) >= examination.PassMark ? "Passed" : "Failed"
-                    }).ToList();
-
-                    res.Result = result;
+                    var totalRecord = query.Count();
+                    var result = await paginationService.GetPagedResult(query, filter).Select(x => new SelectAllCandidateResult(x, examination, GetTotalScore(questionIds, x.Id.ToString()))).ToListAsync();
+                    res.Result = paginationService.CreatePagedReponse(result, filter, totalRecord);
                 }
 
                 if (examination.ExaminationType == (int)ExaminationType.InternalExam)
                 {
-                    //var result = candidates.Select(x => new SelectAllCandidateResult
-                    //{
-                    //    CandidateId = x.CandidateId,
-                    //    CandidateName = $"{x.FirstName} {x.LastName}",
-                    //    ExaminationName = examination.ExamName_Subject,
-                    //    TotalScore = GetTotalScore(questionIds, x.Id.ToString()),
-                    //    Status = GetTotalScore(questionIds, x.Id.ToString()) >= examination.PassMark ? "Passed" : "Failed"
-                    //}).ToList();
+                    var students = await studentService.GetAllStudentDetails(filter.PageNumber, filter.PageSize, examination.CandidateCategoryId_ClassId, examination.ProductBaseurlSuffix);
+                    if(students != null)
+                    {
+                        var totalRecord = students.Result.TotalRecords;
+                        var result = students.Result.Data.Select(x => new SelectAllCandidateResult(x, examination, GetTotalScore(questionIds, x.RegistrationNumber.ToString()))).ToList();
+                        res.Result = paginationService.CreatePagedReponse(result, filter, totalRecord);
+                        res.Result.TotalPages = students.Result.TotalPages;
+                    }
+                    
                 }
 
-                res.IsSuccessful = true;;
+                res.IsSuccessful = true;
                 res.Message.FriendlyMessage = Messages.GetSuccess;
                 return res;
 
@@ -154,13 +153,14 @@ namespace CBT.BLL.Services.Result
 
         }
 
-        private int GetTotalScore(List<Guid> questionIds, string candidateId_regNo)
+        private static int GetTotalScore(List<Guid> questionIds, string candidateId_regNo)
         {
             int totalScore = 0;
             foreach (var item in questionIds)
             {
-                var answer = context.Question?.Where(x => x.QuestionId == item)?.FirstOrDefault();
-                var candidateAnswer = context.CandidateAnswer?.Where(x => x.QuestionId == item && x.CandidateId.ToLower() == candidateId_regNo.ToLower())?.FirstOrDefault();
+                var dataContext = new DataContext();
+                var answer = dataContext.Question?.Where(x => x.QuestionId == item)?.FirstOrDefault();
+                var candidateAnswer = dataContext.CandidateAnswer?.Where(x => x.QuestionId == item && x.CandidateId.ToLower() == candidateId_regNo.ToLower())?.FirstOrDefault();
 
                 if (answer?.Answers == candidateAnswer?.Answers)
                 {

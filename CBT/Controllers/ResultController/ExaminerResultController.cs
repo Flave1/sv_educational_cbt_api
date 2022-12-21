@@ -1,4 +1,5 @@
-﻿using CBT.BLL.Middleware;
+﻿using CBT.BLL.Filters;
+using CBT.BLL.Middleware;
 using CBT.BLL.Services.Result;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,9 +17,9 @@ namespace CBT.Controllers.ResultController
         }
 
         [HttpGet("get-all-candidate-result")]
-        public async Task<IActionResult> GetAllCandidateResult(string examinationId)
+        public async Task<IActionResult> GetAllCandidateResult(PaginationFilter filter, string examinationId)
         {
-            var response = await service.GetAllCandidateResult(examinationId);
+            var response = await service.GetAllCandidateResult(filter, examinationId);
             if (response.IsSuccessful)
                 return Ok(response);
             return BadRequest(response);

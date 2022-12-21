@@ -24,6 +24,7 @@ namespace CBT.BLL.Services.Subject
             _accessor = accessor;
             _fwsOptions = fwsOptions.Value;
         }
+
         public async Task<APIResponse<List<SelectSubjects>>> GetActiveSubjects()
         {
             var res = new APIResponse<List<SelectSubjects>>();
@@ -35,6 +36,22 @@ namespace CBT.BLL.Services.Subject
                 return res;
             }
             catch(Exception ex)
+            {
+                res.IsSuccessful = false;
+                throw ex;
+            }
+        }
+        public async Task<APIResponse<List<SelectSessionClassSubjects>>> GetActiveSessionClassSubjects(string sessionClassId)
+        {
+            var res = new APIResponse<List<SelectSessionClassSubjects>>();
+            try
+            {
+                var productBaseurlSuffix = _accessor.HttpContext.Items["productBaseurlSuffix"].ToString();
+                res = await _webRequest.GetAsync<APIResponse<List<SelectSessionClassSubjects>>>($"{_fwsOptions.FwsBaseUrl}smp/{productBaseurlSuffix}{FwsRoutes.sessionSubjectSelect}{sessionClassId}");
+                res.IsSuccessful = true;
+                return res;
+            }
+            catch (Exception ex)
             {
                 res.IsSuccessful = false;
                 throw ex;

@@ -116,10 +116,12 @@ namespace CBT.BLL.Services.CandidateAnswers
             try
             {
 
-                var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
+                var candidateId_regNo = accessor.HttpContext.Items["candidateId_regNo"].ToString();
+                var examinationId = Guid.Parse(accessor.HttpContext.Items["examinationId"].ToString());
 
+                var questions = await context.Question.Where(x => x.ExaminationId == examinationId).Select(x=>x.QuestionId).ToListAsync();
                 var query = context.CandidateAnswer
-                    .Where(d => d.Deleted != true && d.ClientId == clientId)
+                    .Where(d => d.Deleted != true && questions.Contains(d.QuestionId) && d.CandidateId == candidateId_regNo)
                     .Include(q => q.Question)
                     .OrderByDescending(s => s.CreatedOn);
 

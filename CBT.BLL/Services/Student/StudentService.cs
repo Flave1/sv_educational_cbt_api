@@ -26,6 +26,23 @@ namespace CBT.BLL.Services.Student
             this.webRequest = webRequest;
             this.accessor = accessor;
         }
+
+        public async Task<APIResponse<GetAllStudentDetails>> GetAllStudentDetails(int pageNumber, int pageSize, string classId, string productBaseurlSuffix)
+        {
+            var res = new APIResponse<GetAllStudentDetails>();
+            try
+            {
+                res = await webRequest.GetAsync<APIResponse<GetAllStudentDetails>>($"{fwsOptions.FwsBaseUrl}smp/{productBaseurlSuffix}{FwsRoutes.classStudentsSelect}PageNumber={pageNumber}&PageSize={pageSize}&classId={classId}");
+                res.IsSuccessful = true;
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.IsSuccessful = false;
+                throw ex;
+            }
+        }
+
         public async Task<APIResponse<GetStudentDetails>> GetStudentDetails(string studentRegNo, string productBaseurlSuffix)
         {
             var res = new APIResponse<GetStudentDetails>();

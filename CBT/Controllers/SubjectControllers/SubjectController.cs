@@ -22,5 +22,13 @@ namespace CBT.Controllers.SubjectControllers
                 return Ok(response);
             return BadRequest(response);
         }
+        [HttpGet("get-active-session-subjects")]
+        public async Task<IActionResult> GetActiveSessionSubjects(string sessionClassId)
+        {
+            var response = await _service.GetActiveSessionClassSubjects(sessionClassId);
+            if (response.IsSuccessful)
+                return Ok(response);
+            return BadRequest(response);
+        }
     }
 }
