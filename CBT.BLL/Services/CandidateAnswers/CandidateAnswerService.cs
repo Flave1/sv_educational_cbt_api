@@ -10,6 +10,7 @@ using CBT.Contracts.Common;
 using CBT.Contracts.Questions;
 using CBT.DAL;
 using CBT.DAL.Models.Candidate;
+using CBT.DAL.Models.Examinations;
 using CBT.DAL.Models.Questions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -224,6 +225,7 @@ namespace CBT.BLL.Services.CandidateAnswers
                         examination.CandidateIds += $",{candidateId_regNo}";
                     }
                 }
+                await SetExaminerDetails(examination);
                 
                 await context.SaveChangesAsync();
                 res.Result = true;
@@ -237,6 +239,19 @@ namespace CBT.BLL.Services.CandidateAnswers
                 res.Message.FriendlyMessage = Messages.FriendlyException;
                 res.Message.TechnicalMessage = ex.ToString();
                 return res;
+            }
+        }
+        private async Task SetExaminerDetails(Examination examination)
+        {
+            accessor.HttpContext.Items["userId"] = examination.ClientId;
+            accessor.HttpContext.Items["productBaseurlSuffix"] = examination.ProductBaseurlSuffix;
+            if(examination.UserType == (int)UserType.NonSMSUser)
+            {
+                accessor.HttpContext.Items["smsClientId"] = string.Empty;
+            }
+            else
+            {
+                accessor.HttpContext.Items["smsClientId"] = examination.ClientId; 
             }
         }
     }
