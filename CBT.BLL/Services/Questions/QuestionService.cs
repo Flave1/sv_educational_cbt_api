@@ -6,6 +6,7 @@ using CBT.Contracts;
 using CBT.Contracts.Common;
 using CBT.Contracts.Questions;
 using CBT.DAL;
+using CBT.DAL.Models.Examinations;
 using CBT.DAL.Models.Questions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -29,8 +30,8 @@ namespace CBT.BLL.Services.Questions
             var res = new APIResponse<CreateQuestion>();
             try
             {
-                var examination = await context.Examination.FirstOrDefaultAsync(x=>x.ExaminationId == Guid.Parse(request.ExaminationId));
-                int? questionMarks = context.Question?.Where(x => x.ExaminationId == Guid.Parse(request.ExaminationId))?.Sum(x => x.Mark);
+                var examination = await context.Examination.FirstOrDefaultAsync(x=>x.ExaminationId == Guid.Parse(request.ExaminationId) && x.Deleted != true);
+                int? questionMarks = context.Question?.Where(x => x.ExaminationId == Guid.Parse(request.ExaminationId) && x.Deleted != true)?.Sum(x => x.Mark);
 
                 if(questionMarks + request.Mark > examination.ExamScore)
                 {
@@ -136,11 +137,19 @@ namespace CBT.BLL.Services.Questions
             {
                 var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
 
-                var question = await context.Question.FirstOrDefaultAsync(m => m.QuestionId == request.QuestionId && m.ClientId == clientId);
+                var question = await context.Question.Where(m => m.QuestionId == request.QuestionId && m.ClientId == clientId && m.Deleted != true).Include(x=>x.Examination).FirstOrDefaultAsync();
                 if (question == null)
                 {
                     res.IsSuccessful = false;
                     res.Message.FriendlyMessage = "QuestionId doesn't exist";
+                    return res;
+                }
+                int? questionMarks = context.Question?.Where(x => x.ExaminationId == Guid.Parse(request.ExaminationId) && x.Deleted != true)?.Sum(x => x.Mark);
+
+                if (((questionMarks - question.Mark) + request.Mark) > question.Examination.ExamScore)
+                {
+                    res.IsSuccessful = false;
+                    res.Message.FriendlyMessage = "Questions mark must not exceed exam score!";
                     return res;
                 }
 

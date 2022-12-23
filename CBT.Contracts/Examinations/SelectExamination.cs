@@ -52,7 +52,7 @@ namespace CBT.Contracts.Examinations
             AsAssessmentScoreSessionAndTerm = examination.AsAssessmentScoreSessionAndTerm;
             ExamintionType = examination.ExaminationType;
             PassMark = examination.PassMark;
-            UnsedMarks = (examination.ExamScore - examination?.Question?.Sum(x => x.Mark));
+            UnsedMarks = examination.ExamScore - examination.Question.Where(x=>x.Deleted != true).Sum(x => x.Mark);
             CandidateIds = examination.CandidateIds;
             if((DateTime.Compare(examination.StartTime, DateTime.UtcNow.ToLocalTime()) == -1 || DateTime.Compare(examination.StartTime, DateTime.UtcNow.ToLocalTime()) == 0) && DateTime.Compare(examination.EndTime, DateTime.UtcNow.ToLocalTime()) == 1)
             {

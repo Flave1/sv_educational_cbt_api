@@ -22,10 +22,10 @@ namespace CBT.Contracts.Result
             CandidateId = candidate.CandidateId;
             CandidateName = $"{candidate.FirstName} {candidate.LastName}";
             ExaminationName = examination.ExamName_Subject;
-            TotalScore = totalScore;
             if (string.IsNullOrEmpty(examination.CandidateIds))
             {
                 Status = "Not Taken";
+                TotalScore = 0;
             }
             else
             {
@@ -37,7 +37,7 @@ namespace CBT.Contracts.Result
                 {
                     Status = "Not Taken";
                 }
-                
+                TotalScore = totalScore;
             }
         }
         public SelectAllCandidateResult(StudentData student, Examination examination, int totalScore)

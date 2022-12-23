@@ -156,6 +156,7 @@ namespace CBT.BLL.Services.Result
         private static int GetTotalScore(List<Guid> questionIds, string candidateId_regNo)
         {
             int totalScore = 0;
+
             foreach (var item in questionIds)
             {
                 var dataContext = new DataContext();
@@ -168,6 +169,7 @@ namespace CBT.BLL.Services.Result
                 }
 
             }
+
             return totalScore;
         }
     }
