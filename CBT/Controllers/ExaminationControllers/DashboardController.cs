@@ -1,7 +1,5 @@
-﻿using CBT.BLL.Filters;
-using CBT.BLL.Middleware;
+﻿using CBT.BLL.Middleware;
 using CBT.BLL.Services.Dashboard;
-using CBT.BLL.Services.Examinations;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CBT.Controllers.ExaminationControllers

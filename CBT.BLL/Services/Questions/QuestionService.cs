@@ -6,7 +6,6 @@ using CBT.Contracts;
 using CBT.Contracts.Common;
 using CBT.Contracts.Questions;
 using CBT.DAL;
-using CBT.DAL.Models.Examinations;
 using CBT.DAL.Models.Questions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;

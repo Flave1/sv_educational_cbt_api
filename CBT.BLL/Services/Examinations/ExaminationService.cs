@@ -5,14 +5,12 @@ using CBT.BLL.Services.Session;
 using CBT.BLL.Utilities;
 using CBT.BLL.Wrappers;
 using CBT.Contracts;
-using CBT.Contracts.Authentication;
 using CBT.Contracts.Common;
 using CBT.Contracts.Examinations;
 using CBT.DAL;
 using CBT.DAL.Models.Examinations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace CBT.BLL.Services.Examinations
 {

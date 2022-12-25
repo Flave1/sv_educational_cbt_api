@@ -1,15 +1,8 @@
 ﻿using CBT.BLL.Constants;
 using CBT.Contracts;
 using CBT.Contracts.Dashboard;
-using CBT.Contracts.Examinations;
 using CBT.DAL;
-using CBT.DAL.Models.Examinations;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CBT.BLL.Services.Dashboard
 {
