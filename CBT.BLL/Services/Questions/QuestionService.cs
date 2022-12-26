@@ -244,11 +244,22 @@ namespace CBT.BLL.Services.Questions
             {
                 var candidateId_regNo = accessor.HttpContext.Items["candidateId_regNo"].ToString();
                 var examinationId = Guid.Parse(accessor.HttpContext.Items["examinationId"].ToString());
-                var query = context.Question
-                     .Where(d => d.Deleted != true && d.ExaminationId == examinationId)
-                     .Include(e => e.Examination)
-                     .OrderByDescending(s => s.CreatedOn);
 
+                var examination = await context.Examination.FirstOrDefaultAsync(x => x.ExaminationId == examinationId);
+                var query = context.Question
+                    .Where(d => d.Deleted != true && d.ExaminationId == examinationId);
+                    
+                if (examination.ShuffleQuestions)
+                {
+                    query = query.Include(e => e.Examination)
+                    .OrderBy(s => s.CreatedOn);
+                }
+                else
+                {
+                    query = query.Include(e => e.Examination)
+                    .OrderByDescending(s => s.CreatedOn);
+                }
+               
                 var totalRecord = query.Count();
                 var result = await paginationService.GetPagedResult(query, filter)
                     .Select(db => new SelectCandidateQuestions(db, context.CandidateAnswer.FirstOrDefault(x => x.QuestionId == db.QuestionId && x.CandidateId == candidateId_regNo))).ToListAsync();

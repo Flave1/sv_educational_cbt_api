@@ -31,9 +31,11 @@ namespace CBT.BLL.Services.Candidates
         private readonly IHttpContextAccessor accessor;
         private readonly IClassService classService;
         private readonly IPaginationService paginationService;
+        private readonly DateTime localTime;
 
         public CandidateService(DataContext context, IFileUploadService fileUpload, IConfiguration config, 
-            IHttpContextAccessor accessor, IClassService classService, IPaginationService paginationService)
+            IHttpContextAccessor accessor, IClassService classService, IPaginationService paginationService, 
+            IUtilityService utilityService)
         {
             this.context = context;
             this.fileUpload = fileUpload;
@@ -41,6 +43,7 @@ namespace CBT.BLL.Services.Candidates
             this.accessor = accessor;
             this.classService = classService;
             this.paginationService = paginationService;
+            localTime = utilityService.GetCurrentLocalDateTime();
         }
         public async Task<APIResponse<string>> CreateCandidate(CreateCandidate request)
         {
@@ -213,9 +216,9 @@ namespace CBT.BLL.Services.Candidates
             try
             {
                 var examination = await context.Examination
-                    .Where(x=>x.CandidateExaminationId.ToLower() == request.ExaminationId.ToLower())
+                    .Where(x=>x.CandidateExaminationId.ToLower() == request.ExaminationId.ToLower() && x.Deleted != true)
                     .Include(q => q.Question)
-                    .Select(db=> new SelectExamination(db)).FirstOrDefaultAsync();
+                    .Select(db=> new SelectExamination(db, localTime)).FirstOrDefaultAsync();
 
                 if(examination == null || !(examination.Status == (int)ExaminationStatus.InProgress))
                 {
@@ -251,7 +254,7 @@ namespace CBT.BLL.Services.Candidates
             try
             {
                 var candidate = await context.Candidate
-                    .Where(x => x.Email.ToLower() == request.Email.ToLower())
+                    .Where(x => x.Email.ToLower() == request.Email.ToLower() && x.Deleted != true)
                     .Include(c=>c.Category)
                     .Select(db => new SelectCandidates(db)).FirstOrDefaultAsync();
 
@@ -263,8 +266,7 @@ namespace CBT.BLL.Services.Candidates
                 }
 
                 var examination = context.Examination?.Where(x => x.CandidateExaminationId.ToLower() == request.ExaminationId.ToLower() && x.CandidateCategoryId_ClassId == candidate.CandidateCategoryId);
-                    
-                var examinationDetails = await examination.Include(q=>q.Question).Select(db => new SelectExamination(db))
+                var examinationDetails = await examination.Include(q=>q.Question).Select(db => new SelectExamination(db, localTime))
                     .FirstOrDefaultAsync();
 
                 if (examinationDetails == null)
@@ -340,8 +342,8 @@ namespace CBT.BLL.Services.Candidates
             var res = new APIResponse<CandidateLoginDetails>();
             try
             {
-                var examination = context.Examination.Where(x => x.CandidateExaminationId.ToLower() == request.ExaminationId.ToLower());
-                var examinationDetails = await examination.Include(q => q.Question).Select(db => new SelectExamination(db))
+                var examination = context.Examination.Where(x => x.CandidateExaminationId.ToLower() == request.ExaminationId.ToLower() && x.Deleted != true);
+                var examinationDetails = await examination.Include(q => q.Question).Select(db => new SelectExamination(db, localTime))
                    .FirstOrDefaultAsync();
                 if(examinationDetails == null)
                 {

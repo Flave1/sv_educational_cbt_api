@@ -14,6 +14,7 @@ using CBT.BLL.Services.Settings;
 using CBT.BLL.Services.Student;
 using CBT.BLL.Services.Subject;
 using CBT.BLL.Services.WebRequests;
+using CBT.BLL.Utilities;
 using CBT.Contracts.Options;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -44,6 +45,7 @@ namespace CBT.Installers
             services.AddSingleton<IPaginationService, PaginationService>();
             services.AddScoped<IDashboardService, DashboardService>();
             services.AddScoped<IStudentService, StudentService>();
+            services.AddScoped<IUtilityService, UtilityService>();
             services.AddSingleton<IUriService>(o =>
             {
                 var accessor = o.GetRequiredService<IHttpContextAccessor>();
