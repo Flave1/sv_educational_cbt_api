@@ -32,7 +32,7 @@ namespace CBT.Contracts.Examinations
         public int? UnsedMarks { get; set; }
         public string CandidateIds { get; set; }
 
-        public SelectExamination(Examination examination)
+        public SelectExamination(Examination examination, DateTime localTime)
         {
             ExaminationId = examination.ExaminationId.ToString();
             ExamName_SubjectId = examination.ExamName_SubjectId;
@@ -54,11 +54,11 @@ namespace CBT.Contracts.Examinations
             PassMark = examination.PassMark;
             UnsedMarks = examination.ExamScore - examination.Question.Where(x=>x.Deleted != true).Sum(x => x.Mark);
             CandidateIds = examination.CandidateIds;
-            if((DateTime.Compare(examination.StartTime, DateTime.UtcNow.ToLocalTime()) == -1 || DateTime.Compare(examination.StartTime, DateTime.UtcNow.ToLocalTime()) == 0) && DateTime.Compare(examination.EndTime, DateTime.UtcNow.ToLocalTime()) == 1)
+            if((DateTime.Compare(examination.StartTime, localTime) == -1 || DateTime.Compare(examination.StartTime, localTime) == 0) && DateTime.Compare(examination.EndTime, localTime) == 1)
             {
                 Status = 1;
             }
-            if (DateTime.Compare(examination.StartTime, DateTime.UtcNow.ToLocalTime()) == -1 && DateTime.Compare(examination.EndTime, DateTime.UtcNow.ToLocalTime()) == -1)
+            if (DateTime.Compare(examination.StartTime, localTime) == -1 && DateTime.Compare(examination.EndTime, localTime) == -1)
             {
                 Status = 2;
             }

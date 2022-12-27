@@ -22,13 +22,15 @@ namespace CBT.BLL.Services.Examinations
         private readonly IHttpContextAccessor accessor;
         private readonly ISessionService sessionService;
         private readonly IPaginationService paginationService;
-
-        public ExaminationService(DataContext context, IHttpContextAccessor accessor, ISessionService sessionService, IPaginationService paginationService)
+        private readonly DateTime localTime;
+        public ExaminationService(DataContext context, IHttpContextAccessor accessor, ISessionService sessionService, IPaginationService paginationService,
+            IUtilityService utilityService)
         {
             this.context = context;
             this.accessor = accessor;
             this.sessionService = sessionService;
             this.paginationService = paginationService;
+            this.localTime = utilityService.GetCurrentLocalDateTime();
         }
         public async Task<APIResponse<CreateExamination>> CreateExamination(CreateExamination request)
         {
@@ -113,7 +115,7 @@ namespace CBT.BLL.Services.Examinations
                     .OrderByDescending(s => s.CreatedOn);
 
                 var totalRecord = query.Count();
-                var result = await paginationService.GetPagedResult(query, filter).Select(db => new SelectExamination(db)).ToListAsync();
+                var result = await paginationService.GetPagedResult(query, filter).Select(db => new SelectExamination(db,localTime)).ToListAsync();
                 res.Result = paginationService.CreatePagedReponse(result, filter, totalRecord);
 
                 res.IsSuccessful = true;
@@ -139,7 +141,7 @@ namespace CBT.BLL.Services.Examinations
                 var result = await context.Examination
                     .Where(d => d.Deleted != true && d.ExaminationId == Id && d.ClientId == clientId)
                     .Include(q => q.Question)
-                    .Select(db => new SelectExamination(db)).FirstOrDefaultAsync();
+                    .Select(db => new SelectExamination(db, localTime)).FirstOrDefaultAsync();
 
                 if (result == null)
                 {
@@ -283,7 +285,7 @@ namespace CBT.BLL.Services.Examinations
                     .OrderByDescending(s => s.CreatedOn);
 
                     var totalRecord = query.Count();
-                    var result = await paginationService.GetPagedResult(query, filter).Select(db => new SelectExamination(db)).ToListAsync();
+                    var result = await paginationService.GetPagedResult(query, filter).Select(db => new SelectExamination(db, localTime)).ToListAsync();
                     res.Result = paginationService.CreatePagedReponse(result, filter, totalRecord);
                 }
 
@@ -295,7 +297,7 @@ namespace CBT.BLL.Services.Examinations
                     .OrderByDescending(s => s.CreatedOn);
 
                     var totalRecord = query.Count();
-                    var result = await paginationService.GetPagedResult(query, filter).Select(db => new SelectExamination(db)).ToListAsync();
+                    var result = await paginationService.GetPagedResult(query, filter).Select(db => new SelectExamination(db, localTime)).ToListAsync();
                     res.Result = paginationService.CreatePagedReponse(result, filter, totalRecord);
                 }
 
