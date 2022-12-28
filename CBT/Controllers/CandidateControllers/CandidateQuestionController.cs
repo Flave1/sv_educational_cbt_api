@@ -20,7 +20,14 @@ namespace CBT.Controllers.CandidateControllers
         {
             var response = await service.GetCandidateQuestions(filter);
             if (response.IsSuccessful)
-
+                return Ok(response);
+            return BadRequest(response);
+        }
+        [HttpGet("get-question/{questionId}")]
+        public async Task<IActionResult> GetCandidateQuestions(string questionId)
+        {
+            var response = await service.GetCandidateQuestionById(questionId);
+            if (response.IsSuccessful)
                 return Ok(response);
             return BadRequest(response);
         }

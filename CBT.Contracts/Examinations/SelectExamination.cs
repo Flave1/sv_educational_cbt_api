@@ -26,6 +26,8 @@ namespace CBT.Contracts.Examinations
         public bool UseAsAssessmentScore { get; set; }
         public string AsExamScoreSessionAndTerm { get; set; }
         public string AsAssessmentScoreSessionAndTerm { get; set; }
+        public bool UploadToSmpAsAssessment { get; set; }
+        public bool UploadToSmpAsExam { get; set; }
         public int Status { get; set; }
         public int ExamintionType { get; set; }
         public int PassMark { get; set; }
@@ -50,6 +52,8 @@ namespace CBT.Contracts.Examinations
             UseAsAssessmentScore = examination.UseAsAssessmentScore;
             AsExamScoreSessionAndTerm = examination.AsExamScoreSessionAndTerm;
             AsAssessmentScoreSessionAndTerm = examination.AsAssessmentScoreSessionAndTerm;
+            UploadToSmpAsExam = examination.UploadToSmpAsExam;
+            UploadToSmpAsAssessment = examination.UploadToSmpAsAssessment;
             ExamintionType = examination.ExaminationType;
             PassMark = examination.PassMark;
             UnsedMarks = examination.ExamScore - examination.Question.Where(x=>x.Deleted != true).Sum(x => x.Mark);

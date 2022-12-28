@@ -19,8 +19,6 @@ namespace CBT.Contracts.Settings
         public bool ViewCategory { get; set; }
         public bool Calculator { get; set; }
         public bool SendToEmail { get; set; }
-        public bool UploadToSmpAsAssessment { get; set; }
-        public bool UploadToSmpAsExam { get; set; }
         public bool GeoLocation { get; set; }
         public bool ImageCasting { get; set; }
         public bool ScreenRecording { get; set; }
@@ -37,8 +35,6 @@ namespace CBT.Contracts.Settings
             ViewCategory = setting.ViewCategory;
             Calculator = setting.Calculator;
             SendToEmail = setting.SendToEmail;
-            UploadToSmpAsAssessment = setting.UploadToSmpAsAssessment;
-            UploadToSmpAsExam = setting.UploadToSmpAsExam;
             GeoLocation = setting.GeoLocation;
             ImageCasting = setting.ImageCasting;
             ScreenRecording = setting.ScreenRecording;

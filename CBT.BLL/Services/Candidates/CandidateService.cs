@@ -265,7 +265,7 @@ namespace CBT.BLL.Services.Candidates
                     return res;
                 }
 
-                var examination = context.Examination?.Where(x => x.CandidateExaminationId.ToLower() == request.ExaminationId.ToLower() && x.CandidateCategoryId_ClassId == candidate.CandidateCategoryId);
+                var examination = context.Examination?.Where(x => x.CandidateExaminationId.ToLower() == request.ExaminationId.ToLower() && x.CandidateCategoryId_ClassId == candidate.CandidateCategoryId && x.Deleted != true);
                 var examinationDetails = await examination.Include(q=>q.Question).Select(db => new SelectExamination(db, localTime))
                     .FirstOrDefaultAsync();
 
@@ -276,7 +276,7 @@ namespace CBT.BLL.Services.Candidates
                     return res;
                 }
 
-                if (!(Convert.ToDateTime(examinationDetails?.StartTime) <= DateTime.Now && Convert.ToDateTime(examinationDetails?.EndTime) > DateTime.Now))
+                if (!(Convert.ToDateTime(examinationDetails?.StartTime) <= localTime && Convert.ToDateTime(examinationDetails?.EndTime) > localTime))
                 {
                     res.IsSuccessful = false;
                     res.Message.FriendlyMessage = "You do not have an active Examination!";
@@ -289,12 +289,25 @@ namespace CBT.BLL.Services.Candidates
                     return res;
                 }
                 var clientId = examination.FirstOrDefault().ClientId;
+
+                string[] questionsId = Array.Empty<string>();
+                if(examinationDetails.ShuffleQuestions)
+                {
+                    questionsId = context.Question?.Where(x => x.ExaminationId == Guid.Parse(examinationDetails.ExaminationId) && x.Deleted != true)
+                        .OrderBy(x=> Guid.NewGuid()).Select(x=>x.QuestionId.ToString()).ToArray();
+                }
+                else
+                {
+                    questionsId = context.Question?.Where(x => x.ExaminationId == Guid.Parse(examinationDetails.ExaminationId) && x.Deleted != true)
+                        .OrderByDescending(x=>x.CreatedOn).Select(x => x.QuestionId.ToString()).ToArray();
+                }
                 var result = new CandidateLoginDetails
                 {
                     AuthDetails = await GenerateAuthenticationToken(examinationDetails.ExaminationId, candidate.Id),
                     ExaminationDetails = examinationDetails,
                     Settings = await context.Setting?.Where(d => d.Deleted != true && d.ClientId == clientId)
-                    .Select(db => new SelectSettings(db)).FirstOrDefaultAsync()
+                    .Select(db => new SelectSettings(db)).FirstOrDefaultAsync(),
+                    QuestionsId = questionsId
                 };
 
                 res.IsSuccessful = true;
@@ -379,12 +392,24 @@ namespace CBT.BLL.Services.Candidates
                     return res;
                 }
                 var clientId = examination.FirstOrDefault().ClientId;
+                string[] questionsId = Array.Empty<string>();
+                if (examinationDetails.ShuffleQuestions)
+                {
+                    questionsId = context.Question?.Where(x => x.ExaminationId == Guid.Parse(examinationDetails.ExaminationId) && x.Deleted != true)
+                        .OrderBy(x => Guid.NewGuid()).Select(x => x.QuestionId.ToString()).ToArray();
+                }
+                else
+                {
+                    questionsId = context.Question?.Where(x => x.ExaminationId == Guid.Parse(examinationDetails.ExaminationId) && x.Deleted != true)
+                        .OrderByDescending(x => x.CreatedOn).Select(x => x.QuestionId.ToString()).ToArray();
+                }
                 var result = new CandidateLoginDetails
                 {
                     AuthDetails = await GenerateAuthenticationToken(examinationDetails.ExaminationId, request.RegistrationNo),
                     ExaminationDetails = examinationDetails,
                     Settings = await context.Setting?.Where(d => d.Deleted != true && d.ClientId == clientId)
-                    .Select(db => new SelectSettings(db)).FirstOrDefaultAsync()
+                    .Select(db => new SelectSettings(db)).FirstOrDefaultAsync(),
+                    QuestionsId = questionsId
                 };
 
                 res.IsSuccessful = true;

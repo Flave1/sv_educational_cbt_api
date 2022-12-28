@@ -21,8 +21,6 @@ namespace CBT.DAL.Models.Settings
         public bool ViewCategory { get; set; }
         public bool Calculator { get; set; }
         public bool SendToEmail { get; set; }
-        public bool UploadToSmpAsAssessment { get; set; }
-        public bool UploadToSmpAsExam { get; set; }
         public bool GeoLocation { get; set; }
         public bool ImageCasting { get; set; }
         public bool ScreenRecording { get; set; }
