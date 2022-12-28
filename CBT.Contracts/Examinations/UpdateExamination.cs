@@ -21,6 +21,8 @@ namespace CBT.Contracts.Examinations
         public bool ShuffleQuestions { get; set; }
         public bool UseAsExamScore { get; set; }
         public bool UseAsAssessmentScore { get; set; }
+        public bool UploadToSmpAsAssessment { get; set; }
+        public bool UploadToSmpAsExam { get; set; }
         public int Status { get; set; }
         public int ExaminationType { get; set; }
         public int PassMark { get; set; }

@@ -79,6 +79,8 @@ namespace CBT.BLL.Services.Examinations
                     UseAsAssessmentScore = request.UseAsAssessmentScore,
                     AsExamScoreSessionAndTerm = asExamScoreSessionAndTerm,
                     AsAssessmentScoreSessionAndTerm = asAssessmentScoreSessionAndTerm,
+                    UploadToSmpAsExam = request.UploadToSmpAsExam,
+                    UploadToSmpAsAssessment = request.UploadToSmpAsAssessment,
                     ExaminationNo = result.Keys.First(),
                     CandidateExaminationId = result.Values.First(),
                     Status = request.Status,
@@ -219,6 +221,8 @@ namespace CBT.BLL.Services.Examinations
                 result.UseAsAssessmentScore = request.UseAsAssessmentScore;
                 result.AsExamScoreSessionAndTerm = asExamScoreSessionAndTerm;
                 result.AsAssessmentScoreSessionAndTerm = asAssessmentScoreSessionAndTerm;
+                result.UploadToSmpAsExam = request.UploadToSmpAsExam;
+                result.UploadToSmpAsAssessment = request.UploadToSmpAsAssessment;
                 result.Status = request.Status;
                 result.ExaminationType = request.ExaminationType;
                 result.PassMark = request.PassMark;

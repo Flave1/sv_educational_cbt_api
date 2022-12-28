@@ -15,5 +15,6 @@ namespace CBT.BLL.Services.Result
     {
         Task<APIResponse<SelectResult>> GetCandidateResult();
         Task<APIResponse<PagedResponse<List<SelectAllCandidateResult>>>> GetAllCandidateResult(PaginationFilter filter, string examinationId);
+        Task<APIResponse<byte[]>> DownloadCandidateResult(string examinationId);
     }
 }

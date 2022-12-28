@@ -28,6 +28,8 @@ namespace CBT.DAL.Models.Examinations
         public bool UseAsAssessmentScore { get; set; }
         public string AsExamScoreSessionAndTerm { get; set; }
         public string AsAssessmentScoreSessionAndTerm { get; set; }
+        public bool UploadToSmpAsAssessment { get; set; }
+        public bool UploadToSmpAsExam { get; set; }
         public int Status { get; set; }
         public  int ExaminationType { get; set; }
         public int PassMark { get; set; }

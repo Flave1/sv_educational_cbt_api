@@ -9,13 +9,18 @@ using CBT.Contracts.Authentication;
 using CBT.Contracts.Result;
 using CBT.DAL;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using LicenseContext = OfficeOpenXml.LicenseContext;
 
 namespace CBT.BLL.Services.Result
 {
@@ -171,6 +176,66 @@ namespace CBT.BLL.Services.Result
             }
 
             return totalScore;
+        }
+
+        public async Task<APIResponse<byte[]>> DownloadCandidateResult(string examinationId)
+        {
+            var res = new APIResponse<byte[]>();
+            try
+            {
+                byte[] resultFile = new byte[0];
+                var examination = await context.Examination?.Where(x => x.ExaminationId == Guid.Parse(examinationId) && x.Deleted != true)?.FirstOrDefaultAsync();
+
+                var questionIds = context.Question?.Where(x => x.ExaminationId == examination.ExaminationId && x.Deleted != true)
+                    .Select(x => x.QuestionId)
+                    .ToList();
+
+                var candidatesResult = await context.Candidate.Where(x => x.CandidateCategoryId == Guid.Parse(examination.CandidateCategoryId_ClassId) && x.Deleted != true)
+                    .Select(x => new SelectAllCandidateResult(x, examination, GetTotalScore(questionIds, x.Id.ToString()))).ToListAsync();
+                
+                DataTable resultColumn = new DataTable();
+                resultColumn.Columns.Add("CandidateId");
+                resultColumn.Columns.Add("CandidateName");
+                resultColumn.Columns.Add("ExaminationName");
+                resultColumn.Columns.Add("TotalScore");
+                resultColumn.Columns.Add("Status");
+
+                if (candidatesResult.Count() > 0)
+                {
+                    foreach (var itemRow in candidatesResult)
+                    {
+                        var row = resultColumn.NewRow();
+                        row["CandidateId"] = itemRow.CandidateId;
+                        row["CandidateName"] = itemRow.CandidateName;
+                        row["ExaminationName"] = itemRow.ExaminationName;
+                        row["TotalScore"] = itemRow.TotalScore;
+                        row["Status"] = itemRow.Status;
+                        resultColumn.Rows.Add(row);
+                    }
+
+                    ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+                    using (ExcelPackage excelPck = new ExcelPackage())
+                    {
+                        ExcelWorksheet workSheet = excelPck.Workbook.Worksheets.Add(examination.ExamName_Subject);
+                        workSheet.DefaultColWidth = 20;
+                        workSheet.Cells["A1"].LoadFromDataTable(resultColumn, true, OfficeOpenXml.Table.TableStyles.None);
+                        resultFile = excelPck.GetAsByteArray();
+                    }
+                    
+                }
+                res.IsSuccessful = true;
+                res.Result = resultFile;
+                res.Message.FriendlyMessage = Messages.GetSuccess;
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.IsSuccessful = false;
+                res.Message.FriendlyMessage = Messages.FriendlyException;
+                res.Message.TechnicalMessage = ex.ToString();
+                return res;
+            }
+
         }
     }
 }

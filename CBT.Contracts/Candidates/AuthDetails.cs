@@ -19,6 +19,8 @@ namespace CBT.Contracts.Candidates
         public SelectExamination ExaminationDetails { get; set; }
         public SelectSettings Settings { get; set; }
 
+        public string[] QuestionsId { get; set; }
+
     }
 
 }

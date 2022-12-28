@@ -21,6 +21,7 @@ namespace CBT.BLL.Services.Questions
         Task<APIResponse<UpdateQuestion>> UpdateQuestion(UpdateQuestion request);
         Task<APIResponse<bool>> DeleteQuestion(SingleDelete request);
         Task<APIResponse<PagedResponse<List<SelectCandidateQuestions>>>> GetCandidateQuestions(PaginationFilter filter);
+        Task<APIResponse<SelectCandidateQuestions>> GetCandidateQuestionById(string questionId);
     }
 }
 

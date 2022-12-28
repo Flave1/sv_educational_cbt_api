@@ -50,10 +50,7 @@ namespace CBT.BLL.Services.Settings
                         UseWebCamCapture = request.UseWebCamCapture,
                         SubmitExamWhenUserLeavesScreen = request.SubmitExamWhenUserLeavesScreen,
                         ViewCategory = request.ViewCategory,
-                        Calculator = request.Calculator,
                         SendToEmail = request.SendToEmail,
-                        UploadToSmpAsAssessment = request.UploadToSmpAsAssessment,
-                        UploadToSmpAsExam = request.UploadToSmpAsExam,
                         GeoLocation = request.GeoLocation,
                         ImageCasting = request.ImageCasting,
                         ScreenRecording = request.ScreenRecording,
@@ -73,8 +70,6 @@ namespace CBT.BLL.Services.Settings
                     setting.ViewCategory = request.ViewCategory;
                     setting.Calculator = request.Calculator;
                     setting.SendToEmail = request.SendToEmail;
-                    setting.UploadToSmpAsAssessment = request.UploadToSmpAsAssessment;
-                    setting.UploadToSmpAsExam = request.UploadToSmpAsExam;
                     setting.GeoLocation = request.GeoLocation;
                     setting.ImageCasting = request.ImageCasting;
                     setting.ScreenRecording = request.ScreenRecording;
