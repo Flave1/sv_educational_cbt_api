@@ -24,5 +24,13 @@ namespace CBT.Controllers.ResultController
                 return Ok(response);
             return BadRequest(response);
         }
+        [HttpGet("download-candidate-result")]
+        public async Task<IActionResult> DownloadCandidateResult(string examinationId)
+        {
+            var response = await service.DownloadCandidateResult(examinationId);
+            if (response.IsSuccessful)
+                return Ok(response);
+            return BadRequest(response);
+        }
     }
 }

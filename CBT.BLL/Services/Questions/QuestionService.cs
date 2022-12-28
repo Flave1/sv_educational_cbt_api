@@ -244,26 +244,42 @@ namespace CBT.BLL.Services.Questions
                 var candidateId_regNo = accessor.HttpContext.Items["candidateId_regNo"].ToString();
                 var examinationId = Guid.Parse(accessor.HttpContext.Items["examinationId"].ToString());
 
-                var examination = await context.Examination.FirstOrDefaultAsync(x => x.ExaminationId == examinationId);
                 var query = context.Question
-                    .Where(d => d.Deleted != true && d.ExaminationId == examinationId);
-                    
-                if (examination.ShuffleQuestions)
-                {
-                    query = query.Include(e => e.Examination)
-                    .OrderBy(s => s.CreatedOn);
-                }
-                else
-                {
-                    query = query.Include(e => e.Examination)
+                    .Where(d => d.Deleted != true && d.ExaminationId == examinationId).Include(e => e.Examination)
                     .OrderByDescending(s => s.CreatedOn);
-                }
                
                 var totalRecord = query.Count();
                 var result = await paginationService.GetPagedResult(query, filter)
                     .Select(db => new SelectCandidateQuestions(db, context.CandidateAnswer.FirstOrDefault(x => x.QuestionId == db.QuestionId && x.CandidateId == candidateId_regNo))).ToListAsync();
                 res.Result = paginationService.CreatePagedReponse(result, filter, totalRecord);
 
+                res.IsSuccessful = true;
+                res.Message.FriendlyMessage = Messages.GetSuccess;
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.IsSuccessful = false;
+                res.Message.FriendlyMessage = Messages.FriendlyException;
+                res.Message.TechnicalMessage = ex.ToString();
+                return res;
+            }
+        }
+
+        public async Task<APIResponse<SelectCandidateQuestions>> GetCandidateQuestionById(string questionId)
+        {
+            var res = new APIResponse<SelectCandidateQuestions>();
+            try
+            {
+                var candidateId_regNo = accessor.HttpContext.Items["candidateId_regNo"].ToString();
+                var examinationId = Guid.Parse(accessor.HttpContext.Items["examinationId"].ToString());
+
+                var result = await context.Question
+                    .Where(d => d.Deleted != true && d.QuestionId == Guid.Parse(questionId) && d.ExaminationId == examinationId)
+                    .Include(e => e.Examination)
+                    .Select(db => new SelectCandidateQuestions(db, context.CandidateAnswer.FirstOrDefault(x => x.QuestionId == db.QuestionId && x.CandidateId == candidateId_regNo))).FirstOrDefaultAsync(); ;
+
+                res.Result = result;
                 res.IsSuccessful = true;
                 res.Message.FriendlyMessage = Messages.GetSuccess;
                 return res;
