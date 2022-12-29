@@ -220,10 +220,30 @@ namespace CBT.BLL.Services.Candidates
                     .Include(q => q.Question)
                     .Select(db=> new SelectExamination(db, localTime)).FirstOrDefaultAsync();
 
-                if(examination == null || !(examination.Status == (int)ExaminationStatus.InProgress))
+                if(examination == null)
                 {
                     res.IsSuccessful = false;
-                    res.Message.FriendlyMessage = "You do not have an active Examination!";
+                    res.Message.FriendlyMessage = "No record found for examinationId!";
+                    return res;
+                }
+                if (examination.Status == (int)ExaminationStatus.Waiting)
+                {
+                    res.IsSuccessful = false;
+                    res.Message.FriendlyMessage = $"This examination is yet to commence, please check back by {examination.StartTime}!";
+                    return res;
+                }
+
+                if (examination.Status == (int)ExaminationStatus.Concluded)
+                {
+                    res.IsSuccessful = false;
+                    res.Message.FriendlyMessage = $"This examination was concluded on {examination.EndTime}!";
+                    return res;
+                }
+
+                if (examination.Status == (int)ExaminationStatus.Cancelled)
+                {
+                    res.IsSuccessful = false;
+                    res.Message.FriendlyMessage = $"This examination has been cancelled!";
                     return res;
                 }
 
@@ -246,7 +266,6 @@ namespace CBT.BLL.Services.Candidates
                 return res;
             }
         }
-
 
         public async Task<APIResponse<CandidateLoginDetails>> LoginByEmail(CandidateLoginEmail request)
         {
@@ -272,14 +291,7 @@ namespace CBT.BLL.Services.Candidates
                 if (examinationDetails == null)
                 {
                     res.IsSuccessful = false;
-                    res.Message.FriendlyMessage = "You do not have an active Examination!";
-                    return res;
-                }
-
-                if (!(Convert.ToDateTime(examinationDetails?.StartTime) <= localTime && Convert.ToDateTime(examinationDetails?.EndTime) > localTime))
-                {
-                    res.IsSuccessful = false;
-                    res.Message.FriendlyMessage = "You do not have an active Examination!";
+                    res.Message.FriendlyMessage = "You're not authorized to access examination!";
                     return res;
                 }
                 if(!string.IsNullOrEmpty(examinationDetails.CandidateIds) && examinationDetails.CandidateIds.Split(",").Contains(candidate.Id))
@@ -364,12 +376,6 @@ namespace CBT.BLL.Services.Candidates
                     res.Message.FriendlyMessage = "Invalid Examination Id!";
                     return res;
                 }
-                if (!(examinationDetails.Status == (int)ExaminationStatus.InProgress))
-                {
-                    res.IsSuccessful = false;
-                    res.Message.FriendlyMessage = "You do not have an active Examination!";
-                    return res;
-                }
 
                 var studentClass = await classService.GetActiveClassByRegNo(request.RegistrationNo, examination.FirstOrDefault().ProductBaseurlSuffix);
                 if(studentClass.Result == null)
@@ -379,10 +385,10 @@ namespace CBT.BLL.Services.Candidates
                     return res;
                 }
 
-                if(Guid.Parse(studentClass.Result.ClassId) != Guid.Parse(examinationDetails.CandidateCategoryId_ClassId))
+                if(Guid.Parse(studentClass.Result.SessionClassId) != Guid.Parse(examinationDetails.CandidateCategoryId_ClassId))
                 {
                     res.IsSuccessful = false;
-                    res.Message.FriendlyMessage = "You do not have an active Examination!";
+                    res.Message.FriendlyMessage = "You're not authorized to access this examination!";
                     return res;
                 }
                 if (!string.IsNullOrEmpty(examinationDetails.CandidateIds) && examinationDetails.CandidateIds.Split(",").Contains(request.RegistrationNo))
