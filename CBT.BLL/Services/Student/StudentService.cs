@@ -11,6 +11,7 @@ using CBT.BLL.Services.WebRequests;
 using CBT.Contracts.Options;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
+using System.Drawing.Printing;
 
 namespace CBT.BLL.Services.Student
 {
@@ -26,7 +27,6 @@ namespace CBT.BLL.Services.Student
             this.webRequest = webRequest;
             this.accessor = accessor;
         }
-
         public async Task<APIResponse<GetAllStudentDetails>> GetAllStudentDetails(int pageNumber, int pageSize, string classId, string productBaseurlSuffix)
         {
             var res = new APIResponse<GetAllStudentDetails>();
@@ -42,6 +42,22 @@ namespace CBT.BLL.Services.Student
                 throw ex;
             }
         }
+        public async Task<APIResponse<GetAllStudentDetails>> GetAllClassStudentDetails(string classId, string productBaseurlSuffix)
+        {
+            var res = new APIResponse<GetAllStudentDetails>();
+            try
+            {
+                res = await webRequest.GetAsync<APIResponse<GetAllStudentDetails>>($"{fwsOptions.FwsBaseUrl}smp/{productBaseurlSuffix}{FwsRoutes.allClassStudentsSelect}classId={classId}");
+                res.IsSuccessful = true;
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.IsSuccessful = false;
+                throw ex;
+            }
+        }
+
 
         public async Task<APIResponse<GetStudentDetails>> GetStudentDetails(string studentRegNo, string productBaseurlSuffix)
         {

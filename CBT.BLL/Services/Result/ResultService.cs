@@ -190,9 +190,21 @@ namespace CBT.BLL.Services.Result
                     .Select(x => x.QuestionId)
                     .ToList();
 
-                var candidatesResult = await context.Candidate.Where(x => x.CandidateCategoryId == Guid.Parse(examination.CandidateCategoryId_ClassId) && x.Deleted != true)
+                var candidatesResult = new List<SelectAllCandidateResult>();
+                if(examination.ExaminationType == (int)ExaminationType.ExternalExam)
+                {
+                    candidatesResult = await context.Candidate.Where(x => x.CandidateCategoryId == Guid.Parse(examination.CandidateCategoryId_ClassId) && x.Deleted != true)
                     .Select(x => new SelectAllCandidateResult(x, examination, GetTotalScore(questionIds, x.Id.ToString()))).ToListAsync();
-                
+                }
+                else
+                {
+                    var students = await studentService.GetAllClassStudentDetails(examination.CandidateCategoryId_ClassId, examination.ProductBaseurlSuffix);
+                    if (students != null)
+                    {
+                        candidatesResult = students.Result.Data.Select(x => new SelectAllCandidateResult(x, examination, GetTotalScore(questionIds, x.RegistrationNumber.ToString()))).ToList(); 
+                    }
+                }
+
                 DataTable resultColumn = new DataTable();
                 resultColumn.Columns.Add("CandidateId");
                 resultColumn.Columns.Add("CandidateName");
