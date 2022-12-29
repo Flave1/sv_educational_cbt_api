@@ -284,7 +284,7 @@ namespace CBT.BLL.Services.Examinations
                 if(examStatus == (int)ExaminationStatus.InProgress)
                 {
                     var query = context.Examination
-                    .Where(d => d.Deleted != true && (d.StartTime <= DateTime.Now && d.EndTime > DateTime.Now) && d.ClientId == clientId)
+                    .Where(d => d.Deleted != true && (d.StartTime <= localTime && d.EndTime > localTime) && d.ClientId == clientId)
                     .Include(q=>q.Question)
                     .OrderByDescending(s => s.CreatedOn);
 
@@ -296,7 +296,7 @@ namespace CBT.BLL.Services.Examinations
                 if (examStatus == (int)ExaminationStatus.Concluded)
                 {
                     var query = context.Examination
-                    .Where(d => d.Deleted != true && (d.StartTime < DateTime.Now && d.EndTime < DateTime.Now) && d.ClientId == clientId)
+                    .Where(d => d.Deleted != true && (d.StartTime < localTime && d.EndTime < localTime) && d.ClientId == clientId)
                     .Include(q => q.Question)
                     .OrderByDescending(s => s.CreatedOn);
 

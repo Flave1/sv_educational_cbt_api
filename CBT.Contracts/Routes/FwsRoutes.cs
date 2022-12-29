@@ -16,5 +16,6 @@ namespace CBT.Contracts.Routes
         public const string classByRegNoSelect = "/class/api/v1/get/session-class-by-reg-no-cbt?regNo=";
         public const string studentByRegNoSelect = "/student/api/v1/get-student-contact-cbt?studentRegNo=";
         public const string classStudentsSelect = "/student/api/v1/getall-student-contact-cbt?";
+        public const string allClassStudentsSelect = "/student/api/v1/getall-students-cbt?";
     }
 }
