@@ -27,12 +27,12 @@ namespace CBT.BLL.Services.Student
             this.webRequest = webRequest;
             this.accessor = accessor;
         }
-        public async Task<APIResponse<GetAllStudentDetails>> GetAllStudentDetails(int pageNumber, int pageSize, string classId, string productBaseurlSuffix)
+        public async Task<APIResponse<GetAllStudentDetails>> GetAllStudentDetails(int pageNumber, int pageSize, string sessionClassId, string productBaseurlSuffix)
         {
             var res = new APIResponse<GetAllStudentDetails>();
             try
             {
-                res = await webRequest.GetAsync<APIResponse<GetAllStudentDetails>>($"{fwsOptions.FwsBaseUrl}smp/{productBaseurlSuffix}{FwsRoutes.classStudentsSelect}PageNumber={pageNumber}&PageSize={pageSize}&classId={classId}");
+                res = await webRequest.GetAsync<APIResponse<GetAllStudentDetails>>($"{fwsOptions.FwsBaseUrl}smp/{productBaseurlSuffix}{FwsRoutes.classStudentsSelect}PageNumber={pageNumber}&PageSize={pageSize}&sessionClassId={sessionClassId}");
                 res.IsSuccessful = true;
                 return res;
             }
@@ -42,12 +42,12 @@ namespace CBT.BLL.Services.Student
                 throw ex;
             }
         }
-        public async Task<APIResponse<GetAllStudentDetails>> GetAllClassStudentDetails(string classId, string productBaseurlSuffix)
+        public async Task<APIResponse<GetAllStudentDetails>> GetAllClassStudentDetails(string sessionClassId, string productBaseurlSuffix)
         {
             var res = new APIResponse<GetAllStudentDetails>();
             try
             {
-                res = await webRequest.GetAsync<APIResponse<GetAllStudentDetails>>($"{fwsOptions.FwsBaseUrl}smp/{productBaseurlSuffix}{FwsRoutes.allClassStudentsSelect}classId={classId}");
+                res = await webRequest.GetAsync<APIResponse<GetAllStudentDetails>>($"{fwsOptions.FwsBaseUrl}smp/{productBaseurlSuffix}{FwsRoutes.allClassStudentsSelect}sessionClassId={sessionClassId}");
                 res.IsSuccessful = true;
                 return res;
             }
