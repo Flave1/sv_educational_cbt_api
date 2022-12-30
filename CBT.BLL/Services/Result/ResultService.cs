@@ -63,7 +63,7 @@ namespace CBT.BLL.Services.Result
                 if (examination.ExaminationType == (int)ExaminationType.InternalExam)
                 {
                     var students = await studentService.GetAllStudentDetails(filter.PageNumber, filter.PageSize, examination.CandidateCategoryId_ClassId, examination.ProductBaseurlSuffix);
-                    if(students != null)
+                    if(students.Result != null)
                     {
                         var totalRecord = students.Result.TotalRecords;
                         var result = students.Result.Data.Select(x => new SelectAllCandidateResult(x, examination, GetTotalScore(questionIds, x.RegistrationNumber.ToString()))).ToList();
