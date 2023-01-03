@@ -42,12 +42,12 @@ namespace CBT.BLL.Services.Student
                 throw ex;
             }
         }
-        public async Task<APIResponse<GetAllStudentDetails>> GetAllClassStudentDetails(string sessionClassId, string productBaseurlSuffix)
+        public async Task<APIResponse<List<StudentData>>> GetAllClassStudentDetails(string sessionClassId, string productBaseurlSuffix)
         {
-            var res = new APIResponse<GetAllStudentDetails>();
+            var res = new APIResponse<List<StudentData>>();
             try
             {
-                res = await webRequest.GetAsync<APIResponse<GetAllStudentDetails>>($"{fwsOptions.FwsBaseUrl}smp/{productBaseurlSuffix}{FwsRoutes.allClassStudentsSelect}sessionClassId={sessionClassId}");
+                res = await webRequest.GetAsync<APIResponse<List<StudentData>>>($"{fwsOptions.FwsBaseUrl}smp/{productBaseurlSuffix}{FwsRoutes.allClassStudentsSelect}sessionClassId={sessionClassId}");
                 res.IsSuccessful = true;
                 return res;
             }
