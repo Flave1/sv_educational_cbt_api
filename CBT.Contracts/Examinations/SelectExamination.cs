@@ -33,6 +33,7 @@ namespace CBT.Contracts.Examinations
         public int PassMark { get; set; }
         public int? UnsedMarks { get; set; }
         public string CandidateIds { get; set; }
+        public string CreatedOn { get; set; }
 
         public SelectExamination(Examination examination, DateTime localTime)
         {
@@ -58,6 +59,7 @@ namespace CBT.Contracts.Examinations
             PassMark = examination.PassMark;
             UnsedMarks = examination.ExamScore - examination.Question.Where(x=>x.Deleted != true).Sum(x => x.Mark);
             CandidateIds = examination.CandidateIds;
+            CreatedOn = examination.CreatedOn.ToString("yyyy-MM-dd HH:mm");
             if((DateTime.Compare(examination.StartTime, localTime) == -1 || DateTime.Compare(examination.StartTime, localTime) == 0) && DateTime.Compare(examination.EndTime, localTime) == 1)
             {
                 Status = 1;
