@@ -111,11 +111,11 @@ namespace CBT.BLL.Services.Examinations
                 var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
                 var query = context.Examination
                     .Where(d => d.Deleted != true && d.ExaminationType == examType && d.ClientId == clientId)
-                    .Include(q => q.Question)
-                    .OrderByDescending(s => s.CreatedOn);
+                    .Include(q => q.Question);
 
                 var totalRecord = query.Count();
-                var result = await paginationService.GetPagedResult(query, filter).Select(db => new SelectExamination(db,localTime)).ToListAsync();
+                var result = await paginationService.GetPagedResult(query, filter).OrderByDescending(s => s.CreatedOn)
+                    .Select(db => new SelectExamination(db,localTime)).ToListAsync();
                 res.Result = paginationService.CreatePagedReponse(result, filter, totalRecord);
 
                 res.IsSuccessful = true;

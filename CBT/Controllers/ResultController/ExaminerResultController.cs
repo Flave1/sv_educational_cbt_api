@@ -32,5 +32,13 @@ namespace CBT.Controllers.ResultController
                 return Ok(response);
             return BadRequest(response);
         }
+        [HttpGet("get-candidate-answers")]
+        public async Task<IActionResult> GetCandidateAnswers(PaginationFilter filter, string examinationId, string candidateId)
+        {
+            var response = await service.GetCandidateAnswers(filter, examinationId, candidateId);
+            if (response.IsSuccessful)
+                return Ok(response);
+            return BadRequest(response);
+        }
     }
 }

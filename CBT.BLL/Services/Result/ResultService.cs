@@ -6,6 +6,7 @@ using CBT.BLL.Services.Student;
 using CBT.BLL.Wrappers;
 using CBT.Contracts;
 using CBT.Contracts.Authentication;
+using CBT.Contracts.CandidateAnswers;
 using CBT.Contracts.Result;
 using CBT.DAL;
 using Microsoft.AspNetCore.Http;
@@ -199,9 +200,9 @@ namespace CBT.BLL.Services.Result
                 else
                 {
                     var students = await studentService.GetAllClassStudentDetails(examination.CandidateCategoryId_ClassId, examination.ProductBaseurlSuffix);
-                    if (students != null)
+                    if (students.Result != null)
                     {
-                        candidatesResult = students.Result.Data.Select(x => new SelectAllCandidateResult(x, examination, GetTotalScore(questionIds, x.RegistrationNumber.ToString()))).ToList(); 
+                        candidatesResult = students.Result.Select(x => new SelectAllCandidateResult(x, examination, GetTotalScore(questionIds, x.RegistrationNumber.ToString()))).ToList(); 
                     }
                 }
 
@@ -248,6 +249,33 @@ namespace CBT.BLL.Services.Result
                 return res;
             }
 
+        }
+        public async Task<APIResponse<PagedResponse<List<SelectCandidateAnswer>>>> GetCandidateAnswers(PaginationFilter filter, string examinationId, string candidateId_regNo)
+        {
+            var res = new APIResponse<PagedResponse<List<SelectCandidateAnswer>>>();
+            try
+            {
+                var questions = await context.Question.Where(x => x.ExaminationId == Guid.Parse(examinationId)).Select(x => x.QuestionId).ToListAsync();
+                var query = context.CandidateAnswer
+                    .Where(d => d.Deleted != true && questions.Contains(d.QuestionId) && d.CandidateId == candidateId_regNo)
+                    .Include(q => q.Question)
+                    .OrderByDescending(s => s.CreatedOn);
+
+                var totalRecord = query.Count();
+                var result = await paginationService.GetPagedResult(query, filter).Select(db => new SelectCandidateAnswer(db)).ToListAsync();
+                res.Result = paginationService.CreatePagedReponse(result, filter, totalRecord);
+
+                res.IsSuccessful = true;
+                res.Message.FriendlyMessage = Messages.GetSuccess;
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.IsSuccessful = false;
+                res.Message.FriendlyMessage = Messages.FriendlyException;
+                res.Message.TechnicalMessage = ex.ToString();
+                return res;
+            }
         }
     }
 }
