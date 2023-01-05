@@ -256,8 +256,14 @@ namespace CBT.BLL.Services.Result
             try
             {
                 var questions = await context.Question.Where(x => x.ExaminationId == Guid.Parse(examinationId)).Select(x => x.QuestionId).ToListAsync();
+                var candidate = await context.Candidate.FirstOrDefaultAsync(x => x.CandidateId.ToLower() == candidateId_regNo.ToLower());
+                if(candidate == null)
+                {
+                    res.Message.FriendlyMessage = "Candidate Id doesn't exist!";
+                    return res;
+                }
                 var query = context.CandidateAnswer
-                    .Where(d => d.Deleted != true && questions.Contains(d.QuestionId) && d.CandidateId == candidateId_regNo)
+                    .Where(d => d.Deleted != true && questions.Contains(d.QuestionId) && d.CandidateId == candidate.Id.ToString())
                     .Include(q => q.Question)
                     .OrderByDescending(s => s.CreatedOn);
 

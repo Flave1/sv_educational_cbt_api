@@ -16,6 +16,7 @@ namespace CBT.DAL.Models.Settings
         public bool ShowPreviousBtn { get; set; }
         public bool ShowPreviewBtn { get; set; }
         public bool ShowResult { get; set; }
+        public bool ShowExamQuestionsAndAnswers { get; set; }
         public bool UseWebCamCapture { get; set; }
         public bool SubmitExamWhenUserLeavesScreen { get; set; }
         public bool ViewCategory { get; set; }

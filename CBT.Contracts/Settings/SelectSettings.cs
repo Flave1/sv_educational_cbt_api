@@ -14,6 +14,7 @@ namespace CBT.Contracts.Settings
         public bool ShowPreviousBtn { get; set; }
         public bool ShowPreviewBtn { get; set; }
         public bool ShowResult { get; set; }
+        public bool ShowExamQuestionsAndAnswers { get; set; }
         public bool UseWebCamCapture { get; set; }
         public bool SubmitExamWhenUserLeavesScreen { get; set; }
         public bool ViewCategory { get; set; }
@@ -30,6 +31,7 @@ namespace CBT.Contracts.Settings
             ShowPreviousBtn = setting.ShowPreviousBtn;
             ShowPreviewBtn = setting.ShowPreviewBtn;
             ShowResult = setting.ShowResult;
+            ShowExamQuestionsAndAnswers = setting.ShowExamQuestionsAndAnswers;
             UseWebCamCapture = setting.UseWebCamCapture;
             SubmitExamWhenUserLeavesScreen = setting.SubmitExamWhenUserLeavesScreen;
             ViewCategory = setting.ViewCategory;
