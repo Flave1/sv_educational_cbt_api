@@ -432,5 +432,58 @@ namespace CBT.BLL.Services.Candidates
                 return res;
             }
         }
+
+        public async Task<APIResponse<bool>> CreateAdmissionCandidate(CreateAdmissionCandidate request)
+        {
+            var res = new APIResponse<bool>();
+            try
+            {
+                var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
+                var categoryName = await context.CandidateCategory.Where(r => r.Name.ToLower() == request.CandidateCategory.ToLower() && r.Deleted == false && r.ClientId == clientId).FirstOrDefaultAsync();
+
+                if (categoryName != null)
+                {
+                    res.Message.FriendlyMessage = "Candidate Category Name Already Exist";
+                    return res;
+                }
+
+                var newCategory = new CandidateCategory
+                {
+                    Name = request.CandidateCategory,
+                };
+
+                context.CandidateCategory.Add(newCategory);
+                await context.SaveChangesAsync();
+
+                foreach(var item in request.AdmissionCandidateList)
+                {
+                    var result = UtilTools.GenerateCandidateId();
+                    var candidate = new Candidate
+                    {
+                        FirstName = item.FirstName,
+                        LastName = item.LastName,
+                        OtherName = item.OtherName,
+                        PhoneNumber = item.PhoneNumber,
+                        Email = item.Email,
+                        CandidateNo = result.Keys.First(),
+                        CandidateId = result.Values.First(),
+                        CandidateCategoryId = newCategory.CandidateCategoryId
+                    };
+                    context.Candidate.Add(candidate);
+                };
+                await context.SaveChangesAsync();
+                res.Result = true;
+                res.IsSuccessful = true;
+                res.Message.FriendlyMessage = Messages.Created;
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.IsSuccessful = false;
+                res.Message.FriendlyMessage = Messages.FriendlyException;
+                res.Message.TechnicalMessage = ex.ToString();
+                return res;
+            }
+        }
     }
 }

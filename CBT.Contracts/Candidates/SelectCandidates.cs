@@ -22,7 +22,7 @@ namespace CBT.Contracts.Candidates
             CandidateId = candidate.CandidateId;
             FirstName = candidate.FirstName;
             LastName = candidate.LastName;
-            OtherName = candidate.OtherName;
+            OtherName = !string.IsNullOrEmpty(candidate.OtherName) ? candidate.OtherName : "";
             PhoneNumber = candidate.PhoneNumber;
             Email = candidate.Email;
             PassportPhoto = candidate.PassportPhoto;
