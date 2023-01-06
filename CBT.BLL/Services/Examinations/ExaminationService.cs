@@ -131,6 +131,34 @@ namespace CBT.BLL.Services.Examinations
             }
         }
 
+        public async Task<APIResponse<PagedResponse<List<SelectExamination2>>>> GetAllExamination2(PaginationFilter filter)
+        {
+            var res = new APIResponse<PagedResponse<List<SelectExamination2>>>();
+            try
+            {
+                var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
+                var query = context.Examination
+                    .Where(d => d.Deleted != true && d.ExaminationType == (int)ExaminationType.InternalExam && d.ClientId == clientId);
+                //.Include(q => q.Question);
+
+                var totalRecord = query.Count();
+                var result = await paginationService.GetPagedResult(query, filter).OrderByDescending(s => s.CreatedOn)
+                    .Select(db => new SelectExamination2(db, localTime)).ToListAsync();
+                res.Result = paginationService.CreatePagedReponse(result, filter, totalRecord);
+
+                res.IsSuccessful = true;
+                res.Message.FriendlyMessage = Messages.GetSuccess;
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.IsSuccessful = false;
+                res.Message.FriendlyMessage = Messages.FriendlyException;
+                res.Message.TechnicalMessage = ex.ToString();
+                return res;
+            }
+        }
+
         public async Task<APIResponse<SelectExamination>> GetExamination(Guid Id)
         {
             var res = new APIResponse<SelectExamination>();
