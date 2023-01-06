@@ -7,6 +7,7 @@ using CBT.BLL.Services.Settings;
 using CBT.BLL.Utilities;
 using CBT.BLL.Wrappers;
 using CBT.Contracts;
+using CBT.Contracts.Authentication;
 using CBT.Contracts.Candidates;
 using CBT.Contracts.Common;
 using CBT.Contracts.Examinations;
@@ -15,6 +16,7 @@ using CBT.DAL;
 using CBT.DAL.Models.Candidates;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -433,9 +435,9 @@ namespace CBT.BLL.Services.Candidates
             }
         }
 
-        public async Task<APIResponse<bool>> CreateAdmissionCandidate(CreateAdmissionCandidate request)
+        public async Task<APIResponse<string>> CreateAdmissionCandidate(CreateAdmissionCandidate request)
         {
-            var res = new APIResponse<bool>();
+            var res = new APIResponse<string>();
             try
             {
                 var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
@@ -443,36 +445,65 @@ namespace CBT.BLL.Services.Candidates
 
                 if (categoryName != null)
                 {
-                    res.Message.FriendlyMessage = "Candidate Category Name Already Exist";
-                    return res;
-                }
-
-                var newCategory = new CandidateCategory
-                {
-                    Name = request.CandidateCategory,
-                };
-
-                context.CandidateCategory.Add(newCategory);
-                await context.SaveChangesAsync();
-
-                foreach(var item in request.AdmissionCandidateList)
-                {
-                    var result = UtilTools.GenerateCandidateId();
-                    var candidate = new Candidate
+                    foreach (var item in request.AdmissionCandidateList)
                     {
-                        FirstName = item.FirstName,
-                        LastName = item.LastName,
-                        OtherName = item.OtherName,
-                        PhoneNumber = item.PhoneNumber,
-                        Email = item.Email,
-                        CandidateNo = result.Keys.First(),
-                        CandidateId = result.Values.First(),
-                        CandidateCategoryId = newCategory.CandidateCategoryId
+                        var candidate = await context.Candidate.FirstOrDefaultAsync(x => x.Email.ToLower() == item.Email.ToLower());
+                        if(candidate == null)
+                        {
+                            var result = UtilTools.GenerateCandidateId();
+                            var newCandidate = new Candidate
+                            {
+                                FirstName = item.FirstName,
+                                LastName = item.LastName,
+                                OtherName = item.OtherName,
+                                PhoneNumber = item.PhoneNumber,
+                                Email = item.Email,
+                                CandidateNo = result.Keys.First(),
+                                CandidateId = result.Values.First(),
+                                CandidateCategoryId = categoryName.CandidateCategoryId
+                            };
+                            context.Candidate.Add(candidate);
+                        }
+                        else
+                        {
+                            candidate.FirstName = item.FirstName;
+                            candidate.LastName = item.LastName;
+                            candidate.OtherName = item.OtherName;
+                            candidate.PhoneNumber = item.PhoneNumber;
+                        }
+                        await context.SaveChangesAsync();
                     };
-                    context.Candidate.Add(candidate);
-                };
-                await context.SaveChangesAsync();
-                res.Result = true;
+                    res.Result = categoryName.CandidateCategoryId.ToString();
+                }
+                else
+                {
+                    var newCategory = new CandidateCategory
+                    {
+                        Name = request.CandidateCategory,
+                    };
+
+                    context.CandidateCategory.Add(newCategory);
+                    await context.SaveChangesAsync();
+
+                    foreach (var item in request.AdmissionCandidateList)
+                    {
+                        var result = UtilTools.GenerateCandidateId();
+                        var candidate = new Candidate
+                        {
+                            FirstName = item.FirstName,
+                            LastName = item.LastName,
+                            OtherName = item.OtherName,
+                            PhoneNumber = item.PhoneNumber,
+                            Email = item.Email,
+                            CandidateNo = result.Keys.First(),
+                            CandidateId = result.Values.First(),
+                            CandidateCategoryId = newCategory.CandidateCategoryId
+                        };
+                        context.Candidate.Add(candidate);
+                        await context.SaveChangesAsync();
+                    };
+                    res.Result = newCategory.CandidateCategoryId.ToString();
+                }
                 res.IsSuccessful = true;
                 res.Message.FriendlyMessage = Messages.Created;
                 return res;

@@ -58,14 +58,6 @@ namespace CBT.Controllers.CandidateController
                 return Ok(response);
             return BadRequest(response);
         }
-        [HttpPost("create-admission-candidate")]
-        public async Task<IActionResult> CreateAdmissionCandidate([FromBody]CreateAdmissionCandidate request)
-        {
-            var response = await _service.CreateAdmissionCandidate(request);
-            if (response.IsSuccessful)
-                return Ok(response);
-            return BadRequest(response);
-        }
         [AllowAnonymous]
         [HttpPost("login/examId")]
         public async Task<IActionResult> LoginByExamId([FromBody]CandidateLoginExamId request)
