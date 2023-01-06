@@ -22,6 +22,6 @@ namespace CBT.BLL.Services.Candidates
         Task<APIResponse<CandidateExamDetails>> LoginByExamId(CandidateLoginExamId request);
         Task<APIResponse<CandidateLoginDetails>> LoginByEmail(CandidateLoginEmail request);
         Task<APIResponse<CandidateLoginDetails>> LoginByRegNo(CandidateLoginRegNo request);
-        Task<APIResponse<bool>> CreateAdmissionCandidate(CreateAdmissionCandidate request);
+        Task<APIResponse<string>> CreateAdmissionCandidate(CreateAdmissionCandidate request);
     }
 }
