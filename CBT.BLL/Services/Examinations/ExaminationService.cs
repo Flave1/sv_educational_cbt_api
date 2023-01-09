@@ -131,14 +131,14 @@ namespace CBT.BLL.Services.Examinations
             }
         }
 
-        public async Task<APIResponse<PagedResponse<List<SelectExamination2>>>> GetAllExamination2(PaginationFilter filter)
+        public async Task<APIResponse<PagedResponse<List<SelectExamination2>>>> GetAllExamination2(PaginationFilter filter, string sessionClassId)
         {
             var res = new APIResponse<PagedResponse<List<SelectExamination2>>>();
             try
             {
                 var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
                 var query = context.Examination
-                    .Where(d => d.Deleted != true && d.ExaminationType == (int)ExaminationType.InternalExam && d.ClientId == clientId);
+                    .Where(d => d.Deleted != true && d.ExaminationType == (int)ExaminationType.InternalExam && d.ClientId == clientId && d.CandidateCategoryId_ClassId == sessionClassId);
                 //.Include(q => q.Question);
 
                 var totalRecord = query.Count();

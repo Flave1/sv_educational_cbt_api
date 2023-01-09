@@ -35,6 +35,14 @@ namespace CBT.Controllers.Examination
                 return Ok(response);
             return BadRequest(response);
         }
+        [HttpGet("get-all-examination/by-sessionclass")]
+        public async Task<IActionResult> GetAllExamination2(PaginationFilter filter, string sessionClassId)
+        {
+            var response = await _service.GetAllExamination2(filter, sessionClassId);
+            if (response.IsSuccessful)
+                return Ok(response);
+            return BadRequest(response);
+        }
         [HttpGet("get-single-examination/{id}")]
         public async Task<IActionResult> GetExamination(string id)
         {
