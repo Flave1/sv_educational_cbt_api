@@ -9,6 +9,7 @@ using CBT.Contracts.Authentication;
 using CBT.Contracts.CandidateAnswers;
 using CBT.Contracts.Result;
 using CBT.DAL;
+using CBT.DAL.Models.Examinations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -271,6 +272,42 @@ namespace CBT.BLL.Services.Result
                 var result = await paginationService.GetPagedResult(query, filter).Select(db => new SelectCandidateAnswer(db)).ToListAsync();
                 res.Result = paginationService.CreatePagedReponse(result, filter, totalRecord);
 
+                res.IsSuccessful = true;
+                res.Message.FriendlyMessage = Messages.GetSuccess;
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.IsSuccessful = false;
+                res.Message.FriendlyMessage = Messages.FriendlyException;
+                res.Message.TechnicalMessage = ex.ToString();
+                return res;
+            }
+        }
+
+        public async Task<APIResponse<List<SelectAllCandidateResult>>> GetAdmissionCandidateResult(string candidateCategoryId)
+        {
+            var res = new APIResponse<List<SelectAllCandidateResult>>();
+            try
+            {
+                var examination = await context.Examination?.Where(x => x.CandidateCategoryId_ClassId.ToLower() == candidateCategoryId.ToLower() && x.Deleted != true)?.FirstOrDefaultAsync();
+
+                if(examination == null)
+                {
+                    res.IsSuccessful = false;
+                    res.Message.FriendlyMessage = "Examination has not been created for this category. Kindly create Examination.";
+                    return res;
+                }
+
+                var questionIds = context.Question?.Where(x => x.ExaminationId == examination.ExaminationId)
+                    .Select(x => x.QuestionId)
+                    .ToList();
+
+                var result = await context.Candidate.Where(x => x.CandidateCategoryId == Guid.Parse(examination.CandidateCategoryId_ClassId))
+                    .Select(x => new SelectAllCandidateResult(x, examination, GetTotalScore(questionIds, x.Id.ToString()))).ToListAsync();
+
+                res.Result = result;
+                
                 res.IsSuccessful = true;
                 res.Message.FriendlyMessage = Messages.GetSuccess;
                 return res;
