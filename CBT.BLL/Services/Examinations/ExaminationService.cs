@@ -139,7 +139,7 @@ namespace CBT.BLL.Services.Examinations
                 var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
                 var query = context.Examination
                     .Where(d => d.Deleted != true && d.ExaminationType == (int)ExaminationType.InternalExam && d.ClientId == clientId && d.CandidateCategoryId_ClassId == sessionClassId);
-                //.Include(q => q.Question);
+            
 
                 var totalRecord = query.Count();
                 var result = await paginationService.GetPagedResult(query, filter).OrderByDescending(s => s.CreatedOn)

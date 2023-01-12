@@ -2,22 +2,14 @@
 using CBT.BLL.Services.WebRequests;
 using CBT.Contracts;
 using CBT.Contracts.Authentication;
-using CBT.Contracts.Candidates;
-using CBT.Contracts.Category;
 using CBT.Contracts.Options;
 using CBT.Contracts.Routes;
-using CBT.DAL.Models.Examinations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace CBT.BLL.Services.Authentication
 {
@@ -31,6 +23,30 @@ namespace CBT.BLL.Services.Authentication
             this.webRequest = webRequest;
             this.config = config;
             this.fwsOptions = fwsOptions.Value;
+        }
+        public async Task<APIResponse<LoginDetails>> SMPLoginAsync(LoginCommandByHash user)
+        {
+            var res = new APIResponse<LoginDetails>();
+            try
+            {
+                var result = await webRequest.PostAsync<LoginSuccessResponse, LoginCommandByHash>($"{fwsOptions.FwsBaseUrl}{FwsRoutes.loginByHash}", user);
+                if (result.Result.AuthResult.Token != null)
+                {
+                    res.Result = await ReadAndGenerateNewTokenAsync(result.Result.AuthResult.Token);
+                    res.Result.ClientUrl = config.GetValue<string>("ClientUrl");
+                    res.IsSuccessful = true;
+                    return res;
+                }
+                res.IsSuccessful = false;
+                res.Message.FriendlyMessage = result.Message.FriendlyMessage?.ToString();
+                res.Message.TechnicalMessage = result.Message.TechnicalMessage?.ToString();
+                return res;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
         }
         public async Task<APIResponse<LoginDetails>> LoginAsync(LoginCommand user)
         {

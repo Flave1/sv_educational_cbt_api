@@ -11,5 +11,6 @@ namespace CBT.BLL.Services.Authentication
     public interface IIdentityService
     {
         Task<APIResponse<LoginDetails>> LoginAsync(LoginCommand user);
+        Task<APIResponse<LoginDetails>> SMPLoginAsync(LoginCommandByHash user);
     }
 }

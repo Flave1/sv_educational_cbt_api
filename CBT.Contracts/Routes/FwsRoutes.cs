@@ -9,6 +9,7 @@ namespace CBT.Contracts.Routes
     public class FwsRoutes
     {
         public const string login = "fws/client/fws/user/api/v1/login";
+        public const string loginByHash = "fws/client/fws/user/api/v1/login-by-hash";
         public const string subjectSelect = "/subject/api/v1/getall/active-subject";
         public const string sessionSubjectSelect = "/class/api/v1/getall/class-subjects-cbt?sessionClassId=";
         public const string classSelect = "/class/api/v1/get-all/session-classes-cbt";

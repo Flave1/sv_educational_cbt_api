@@ -16,6 +16,10 @@ namespace CBT.Contracts.Authentication
         public string UserName { get; set; }
         public string Password { get; set; }
     }
+    public class LoginCommandByHash
+    {
+        public string PasswordHash { get; set; }
+    }
     public class Message
     {
         public object FriendlyMessage { get; set; }
@@ -31,4 +35,5 @@ namespace CBT.Contracts.Authentication
         public string Status { get; set; }
         public Message Message { get; set; }
     }
+
 }

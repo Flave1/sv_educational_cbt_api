@@ -10,6 +10,7 @@ namespace CBT.Contracts.Authentication
     {
         public AuthenticationResult AuthResult { get; set; }
         public UserDetails UserDetails { get; set; }
+        public string ClientUrl { get; set; }
     }
     public class UserDetails
     {
