@@ -3,6 +3,7 @@ using CBT.BLL.Filters;
 using CBT.BLL.Services.Class;
 using CBT.BLL.Services.Pagination;
 using CBT.BLL.Services.Student;
+using CBT.BLL.Utilities;
 using CBT.BLL.Wrappers;
 using CBT.Contracts;
 using CBT.Contracts.Authentication;
@@ -32,14 +33,18 @@ namespace CBT.BLL.Services.Result
         private readonly IHttpContextAccessor accessor;
         private readonly IStudentService studentService;
         private readonly IPaginationService paginationService;
+        private readonly IUtilityService utilityService;
+        private readonly DateTime localTime;
 
         public ResultService(DataContext context, IHttpContextAccessor accessor,
-            IStudentService studentService, IPaginationService paginationService)
+            IStudentService studentService, IPaginationService paginationService,
+            IUtilityService utilityService)
         {
             this.context = context;
             this.accessor = accessor;
             this.studentService = studentService;
             this.paginationService = paginationService;
+            this.localTime = utilityService.GetCurrentLocalDateTime();
         }
 
         public async Task<APIResponse<PagedResponse<List<SelectAllCandidateResult>>>> GetAllCandidateResult(PaginationFilter filter, string examinationId)
@@ -285,17 +290,35 @@ namespace CBT.BLL.Services.Result
             }
         }
 
-        public async Task<APIResponse<List<SelectAllCandidateResult>>> GetAdmissionCandidateResult(string candidateCategoryId)
+        public async Task<APIResponse<List<SelectAdmissionCandidateResult>>> GetAdmissionCandidateResult(string candidateCategoryId)
         {
-            var res = new APIResponse<List<SelectAllCandidateResult>>();
+            var res = new APIResponse<List<SelectAdmissionCandidateResult>>();
             try
             {
-                var examination = await context.Examination?.Where(x => x.CandidateCategoryId_ClassId.ToLower() == candidateCategoryId.ToLower() && x.Deleted != true)?.FirstOrDefaultAsync();
+                var examination = await context.Examination?.Where(x => x.CandidateCategoryId_ClassId.ToLower() == candidateCategoryId.ToLower() && x.Deleted != true)?.OrderByDescending(x=>x.CreatedOn).FirstOrDefaultAsync();
 
                 if(examination == null)
                 {
                     res.IsSuccessful = false;
                     res.Message.FriendlyMessage = "Examination has not been created for this category. Kindly create Examination.";
+                    return res;
+                }
+                if ((DateTime.Compare(examination.StartTime, localTime) == -1 || DateTime.Compare(examination.StartTime, localTime) == 0) && DateTime.Compare(examination.EndTime, localTime) == 1)
+                {
+                    res.IsSuccessful = false;
+                    res.Message.FriendlyMessage = $"This examination is in progress and will be concluded on {examination.EndTime}";
+                    return res;
+                }
+                if ((DateTime.Compare(examination.StartTime, localTime) == 1))
+                {
+                    res.IsSuccessful = false;
+                    res.Message.FriendlyMessage = $"This examination is yet to commence. Examination commences on {examination.EndTime}";
+                    return res;
+                }
+                if (examination.Status == (int)ExaminationStatus.Cancelled)
+                {
+                    res.IsSuccessful = false;
+                    res.Message.FriendlyMessage = $"This examination has been cancelled";
                     return res;
                 }
 
@@ -304,7 +327,7 @@ namespace CBT.BLL.Services.Result
                     .ToList();
 
                 var result = await context.Candidate.Where(x => x.CandidateCategoryId == Guid.Parse(examination.CandidateCategoryId_ClassId))
-                    .Select(x => new SelectAllCandidateResult(x, examination, GetTotalScore(questionIds, x.Id.ToString()))).ToListAsync();
+                    .Select(x => new SelectAdmissionCandidateResult(x, examination, GetTotalScore(questionIds, x.Id.ToString()))).ToListAsync();
 
                 res.Result = result;
                 
