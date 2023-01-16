@@ -14,6 +14,7 @@ namespace CBT.Contracts.Result
         public string CandidateName { get; set; }
         public string CandidateId { get; set; }
         public string CandidateEmail { get; set; }
+        public string ExaminationId { get; set; }
         public string ExaminationName { get; set; }
         public int TotalScore { get; set; }
         public string Status { get; set; }
@@ -22,6 +23,7 @@ namespace CBT.Contracts.Result
             CandidateId = candidate.CandidateId;
             CandidateName = $"{candidate.FirstName} {candidate.LastName}";
             CandidateEmail = candidate.Email;
+            ExaminationId = examination.ExaminationId.ToString();
             ExaminationName = examination.ExamName_Subject;
             if (string.IsNullOrEmpty(examination.CandidateIds))
             {
