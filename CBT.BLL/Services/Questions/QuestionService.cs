@@ -39,6 +39,15 @@ namespace CBT.BLL.Services.Questions
                     return res;
                 }
 
+                foreach (int answer in request.Answers)
+                {
+                    if (answer > (request.Options.Count - 1))
+                    {
+                        res.IsSuccessful = false;
+                        res.Message.FriendlyMessage = "Ops! Kindly select a valid answer.";
+                        return res;
+                    }
+                }
 
                 string options = String.Join("</option>", request.Options);
                 string answers = String.Join(",", request.Answers);
@@ -150,6 +159,16 @@ namespace CBT.BLL.Services.Questions
                     res.IsSuccessful = false;
                     res.Message.FriendlyMessage = "Questions mark must not exceed exam score!";
                     return res;
+                }
+
+                foreach (int answer in request.Answers)
+                {
+                    if (answer > (request.Options.Count - 1))
+                    {
+                        res.IsSuccessful = false;
+                        res.Message.FriendlyMessage = "Ops! Kindly select a valid answer.";
+                        return res;
+                    }
                 }
 
                 string options = String.Join("</option>", request.Options);
