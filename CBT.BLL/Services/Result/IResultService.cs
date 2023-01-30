@@ -19,5 +19,6 @@ namespace CBT.BLL.Services.Result
         Task<APIResponse<byte[]>> DownloadCandidateResult(string examinationId);
         Task<APIResponse<PagedResponse<List<SelectCandidateAnswer>>>> GetCandidateAnswers(PaginationFilter filter, string examinationId, string candidateId_regNo);
         Task<APIResponse<List<SelectAdmissionCandidateResult>>> GetAdmissionCandidateResult(string candidateCategoryId);
+        Task<APIResponse<bool>> ResetResult(string examinationId, string candidateId_regNo);
     }
 }

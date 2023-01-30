@@ -40,5 +40,13 @@ namespace CBT.Controllers.ResultController
                 return Ok(response);
             return BadRequest(response);
         }
+        [HttpGet("reset-result")]
+        public async Task<IActionResult> ResetResult(string examinationId, string candidateId_regNo)
+        {
+            var response = await service.ResetResult(examinationId, candidateId_regNo);
+            if (response.IsSuccessful)
+                return Ok(response);
+            return BadRequest(response);
+        }
     }
 }
