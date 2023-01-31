@@ -32,12 +32,13 @@ namespace CBT.Contracts.Result
                 if(examination.CandidateIds.Split(",").Contains(candidate.Id.ToString()))
                 {
                     Status = totalScore >= examination.PassMark ? "Passed" : "Failed";
+                    TotalScore = totalScore;
                 }
                 else
                 {
                     Status = "Not Taken";
+                    TotalScore = 0;
                 }
-                TotalScore = totalScore;
             }
         }
         public SelectAllCandidateResult(StudentData student, Examination examination, int totalScore)

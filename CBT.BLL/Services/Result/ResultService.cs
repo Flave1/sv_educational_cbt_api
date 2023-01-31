@@ -343,5 +343,60 @@ namespace CBT.BLL.Services.Result
                 return res;
             }
         }
+
+        public async Task<APIResponse<bool>> ResetResult(string examinationId, string candidateId_regNo)
+        {
+            var res = new APIResponse<bool>();
+            try
+            {
+                var examination = await context.Examination?.Where(x => x.ExaminationId == Guid.Parse(examinationId))?.FirstOrDefaultAsync();
+                var candidate = await context.Candidate.Where(x => x.CandidateId.ToLower() == candidateId_regNo.ToLower()).FirstOrDefaultAsync();
+
+                if (string.IsNullOrEmpty(examination.CandidateIds))
+                {
+                    res.IsSuccessful = false;
+                    res.Message.FriendlyMessage = "Candidate has not taken examination";
+                    return res;
+                }
+
+                var candidateIds = examination.CandidateIds.Split(",").ToList();
+                var candidateIndex = candidateIds.IndexOf(candidate.Id.ToString());
+
+                if (candidateIndex == -1)
+                {
+                    res.IsSuccessful = false;
+                    res.Message.FriendlyMessage = "Candidate has not taken examination";
+                    return res;
+                }
+
+                candidateIds.RemoveAt(candidateIndex);
+                examination.CandidateIds = string.Join(",", candidateIds);
+
+                var questionIds = await context.Question?.Where(x => x.ExaminationId == Guid.Parse(examinationId))
+                  .Select(x => x.QuestionId)
+                  .ToListAsync();
+
+                foreach (var item in questionIds)
+                {
+                    var candidateAnswer = await context.CandidateAnswer?.Where(x => x.QuestionId == item && x.CandidateId == candidate.Id.ToString())?.FirstOrDefaultAsync();
+                    if(candidateAnswer != null)
+                        context.CandidateAnswer.Remove(candidateAnswer);
+
+                }
+                await context.SaveChangesAsync();
+
+                res.Result = true;
+                res.IsSuccessful = true;
+                res.Message.FriendlyMessage = "Successful";
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.IsSuccessful = false;
+                res.Message.FriendlyMessage = Messages.FriendlyException;
+                res.Message.TechnicalMessage = ex.ToString();
+                return res;
+            }
+        }
     }
 }
