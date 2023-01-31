@@ -487,19 +487,31 @@ namespace CBT.BLL.Services.Candidates
 
                     foreach (var item in request.AdmissionCandidateList)
                     {
-                        var result = UtilTools.GenerateCandidateId();
-                        var candidate = new Candidate
+                        var candidate = await context.Candidate.FirstOrDefaultAsync(x => x.Email.ToLower() == item.Email.ToLower());
+                        if (candidate == null)
                         {
-                            FirstName = item.FirstName,
-                            LastName = item.LastName,
-                            OtherName = item.OtherName,
-                            PhoneNumber = item.PhoneNumber,
-                            Email = item.Email,
-                            CandidateNo = result.Keys.First(),
-                            CandidateId = result.Values.First(),
-                            CandidateCategoryId = newCategory.CandidateCategoryId
-                        };
-                        context.Candidate.Add(candidate);
+                            var result = UtilTools.GenerateCandidateId();
+                            var newCandidate = new Candidate
+                            {
+                                FirstName = item.FirstName,
+                                LastName = item.LastName,
+                                OtherName = item.OtherName,
+                                PhoneNumber = item.PhoneNumber,
+                                Email = item.Email,
+                                CandidateNo = result.Keys.First(),
+                                CandidateId = result.Values.First(),
+                                CandidateCategoryId = newCategory.CandidateCategoryId
+                            };
+                            context.Candidate.Add(candidate);
+                        }
+                        else
+                        {
+                            candidate.FirstName = item.FirstName;
+                            candidate.LastName = item.LastName;
+                            candidate.OtherName = item.OtherName;
+                            candidate.PhoneNumber = item.PhoneNumber;
+                            candidate.CandidateCategoryId = newCategory.CandidateCategoryId;
+                        }
                         await context.SaveChangesAsync();
                     };
                     res.Result = newCategory.CandidateCategoryId.ToString();
