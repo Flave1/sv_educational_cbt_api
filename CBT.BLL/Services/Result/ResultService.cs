@@ -256,27 +256,51 @@ namespace CBT.BLL.Services.Result
             }
 
         }
-        public async Task<APIResponse<PagedResponse<List<SelectCandidateAnswer>>>> GetCandidateAnswers(PaginationFilter filter, string examinationId, string candidateId_regNo)
+        public async Task<APIResponse<PagedResponse<List<SelectCandidateAnswer>>>> GetCandidateAnswers(PaginationFilter filter, string examinationId, string candidateId_regNo, string candidateEmail)
         {
             var res = new APIResponse<PagedResponse<List<SelectCandidateAnswer>>>();
             try
             {
                 var questions = await context.Question.Where(x => x.ExaminationId == Guid.Parse(examinationId)).Select(x => x.QuestionId).ToListAsync();
-                var candidate = await context.Candidate.FirstOrDefaultAsync(x => x.CandidateId.ToLower() == candidateId_regNo.ToLower());
-                if(candidate == null)
+                
+                if(string.IsNullOrEmpty(candidateEmail))
                 {
-                    res.Message.FriendlyMessage = "Candidate Id doesn't exist!";
-                    return res;
+                    var candidate = await context.Candidate.FirstOrDefaultAsync(x => x.CandidateId.ToLower() == candidateId_regNo.ToLower());
+
+                    if (candidate == null)
+                    {
+                        res.Message.FriendlyMessage = "Candidate Id doesn't exist!";
+                        return res;
+                    }
+                    var query = context.CandidateAnswer
+                        .Where(d => d.Deleted != true && questions.Contains(d.QuestionId) && d.CandidateId == candidate.Id.ToString())
+                        .Include(q => q.Question)
+                        .OrderByDescending(s => s.CreatedOn);
+
+                    var totalRecord = query.Count();
+                    var result = await paginationService.GetPagedResult(query, filter).Select(db => new SelectCandidateAnswer(db)).ToListAsync();
+                    res.Result = paginationService.CreatePagedReponse(result, filter, totalRecord);
                 }
-                var query = context.CandidateAnswer
-                    .Where(d => d.Deleted != true && questions.Contains(d.QuestionId) && d.CandidateId == candidate.Id.ToString())
-                    .Include(q => q.Question)
-                    .OrderByDescending(s => s.CreatedOn);
+                
+                if(string.IsNullOrEmpty(candidateId_regNo))
+                {
+                    var candidate = await context.Candidate.FirstOrDefaultAsync(x => x.Email.ToLower() == candidateEmail.ToLower());
 
-                var totalRecord = query.Count();
-                var result = await paginationService.GetPagedResult(query, filter).Select(db => new SelectCandidateAnswer(db)).ToListAsync();
-                res.Result = paginationService.CreatePagedReponse(result, filter, totalRecord);
+                    if (candidate == null)
+                    {
+                        res.Message.FriendlyMessage = "Candidate Email doesn't exist!";
+                        return res;
+                    }
+                    var query = context.CandidateAnswer
+                        .Where(d => d.Deleted != true && questions.Contains(d.QuestionId) && d.CandidateId == candidate.Id.ToString())
+                        .Include(q => q.Question)
+                        .OrderByDescending(s => s.CreatedOn);
 
+                    var totalRecord = query.Count();
+                    var result = await paginationService.GetPagedResult(query, filter).Select(db => new SelectCandidateAnswer(db)).ToListAsync();
+                    res.Result = paginationService.CreatePagedReponse(result, filter, totalRecord);
+                }
+                
                 res.IsSuccessful = true;
                 res.Message.FriendlyMessage = Messages.GetSuccess;
                 return res;
