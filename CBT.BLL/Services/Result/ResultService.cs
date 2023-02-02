@@ -422,5 +422,72 @@ namespace CBT.BLL.Services.Result
                 return res;
             }
         }
+
+        public async Task<APIResponse<SelectResult>> GetCandidateResult(string examinationId, string candidateId_regNo)
+        {
+            var res = new APIResponse<SelectResult>();
+            try
+            {
+                var examination = await context.Examination?.Where(x => x.ExaminationId == Guid.Parse(examinationId))?.FirstOrDefaultAsync();
+
+                var questionIds = await context.Question?.Where(x => x.ExaminationId == Guid.Parse(examinationId))
+                    .Select(x => x.QuestionId)
+                    .ToListAsync();
+
+                int totalScore = 0;
+                foreach (var item in questionIds)
+                {
+                    var answer = await context.Question?.Where(x => x.QuestionId == item)?.FirstOrDefaultAsync();
+                    var candidateAnswer = await context.CandidateAnswer?.Where(x => x.QuestionId == item && x.CandidateId == candidateId_regNo)?.FirstOrDefaultAsync();
+
+                    if (answer?.Answers == candidateAnswer?.Answers)
+                    {
+                        totalScore += answer.Mark;
+                    }
+
+                }
+
+                string status = "";
+                string candidateName = "";
+
+                if (examination.ExaminationType == (int)ExaminationType.InternalExam)
+                {
+                    status = totalScore >= examination.ExamScore ? "Passed" : "Failed";
+                    var student = await studentService.GetStudentDetails(candidateId_regNo, examination.ProductBaseurlSuffix);
+                    if (student.Result != null)
+                    {
+                        candidateName = $"{student.Result.FirstName} {student.Result.LastName}";
+                    }
+                }
+                else
+                {
+                    status = totalScore >= examination.PassMark ? "Passed" : "Failed";
+                    var candidate = await context.Candidate?.Where(x => x.Id == Guid.Parse(candidateId_regNo))?.FirstOrDefaultAsync();
+                    candidateName = $"{candidate?.FirstName} {candidate?.LastName}";
+                }
+
+                var result = new SelectResult
+                {
+                    CandidateName = candidateName,
+                    CandidateId = candidateId_regNo,
+                    ExaminationName = examination.ExamName_Subject,
+                    TotalScore = totalScore,
+                    Status = status
+                };
+
+                res.IsSuccessful = true;
+                res.Result = result;
+                res.Message.FriendlyMessage = Messages.GetSuccess;
+                return res;
+
+            }
+            catch (Exception ex)
+            {
+                res.IsSuccessful = false;
+                res.Message.FriendlyMessage = Messages.FriendlyException;
+                res.Message.TechnicalMessage = ex.ToString();
+                return res;
+            }
+        }
     }
 }
