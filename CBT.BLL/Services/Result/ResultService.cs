@@ -462,7 +462,7 @@ namespace CBT.BLL.Services.Result
                 else
                 {
                     status = totalScore >= examination.PassMark ? "Passed" : "Failed";
-                    var candidate = await context.Candidate?.Where(x => x.Id == Guid.Parse(candidateId_regNo))?.FirstOrDefaultAsync();
+                    var candidate = await context.Candidate?.Where(x => x.CandidateId.ToLower() == candidateId_regNo.ToLower())?.FirstOrDefaultAsync();
                     candidateName = $"{candidate?.FirstName} {candidate?.LastName}";
                 }
 
