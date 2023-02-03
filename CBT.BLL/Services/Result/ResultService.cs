@@ -423,7 +423,7 @@ namespace CBT.BLL.Services.Result
             }
         }
 
-        public async Task<APIResponse<SelectResult>> GetCandidateResult(string examinationId, string candidateId_regNo)
+        public async Task<APIResponse<SelectResult>> GetCandidateResult(string examinationId, string candidateId_regNo, string candidateEmail)
         {
             var res = new APIResponse<SelectResult>();
             try
@@ -461,9 +461,20 @@ namespace CBT.BLL.Services.Result
                 }
                 else
                 {
+
                     status = totalScore >= examination.PassMark ? "Passed" : "Failed";
-                    var candidate = await context.Candidate?.Where(x => x.CandidateId.ToLower() == candidateId_regNo.ToLower())?.FirstOrDefaultAsync();
-                    candidateName = $"{candidate?.FirstName} {candidate?.LastName}";
+
+                    if (string.IsNullOrEmpty(candidateEmail))
+                    {
+                        var candidate = await context.Candidate?.Where(x => x.CandidateId.ToLower() == candidateId_regNo.ToLower())?.FirstOrDefaultAsync();
+                        candidateName = $"{candidate?.FirstName} {candidate?.LastName}";
+                    }
+
+                    if(string.IsNullOrEmpty(candidateId_regNo))
+                    {
+                        var candidate = await context.Candidate?.Where(x => x.Email.ToLower() == candidateEmail.ToLower())?.FirstOrDefaultAsync();
+                        candidateName = $"{candidate?.FirstName} {candidate?.LastName}";
+                    }
                 }
 
                 var result = new SelectResult

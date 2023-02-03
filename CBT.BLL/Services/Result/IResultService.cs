@@ -20,6 +20,6 @@ namespace CBT.BLL.Services.Result
         Task<APIResponse<PagedResponse<List<SelectCandidateAnswer>>>> GetCandidateAnswers(PaginationFilter filter, string examinationId, string candidateId_regNo, string candidateEmail);
         Task<APIResponse<List<SelectAdmissionCandidateResult>>> GetAdmissionCandidateResult(string candidateCategoryId);
         Task<APIResponse<bool>> ResetResult(string examinationId, string candidateId_regNo);
-        Task<APIResponse<SelectResult>> GetCandidateResult(string examinationId, string candidateId_regNo);
+        Task<APIResponse<SelectResult>> GetCandidateResult(string examinationId, string candidateId_regNo, string candidateEmail);
     }
 }

@@ -25,9 +25,9 @@ namespace CBT.Controllers.ResultController
             return BadRequest(response);
         }
         [HttpGet("candidate-result")]
-        public async Task<IActionResult> GetCandidateResult(string examinationId, string candidateId_regNo)
+        public async Task<IActionResult> GetCandidateResult(string examinationId, string candidateId_regNo, string candidateEmail)
         {
-            var response = await service.GetCandidateResult(examinationId, candidateId_regNo);
+            var response = await service.GetCandidateResult(examinationId, candidateId_regNo, candidateEmail);
             if (response.IsSuccessful)
                 return Ok(response);
             return BadRequest(response);
