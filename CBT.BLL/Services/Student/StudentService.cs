@@ -32,7 +32,8 @@ namespace CBT.BLL.Services.Student
             var res = new APIResponse<GetAllStudentDetails>();
             try
             {
-                res = await webRequest.GetAsync<APIResponse<GetAllStudentDetails>>($"{fwsOptions.FwsBaseUrl}smp/{productBaseurlSuffix}{FwsRoutes.classStudentsSelect}PageNumber={pageNumber}&PageSize={pageSize}&sessionClassId={sessionClassId}");
+                var clientId = accessor.HttpContext.Items["smsClientId"].ToString();
+                res = await webRequest.GetAsync<APIResponse<GetAllStudentDetails>>($"{fwsOptions.FwsBaseUrl}smp/{productBaseurlSuffix}{FwsRoutes.classStudentsSelect}PageNumber={pageNumber}&PageSize={pageSize}&sessionClassId={sessionClassId}&clientId={clientId}");
                 res.IsSuccessful = true;
                 return res;
             }
@@ -47,7 +48,8 @@ namespace CBT.BLL.Services.Student
             var res = new APIResponse<List<StudentData>>();
             try
             {
-                res = await webRequest.GetAsync<APIResponse<List<StudentData>>>($"{fwsOptions.FwsBaseUrl}smp/{productBaseurlSuffix}{FwsRoutes.allClassStudentsSelect}sessionClassId={sessionClassId}");
+                var clientId = accessor.HttpContext.Items["smsClientId"].ToString();
+                res = await webRequest.GetAsync<APIResponse<List<StudentData>>>($"{fwsOptions.FwsBaseUrl}smp/{productBaseurlSuffix}{FwsRoutes.allClassStudentsSelect}sessionClassId={sessionClassId}&clientId={clientId}");
                 res.IsSuccessful = true;
                 return res;
             }
@@ -64,7 +66,8 @@ namespace CBT.BLL.Services.Student
             var res = new APIResponse<GetStudentDetails>();
             try
             {
-                res = await webRequest.GetAsync<APIResponse<GetStudentDetails>>($"{fwsOptions.FwsBaseUrl}smp/{productBaseurlSuffix}{FwsRoutes.studentByRegNoSelect}{studentRegNo}");
+                var clientId = accessor.HttpContext.Items["smsClientId"].ToString();
+                res = await webRequest.GetAsync<APIResponse<GetStudentDetails>>($"{fwsOptions.FwsBaseUrl}smp/{productBaseurlSuffix}{FwsRoutes.studentByRegNoSelect}{studentRegNo}&clientId={clientId}");
                 res.IsSuccessful = true;
                 return res;
             }
