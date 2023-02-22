@@ -35,8 +35,9 @@ namespace CBT.BLL.Services.Class
             var res = new APIResponse<List<SelectActiveClasses>>();
             try
             {
+                var clientId = accessor.HttpContext.Items["smsClientId"].ToString();
                 var productBaseurlSuffix = accessor.HttpContext.Items["productBaseurlSuffix"].ToString();
-                res = await webRequest.GetAsync<APIResponse<List<SelectActiveClasses>>>($"{fwsOptions.FwsBaseUrl}smp/{productBaseurlSuffix}{FwsRoutes.classSelect}");
+                res = await webRequest.GetAsync<APIResponse<List<SelectActiveClasses>>>($"{fwsOptions.FwsBaseUrl}smp/{productBaseurlSuffix}{FwsRoutes.classSelect}{clientId}");
                 res.IsSuccessful = true;
                 return res;
             }
@@ -51,7 +52,8 @@ namespace CBT.BLL.Services.Class
             var res = new APIResponse<SelectActiveClasses>();
             try
             {
-                res = await webRequest.GetAsync<APIResponse<SelectActiveClasses>>($"{fwsOptions.FwsBaseUrl}smp/{productBaseurlSuffix}{FwsRoutes.classByRegNoSelect}{registrationNo}");
+                var clientId = accessor.HttpContext.Items["smsClientId"].ToString();
+                res = await webRequest.GetAsync<APIResponse<SelectActiveClasses>>($"{fwsOptions.FwsBaseUrl}smp/{productBaseurlSuffix}{FwsRoutes.classByRegNoSelect}{registrationNo}&clientId={clientId}");
                 res.IsSuccessful = true;
                 return res;
             }
