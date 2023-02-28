@@ -451,7 +451,7 @@ namespace CBT.BLL.Services.Candidates
                         if(candidate == null)
                         {
                             var result = UtilTools.GenerateCandidateId();
-                            var newCandidate = new Candidate
+                            candidate = new Candidate
                             {
                                 FirstName = item.FirstName,
                                 LastName = item.LastName,
