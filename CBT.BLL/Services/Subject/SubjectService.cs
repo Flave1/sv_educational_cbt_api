@@ -30,8 +30,7 @@ namespace CBT.BLL.Services.Subject
             var res = new APIResponse<List<SelectSubjects>>();
             try
             {
-                var productBaseurlSuffix = _accessor.HttpContext.Items["productBaseurlSuffix"].ToString();
-                res = await _webRequest.GetAsync<APIResponse<List<SelectSubjects>>>($"{_fwsOptions.FwsBaseUrl}smp/{productBaseurlSuffix}{FwsRoutes.subjectSelect}");
+                res = await _webRequest.GetAsync<APIResponse<List<SelectSubjects>>>($"{_fwsOptions.FwsBaseUrl}{FwsRoutes.subjectSelect}");
                 res.IsSuccessful = true;
                 return res;
             }
@@ -47,8 +46,7 @@ namespace CBT.BLL.Services.Subject
             try
             {
                 var clientId = _accessor.HttpContext.Items["smsClientId"].ToString();
-                var productBaseurlSuffix = _accessor.HttpContext.Items["productBaseurlSuffix"].ToString();
-                res = await _webRequest.GetAsync<APIResponse<List<SelectSessionClassSubjects>>>($"{_fwsOptions.FwsBaseUrl}smp/{productBaseurlSuffix}{FwsRoutes.sessionSubjectSelect}{sessionClassId}&clientId={clientId}");
+                res = await _webRequest.GetAsync<APIResponse<List<SelectSessionClassSubjects>>>($"{_fwsOptions.FwsBaseUrl}{FwsRoutes.sessionSubjectSelect}{sessionClassId}&clientId={clientId}");
                 res.IsSuccessful = true;
                 return res;
             }
