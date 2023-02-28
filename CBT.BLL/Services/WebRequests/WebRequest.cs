@@ -1,4 +1,5 @@
 ﻿using CBT.Contracts.Options;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -33,8 +34,8 @@ namespace CBT.BLL.Services.WebRequests
                 {
                     client.DefaultRequestHeaders.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    client.DefaultRequestHeaders.Add("Apikey", fwsOptions.Apikey);
-                    client.DefaultRequestHeaders.Add("ClientId", fwsOptions.ClientId);
+                    //client.DefaultRequestHeaders.Add("Apikey", fwsOptions.Apikey);
+                    //client.DefaultRequestHeaders.Add("ClientId", fwsOptions.ClientId);
                     client.Timeout = TimeSpan.FromSeconds(1000000);
 
                     var serializeOptions = new JsonSerializerOptions
@@ -81,8 +82,8 @@ namespace CBT.BLL.Services.WebRequests
                 {
                     client.DefaultRequestHeaders.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    client.DefaultRequestHeaders.Add("Apikey", fwsOptions.Apikey);
-                    client.DefaultRequestHeaders.Add("ClientId", fwsOptions.ClientId);
+                    //client.DefaultRequestHeaders.Add("Apikey", fwsOptions.Apikey);
+                    //client.DefaultRequestHeaders.Add("ClientId", fwsOptions.ClientId);
                     client.Timeout = TimeSpan.FromSeconds(1000000);
 
                     var serializeOptions = new JsonSerializerOptions

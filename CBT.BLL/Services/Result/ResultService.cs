@@ -10,6 +10,7 @@ using CBT.Contracts.Authentication;
 using CBT.Contracts.CandidateAnswers;
 using CBT.Contracts.Result;
 using CBT.DAL;
+using CBT.DAL.Models.Candidates;
 using CBT.DAL.Models.Examinations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -69,7 +70,7 @@ namespace CBT.BLL.Services.Result
 
                 if (examination.ExaminationType == (int)ExaminationType.InternalExam)
                 {
-                    var students = await studentService.GetAllStudentDetails(filter.PageNumber, filter.PageSize, examination.CandidateCategoryId_ClassId, examination.ProductBaseurlSuffix);
+                    var students = await studentService.GetAllStudentDetails(filter.PageNumber, filter.PageSize, examination.CandidateCategoryId_ClassId);
                     if(students.Result != null)
                     {
                         var totalRecord = students.Result.TotalRecords;
@@ -127,7 +128,7 @@ namespace CBT.BLL.Services.Result
                 if(examination.ExaminationType == (int)ExaminationType.InternalExam)
                 {
                     status = totalScore >= examination.ExamScore ? "Passed" : "Failed";
-                    var student = await studentService.GetStudentDetails(candidateId_regNo, examination.ProductBaseurlSuffix);
+                    var student = await studentService.GetStudentDetails(candidateId_regNo);
                     if(student.Result != null)
                     {
                         candidateName = $"{student.Result.FirstName} {student.Result.LastName}";
@@ -205,7 +206,7 @@ namespace CBT.BLL.Services.Result
                 }
                 else
                 {
-                    var students = await studentService.GetAllClassStudentDetails(examination.CandidateCategoryId_ClassId, examination.ProductBaseurlSuffix);
+                    var students = await studentService.GetAllClassStudentDetails(examination.CandidateCategoryId_ClassId);
                     if (students.Result != null)
                     {
                         candidatesResult = students.Result.Select(x => new SelectAllCandidateResult(x, examination, GetTotalScore(questionIds, x.RegistrationNumber.ToString()))).ToList(); 
@@ -434,11 +435,24 @@ namespace CBT.BLL.Services.Result
                     .Select(x => x.QuestionId)
                     .ToListAsync();
 
+                var candidate = new Candidate();
+
+                if (string.IsNullOrEmpty(candidateEmail))
+                {
+                    candidate = await context.Candidate?.Where(x => x.CandidateId.ToLower() == candidateId_regNo.ToLower())?.FirstOrDefaultAsync();
+                }
+
+                if (string.IsNullOrEmpty(candidateId_regNo))
+                {
+                    candidate = await context.Candidate?.Where(x => x.Email.ToLower() == candidateEmail.ToLower())?.FirstOrDefaultAsync();
+                }
+
+
                 int totalScore = 0;
                 foreach (var item in questionIds)
                 {
                     var answer = await context.Question?.Where(x => x.QuestionId == item)?.FirstOrDefaultAsync();
-                    var candidateAnswer = await context.CandidateAnswer?.Where(x => x.QuestionId == item && x.CandidateId == candidateId_regNo)?.FirstOrDefaultAsync();
+                    var candidateAnswer = await context.CandidateAnswer?.Where(x => x.QuestionId == item && x.CandidateId == candidate.Id.ToString())?.FirstOrDefaultAsync();
 
                     if (answer?.Answers == candidateAnswer?.Answers)
                     {
@@ -453,7 +467,7 @@ namespace CBT.BLL.Services.Result
                 if (examination.ExaminationType == (int)ExaminationType.InternalExam)
                 {
                     status = totalScore >= examination.ExamScore ? "Passed" : "Failed";
-                    var student = await studentService.GetStudentDetails(candidateId_regNo, examination.ProductBaseurlSuffix);
+                    var student = await studentService.GetStudentDetails(candidateId_regNo);
                     if (student.Result != null)
                     {
                         candidateName = $"{student.Result.FirstName} {student.Result.LastName}";
@@ -463,18 +477,7 @@ namespace CBT.BLL.Services.Result
                 {
 
                     status = totalScore >= examination.PassMark ? "Passed" : "Failed";
-
-                    if (string.IsNullOrEmpty(candidateEmail))
-                    {
-                        var candidate = await context.Candidate?.Where(x => x.CandidateId.ToLower() == candidateId_regNo.ToLower())?.FirstOrDefaultAsync();
-                        candidateName = $"{candidate?.FirstName} {candidate?.LastName}";
-                    }
-
-                    if(string.IsNullOrEmpty(candidateId_regNo))
-                    {
-                        var candidate = await context.Candidate?.Where(x => x.Email.ToLower() == candidateEmail.ToLower())?.FirstOrDefaultAsync();
-                        candidateName = $"{candidate?.FirstName} {candidate?.LastName}";
-                    }
+                    candidateName = $"{candidate?.FirstName} {candidate?.LastName}";
                 }
 
                 var result = new SelectResult

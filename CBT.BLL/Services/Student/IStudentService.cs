@@ -11,8 +11,8 @@ namespace CBT.BLL.Services.Student
 {
     public interface IStudentService
     {
-        Task<APIResponse<GetStudentDetails>> GetStudentDetails(string studentRegNo, string productBaseurlSuffix);
-        Task<APIResponse<GetAllStudentDetails>> GetAllStudentDetails(int pageNumber, int pageSize, string sessionClassId, string productBaseurlSuffix);
-        Task<APIResponse<List<StudentData>>> GetAllClassStudentDetails(string sessionClassId, string productBaseurlSuffix);
+        Task<APIResponse<GetStudentDetails>> GetStudentDetails(string studentRegNo);
+        Task<APIResponse<GetAllStudentDetails>> GetAllStudentDetails(int pageNumber, int pageSize, string sessionClassId);
+        Task<APIResponse<List<StudentData>>> GetAllClassStudentDetails(string sessionClassId);
     }
 }

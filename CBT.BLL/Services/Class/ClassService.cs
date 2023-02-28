@@ -36,8 +36,7 @@ namespace CBT.BLL.Services.Class
             try
             {
                 var clientId = accessor.HttpContext.Items["smsClientId"].ToString();
-                var productBaseurlSuffix = accessor.HttpContext.Items["productBaseurlSuffix"].ToString();
-                res = await webRequest.GetAsync<APIResponse<List<SelectActiveClasses>>>($"{fwsOptions.FwsBaseUrl}smp/{productBaseurlSuffix}{FwsRoutes.classSelect}{clientId}");
+                res = await webRequest.GetAsync<APIResponse<List<SelectActiveClasses>>>($"{fwsOptions.FwsBaseUrl}{FwsRoutes.classSelect}{clientId}");
                 res.IsSuccessful = true;
                 return res;
             }
