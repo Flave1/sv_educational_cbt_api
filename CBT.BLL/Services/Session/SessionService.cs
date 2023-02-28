@@ -31,8 +31,7 @@ namespace CBT.BLL.Services.Session
             try
             {
                 var clientId = _accessor.HttpContext.Items["smsClientId"].ToString();
-                var productBaseurlSuffix = _accessor.HttpContext.Items["productBaseurlSuffix"].ToString();
-                res = await _webRequest.GetAsync<APIResponse<SelectActiveSession>>($"{_fwsOptions.FwsBaseUrl}smp/{productBaseurlSuffix}{FwsRoutes.activeSessionSelect}{examScore}&asExamScore={asExamScore}&asAssessmentScore={asAssessmentScore}&clientId={clientId}");
+                res = await _webRequest.GetAsync<APIResponse<SelectActiveSession>>($"{_fwsOptions.FwsBaseUrl}{FwsRoutes.activeSessionSelect}{examScore}&asExamScore={asExamScore}&asAssessmentScore={asAssessmentScore}&clientId={clientId}");
                 res.IsSuccessful = true;
                 return res;
             }

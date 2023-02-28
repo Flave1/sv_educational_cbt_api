@@ -27,13 +27,13 @@ namespace CBT.BLL.Services.Student
             this.webRequest = webRequest;
             this.accessor = accessor;
         }
-        public async Task<APIResponse<GetAllStudentDetails>> GetAllStudentDetails(int pageNumber, int pageSize, string sessionClassId, string productBaseurlSuffix)
+        public async Task<APIResponse<GetAllStudentDetails>> GetAllStudentDetails(int pageNumber, int pageSize, string sessionClassId)
         {
             var res = new APIResponse<GetAllStudentDetails>();
             try
             {
                 var clientId = accessor.HttpContext.Items["smsClientId"].ToString();
-                res = await webRequest.GetAsync<APIResponse<GetAllStudentDetails>>($"{fwsOptions.FwsBaseUrl}smp/{productBaseurlSuffix}{FwsRoutes.classStudentsSelect}PageNumber={pageNumber}&PageSize={pageSize}&sessionClassId={sessionClassId}&clientId={clientId}");
+                res = await webRequest.GetAsync<APIResponse<GetAllStudentDetails>>($"{fwsOptions.FwsBaseUrl}{FwsRoutes.classStudentsSelect}PageNumber={pageNumber}&PageSize={pageSize}&sessionClassId={sessionClassId}&clientId={clientId}");
                 res.IsSuccessful = true;
                 return res;
             }
@@ -43,13 +43,13 @@ namespace CBT.BLL.Services.Student
                 throw ex;
             }
         }
-        public async Task<APIResponse<List<StudentData>>> GetAllClassStudentDetails(string sessionClassId, string productBaseurlSuffix)
+        public async Task<APIResponse<List<StudentData>>> GetAllClassStudentDetails(string sessionClassId)
         {
             var res = new APIResponse<List<StudentData>>();
             try
             {
                 var clientId = accessor.HttpContext.Items["smsClientId"].ToString();
-                res = await webRequest.GetAsync<APIResponse<List<StudentData>>>($"{fwsOptions.FwsBaseUrl}smp/{productBaseurlSuffix}{FwsRoutes.allClassStudentsSelect}sessionClassId={sessionClassId}&clientId={clientId}");
+                res = await webRequest.GetAsync<APIResponse<List<StudentData>>>($"{fwsOptions.FwsBaseUrl}{FwsRoutes.allClassStudentsSelect}sessionClassId={sessionClassId}&clientId={clientId}");
                 res.IsSuccessful = true;
                 return res;
             }
@@ -61,13 +61,13 @@ namespace CBT.BLL.Services.Student
         }
 
 
-        public async Task<APIResponse<GetStudentDetails>> GetStudentDetails(string studentRegNo, string productBaseurlSuffix)
+        public async Task<APIResponse<GetStudentDetails>> GetStudentDetails(string studentRegNo)
         {
             var res = new APIResponse<GetStudentDetails>();
             try
             {
                 var clientId = accessor.HttpContext.Items["smsClientId"].ToString();
-                res = await webRequest.GetAsync<APIResponse<GetStudentDetails>>($"{fwsOptions.FwsBaseUrl}smp/{productBaseurlSuffix}{FwsRoutes.studentByRegNoSelect}{studentRegNo}&clientId={clientId}");
+                res = await webRequest.GetAsync<APIResponse<GetStudentDetails>>($"{fwsOptions.FwsBaseUrl}{FwsRoutes.studentByRegNoSelect}{studentRegNo}&clientId={clientId}");
                 res.IsSuccessful = true;
                 return res;
             }
