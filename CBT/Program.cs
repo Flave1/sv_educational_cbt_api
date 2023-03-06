@@ -17,6 +17,8 @@ builder.Services.AddCors(p => p.AddPolicy("DevCorsPolicy", builder =>
 }));
 
 var app = builder.Build();
+
+app.UseStaticFiles();
 app.UseCors("DevCorsPolicy");
 // Configure the HTTP request pipeline.
 app.UseSwagger();
