@@ -57,6 +57,7 @@ namespace CBT.DAL
                     entry.Entity.CreatedBy = clientId;
                     entry.Entity.UserType = string.IsNullOrEmpty(clientId) ? 1 : 0;
                     entry.Entity.ClientId = Guid.Parse(clientId);
+                    entry.Entity.SmsClientId = smsClientId;
                 }
                 else
                 {
@@ -64,6 +65,7 @@ namespace CBT.DAL
                     entry.Entity.UpdatedBy = clientId;
                     entry.Entity.UserType = string.IsNullOrEmpty(clientId) ? 1 : 0;
                     entry.Entity.ClientId = Guid.Parse(clientId);
+                    entry.Entity.SmsClientId = smsClientId;
                 }
             }
             return base.SaveChanges();
@@ -82,6 +84,7 @@ namespace CBT.DAL
                     entry.Entity.CreatedBy = clientId;
                     entry.Entity.UserType = string.IsNullOrEmpty(smsClientId) ? 1 : 0;
                     entry.Entity.ClientId = clientId != "" ? Guid.Parse(clientId) : Guid.Empty;
+                    entry.Entity.SmsClientId = smsClientId;
                 }
                 else
                 {
@@ -89,6 +92,7 @@ namespace CBT.DAL
                     entry.Entity.UpdatedBy = clientId;
                     entry.Entity.UserType = string.IsNullOrEmpty(smsClientId) ? 1 : 0;
                     entry.Entity.ClientId = clientId != "" ? Guid.Parse(clientId) : Guid.Empty;
+                    entry.Entity.SmsClientId = smsClientId;
                 }
             }
             return base.SaveChangesAsync(cancellationToken);

@@ -251,7 +251,7 @@ namespace CBT.BLL.Services.CandidateAnswers
             }
             else
             {
-                accessor.HttpContext.Items["smsClientId"] = examination.ClientId; 
+                accessor.HttpContext.Items["smsClientId"] = examination.SmsClientId; 
             }
         }
     }

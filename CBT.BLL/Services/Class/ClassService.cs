@@ -35,8 +35,8 @@ namespace CBT.BLL.Services.Class
             var res = new APIResponse<List<SelectActiveClasses>>();
             try
             {
-                var clientId = accessor.HttpContext.Items["smsClientId"].ToString();
-                res = await webRequest.GetAsync<APIResponse<List<SelectActiveClasses>>>($"{fwsOptions.FwsBaseUrl}{FwsRoutes.classSelect}{clientId}");
+                var smsClientId = accessor.HttpContext.Items["smsClientId"].ToString();
+                res = await webRequest.GetAsync<APIResponse<List<SelectActiveClasses>>>($"{fwsOptions.FwsBaseUrl}{FwsRoutes.classSelect}{smsClientId}");
                 res.IsSuccessful = true;
                 return res;
             }
@@ -46,13 +46,12 @@ namespace CBT.BLL.Services.Class
                 throw ex;
             }
         }
-        public async Task<APIResponse<SelectActiveClasses>> GetActiveClassByRegNo(string registrationNo, string productBaseurlSuffix)
+        public async Task<APIResponse<SelectActiveClasses>> GetActiveClassByRegNo(string registrationNo, string smsClientId)
         {
             var res = new APIResponse<SelectActiveClasses>();
             try
             {
-                var clientId = accessor.HttpContext.Items["smsClientId"].ToString();
-                res = await webRequest.GetAsync<APIResponse<SelectActiveClasses>>($"{fwsOptions.FwsBaseUrl}smp/{productBaseurlSuffix}{FwsRoutes.classByRegNoSelect}{registrationNo}&clientId={clientId}");
+                res = await webRequest.GetAsync<APIResponse<SelectActiveClasses>>($"{fwsOptions.FwsBaseUrl}{FwsRoutes.classByRegNoSelect}{registrationNo}&clientId={smsClientId}");
                 res.IsSuccessful = true;
                 return res;
             }

@@ -13,6 +13,6 @@ namespace CBT.BLL.Services.Class
     public interface IClassService
     {
         Task<APIResponse<List<SelectActiveClasses>>> GetActiveClasses();
-        Task<APIResponse<SelectActiveClasses>> GetActiveClassByRegNo(string registrationNo, string productBaseurlSuffix);
+        Task<APIResponse<SelectActiveClasses>> GetActiveClassByRegNo(string registrationNo, string smsClientId);
     }
 }

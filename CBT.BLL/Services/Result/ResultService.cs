@@ -10,6 +10,7 @@ using CBT.Contracts.Authentication;
 using CBT.Contracts.CandidateAnswers;
 using CBT.Contracts.Result;
 using CBT.DAL;
+using CBT.DAL.Models.Candidate;
 using CBT.DAL.Models.Candidates;
 using CBT.DAL.Models.Examinations;
 using Microsoft.AspNetCore.Http;
@@ -374,8 +375,7 @@ namespace CBT.BLL.Services.Result
             var res = new APIResponse<bool>();
             try
             {
-                var examination = await context.Examination?.Where(x => x.ExaminationId == Guid.Parse(examinationId))?.FirstOrDefaultAsync();
-                var candidate = await context.Candidate.Where(x => x.CandidateId.ToLower() == candidateId_regNo.ToLower()).FirstOrDefaultAsync();
+                var examination = await context.Examination?.Where(x => x.ExaminationId == Guid.Parse(examinationId))?.FirstOrDefaultAsync();    
 
                 if (string.IsNullOrEmpty(examination.CandidateIds))
                 {
@@ -385,7 +385,18 @@ namespace CBT.BLL.Services.Result
                 }
 
                 var candidateIds = examination.CandidateIds.Split(",").ToList();
-                var candidateIndex = candidateIds.IndexOf(candidate.Id.ToString());
+                
+                var candidate = new Candidate();
+                int candidateIndex;
+                if (examination.ExaminationType == (int)ExaminationType.ExternalExam)
+                {
+                    candidate = await context.Candidate.Where(x => x.CandidateId.ToLower() == candidateId_regNo.ToLower()).FirstOrDefaultAsync();
+                    candidateIndex = candidateIds.IndexOf(candidate.Id.ToString());
+                }
+                else
+                {
+                    candidateIndex = candidateIds.IndexOf(candidateId_regNo);
+                }
 
                 if (candidateIndex == -1)
                 {
@@ -403,7 +414,16 @@ namespace CBT.BLL.Services.Result
 
                 foreach (var item in questionIds)
                 {
-                    var candidateAnswer = await context.CandidateAnswer?.Where(x => x.QuestionId == item && x.CandidateId == candidate.Id.ToString())?.FirstOrDefaultAsync();
+                    var candidateAnswer = new CandidateAnswer();
+                    if (examination.ExaminationType == (int)ExaminationType.ExternalExam)
+                    {
+                        candidateAnswer = await context.CandidateAnswer?.Where(x => x.QuestionId == item && x.CandidateId == candidate.Id.ToString())?.FirstOrDefaultAsync();
+                    }
+                    else
+                    {
+                        candidateAnswer = await context.CandidateAnswer?.Where(x => x.QuestionId == item && x.CandidateId == candidateId_regNo)?.FirstOrDefaultAsync();
+                    }
+                    
                     if(candidateAnswer != null)
                         context.CandidateAnswer.Remove(candidateAnswer);
 
