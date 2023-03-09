@@ -9,5 +9,6 @@
         public string UpdatedBy { get; set; }
         public Guid ClientId { get; set; }
         public int UserType { get; set; }
+        public string SmsClientId { get; set; }
     }
 }

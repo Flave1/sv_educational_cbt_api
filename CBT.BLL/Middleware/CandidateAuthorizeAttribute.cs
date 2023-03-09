@@ -1,6 +1,7 @@
 ﻿using CBT.BLL.Constants;
 using CBT.Contracts;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Primitives;
@@ -51,6 +52,7 @@ namespace CBT.BLL.Middleware
 
                 var examinationId = tokena.Claims.FirstOrDefault(x => x.Type == "examinationId").Value ?? "";
                 var candidateId_regNo = tokena.Claims.FirstOrDefault(x => x.Type == "candidateId_regNo").Value ?? "";
+                var smsClientId = tokena.Claims.FirstOrDefault(x => x.Type == "smsClientId").Value ?? "";
 
                 if (string.IsNullOrEmpty(examinationId) || string.IsNullOrEmpty(candidateId_regNo))
                 {
@@ -60,6 +62,7 @@ namespace CBT.BLL.Middleware
                 }
                 context.HttpContext.Items["examinationId"] = examinationId;
                 context.HttpContext.Items["candidateId_regNo"] = candidateId_regNo;
+                context.HttpContext.Items["smsClientId"] = smsClientId;
 
                 await next();
                 return;

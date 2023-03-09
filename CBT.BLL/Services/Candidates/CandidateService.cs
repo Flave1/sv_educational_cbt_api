@@ -317,7 +317,7 @@ namespace CBT.BLL.Services.Candidates
                 }
                 var result = new CandidateLoginDetails
                 {
-                    AuthDetails = await GenerateAuthenticationToken(examinationDetails.ExaminationId, candidate.Id),
+                    AuthDetails = await GenerateAuthenticationToken(examinationDetails.ExaminationId, candidate.Id, examination.FirstOrDefault().SmsClientId),
                     ExaminationDetails = examinationDetails,
                     Settings = await context.Setting?.Where(d => d.Deleted != true && d.ClientId == clientId)
                     .Select(db => new SelectSettings(db)).FirstOrDefaultAsync(),
@@ -339,7 +339,7 @@ namespace CBT.BLL.Services.Candidates
             }
         }
 
-        private async Task<AuthDetails> GenerateAuthenticationToken(string examinationId, string candidateId_regNo)
+        private async Task<AuthDetails> GenerateAuthenticationToken(string examinationId, string candidateId_regNo, string smsClientId)
         {
             var claims = new List<Claim>
             {
@@ -347,7 +347,8 @@ namespace CBT.BLL.Services.Candidates
                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                new Claim(JwtRegisteredClaimNames.Email, candidateId_regNo),
                new Claim("examinationId", examinationId),
-               new Claim("candidateId_regNo", candidateId_regNo)
+               new Claim("candidateId_regNo", candidateId_regNo),
+               new Claim("smsClientId", smsClientId)
             };
            
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.GetSection("Jwt:Key").Value));
@@ -379,7 +380,7 @@ namespace CBT.BLL.Services.Candidates
                     return res;
                 }
 
-                var studentClass = await classService.GetActiveClassByRegNo(request.RegistrationNo, examination.FirstOrDefault().ProductBaseurlSuffix);
+                var studentClass = await classService.GetActiveClassByRegNo(request.RegistrationNo, examination.FirstOrDefault().SmsClientId);
                 if(studentClass.Result == null)
                 {
                     res.IsSuccessful = false;
@@ -413,7 +414,7 @@ namespace CBT.BLL.Services.Candidates
                 }
                 var result = new CandidateLoginDetails
                 {
-                    AuthDetails = await GenerateAuthenticationToken(examinationDetails.ExaminationId, request.RegistrationNo),
+                    AuthDetails = await GenerateAuthenticationToken(examinationDetails.ExaminationId, request.RegistrationNo, examination.FirstOrDefault().SmsClientId),
                     ExaminationDetails = examinationDetails,
                     Settings = await context.Setting?.Where(d => d.Deleted != true && d.ClientId == clientId)
                     .Select(db => new SelectSettings(db)).FirstOrDefaultAsync(),

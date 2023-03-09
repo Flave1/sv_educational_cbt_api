@@ -15,7 +15,7 @@ namespace CBT.Controllers.ClassControllers
             _service = service;
         }
         [HttpGet("get-active-classes")]
-        public async Task<IActionResult> GetActiveSubjects()
+        public async Task<IActionResult> GetActiveClasses()
         {
             var response = await _service.GetActiveClasses();
             if(response.IsSuccessful)
