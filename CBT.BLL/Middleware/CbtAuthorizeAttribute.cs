@@ -69,7 +69,6 @@ namespace CBT.BLL.Middleware
                     context.HttpContext.Items["userType"] = (int)UserType.SMSUser;
                 }
                 context.HttpContext.Items["userId"] = userId;
-                context.HttpContext.Items["productBaseurlSuffix"] = productBaseurlSuffix;
                 context.HttpContext.Items["smsClientId"] = smsClientId;
 
                 await next();

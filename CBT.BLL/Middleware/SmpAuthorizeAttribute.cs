@@ -22,7 +22,6 @@ namespace CBT.BLL.Middleware
             {
                 StringValues userId= context.HttpContext.Request.Headers["userId"];
                 StringValues smsClientId = context.HttpContext.Request.Headers["smsClientId"];
-                StringValues productBaseurlSuffix = context.HttpContext.Request.Headers["productBaseurlSuffix"];
 
                 StringValues examinationId = context.HttpContext.Request.Headers["examinationId"];
                 StringValues candidateId_regNo = context.HttpContext.Request.Headers["candidateId_regNo"];
@@ -49,7 +48,6 @@ namespace CBT.BLL.Middleware
                     context.HttpContext.Items["userType"] = (int)UserType.SMSUser;
                 }
                 context.HttpContext.Items["userId"] = userId;
-                context.HttpContext.Items["productBaseurlSuffix"] = productBaseurlSuffix;
                 context.HttpContext.Items["smsClientId"] = smsClientId;
 
                 context.HttpContext.Items["examinationId"] = examinationId;
