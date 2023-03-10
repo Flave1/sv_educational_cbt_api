@@ -78,7 +78,6 @@ namespace CBT.BLL.Services.Authentication
 
             var userId = tokena.Claims.FirstOrDefault(x => x.Type == "userId").Value;
             var smsClientId = tokena.Claims.FirstOrDefault(x => x.Type == "smsClientId").Value;
-            var productBaseurlSuffix = tokena.Claims.FirstOrDefault(x => x.Type == "productBaseurlSuffix").Value;
             var email = tokena.Claims.FirstOrDefault(x => x.Type == "email").Value;
 
             int userType;
@@ -106,7 +105,6 @@ namespace CBT.BLL.Services.Authentication
                new Claim(JwtRegisteredClaimNames.Email, email),
                new Claim("userId", userId),
                new Claim("smsClientId", smsClientId),
-               new Claim("productBaseurlSuffix", productBaseurlSuffix),
                new Claim("userType", userType.ToString())
             };
 
