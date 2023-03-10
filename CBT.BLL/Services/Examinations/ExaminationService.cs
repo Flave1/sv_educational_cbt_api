@@ -84,7 +84,6 @@ namespace CBT.BLL.Services.Examinations
                     Status = request.Status,
                     ExaminationType = request.ExaminationType,
                     PassMark = request.PassMark,
-                    ProductBaseurlSuffix = accessor?.HttpContext?.Items["productBaseurlSuffix"].ToString() ?? ""
                 };
 
                 context.Examination.Add(examination);
@@ -252,7 +251,6 @@ namespace CBT.BLL.Services.Examinations
                 result.Status = request.Status;
                 result.ExaminationType = request.ExaminationType;
                 result.PassMark = request.PassMark;
-                result.ProductBaseurlSuffix = accessor?.HttpContext?.Items["productBaseurlSuffix"].ToString() ?? "";
 
                 await context.SaveChangesAsync();
                 res.Result = request;

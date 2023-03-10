@@ -244,7 +244,6 @@ namespace CBT.BLL.Services.CandidateAnswers
         private async Task SetExaminerDetails(Examination examination)
         {
             accessor.HttpContext.Items["userId"] = examination.ClientId;
-            accessor.HttpContext.Items["productBaseurlSuffix"] = examination.ProductBaseurlSuffix;
             if(examination.UserType == (int)UserType.NonSMSUser)
             {
                 accessor.HttpContext.Items["smsClientId"] = string.Empty;
