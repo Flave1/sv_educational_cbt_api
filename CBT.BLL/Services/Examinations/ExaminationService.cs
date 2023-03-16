@@ -88,6 +88,7 @@ namespace CBT.BLL.Services.Examinations
 
                 context.Examination.Add(examination);
                 await context.SaveChangesAsync();
+                request.ExaminationId = examination.ExaminationId.ToString();
                 res.Result = request;
                 res.IsSuccessful = true;
                 res.Message.FriendlyMessage = Messages.Created;

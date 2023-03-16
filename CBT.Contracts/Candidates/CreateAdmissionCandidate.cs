@@ -10,6 +10,7 @@ namespace CBT.Contracts.Candidates
     public class CreateAdmissionCandidate
     {
         public string CandidateCategory { get; set; }
+        public string CategoryName { get; set; }
         public List<AdmissionCandidateList> AdmissionCandidateList { get; set; }
     }
     public class AdmissionCandidateList
@@ -19,5 +20,11 @@ namespace CBT.Contracts.Candidates
         public string OtherName { get; set; }
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
+    }
+
+    public class SMPCbtCreateCandidateResponse
+    {
+        public string CategoryName { get; set; }
+        public string CategoryId { get; set; }
     }
 }

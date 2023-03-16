@@ -8,6 +8,7 @@ namespace CBT.Contracts.Examinations
 {
     public class CreateExamination
     {
+        public string ExaminationId { get; set; }
         public string ExamName_SubjectId { get; set; }
         public string ExamName_Subject { get; set; }
         public string CandidateCategoryId_ClassId { get; set; }
