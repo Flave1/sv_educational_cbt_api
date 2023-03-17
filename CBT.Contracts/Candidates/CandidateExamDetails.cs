@@ -10,5 +10,6 @@ namespace CBT.Contracts.Candidates
     public class CandidateExamDetails
     {
         public int ExaminationType { get; set; }
+        public int ExaminationStatus { get; set; }
     }
 }

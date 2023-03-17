@@ -251,7 +251,8 @@ namespace CBT.BLL.Services.Candidates
 
                 var result = new CandidateExamDetails
                 {
-                    ExaminationType = examination.ExamintionType
+                    ExaminationType = examination.ExamintionType,
+                    ExaminationStatus = examination.Status
                 };
 
                 res.IsSuccessful = true;
@@ -515,6 +516,34 @@ namespace CBT.BLL.Services.Candidates
             categery.Name = name;
             await context.SaveChangesAsync();
             return categery;
+        }
+
+        public async Task<APIResponse<PagedResponse<List<SelectCandidates>>>> GetAllCandidateByCategory(PaginationFilter filter, string categoryId)
+        {
+            var res = new APIResponse<PagedResponse<List<SelectCandidates>>>();
+            try
+            {
+                var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
+                var query = context.Candidate
+                    .Where(c => c.Deleted != true && c.ClientId == clientId && c.CandidateCategoryId == Guid.Parse(categoryId))
+                    .Include(c => c.Category)
+                    .OrderByDescending(c => c.CreatedOn);
+
+                var totalRecord = query.Count();
+                var result = await paginationService.GetPagedResult(query, filter).Select(d => new SelectCandidates(d)).ToListAsync();
+                res.Result = paginationService.CreatePagedReponse(result, filter, totalRecord);
+
+                res.IsSuccessful = true;
+                res.Message.FriendlyMessage = Messages.GetSuccess;
+                return res;
+            }
+            catch (Exception ex)
+            {
+                res.IsSuccessful = false;
+                res.Message.FriendlyMessage = Messages.FriendlyException;
+                res.Message.TechnicalMessage = ex.ToString();
+                return res;
+            }
         }
     }
 

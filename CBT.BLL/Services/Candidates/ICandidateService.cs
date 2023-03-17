@@ -16,6 +16,7 @@ namespace CBT.BLL.Services.Candidates
     {
         Task<APIResponse<string>> CreateCandidate(CreateCandidate request);
         Task<APIResponse<PagedResponse<List<SelectCandidates>>>> GetAllCandidates(PaginationFilter filter);
+        Task<APIResponse<PagedResponse<List<SelectCandidates>>>> GetAllCandidateByCategory(PaginationFilter filter, string categoryId);
         Task<APIResponse<SelectCandidates>> GetCandidate(string candidateId);
         Task<APIResponse<string>> UpdateCandidate(UpdateCandidate request);
         Task<APIResponse<bool>> DeleteCandidate(SingleDelete request);

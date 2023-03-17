@@ -267,15 +267,14 @@ namespace CBT.BLL.Services.Result
                 
                 if(string.IsNullOrEmpty(candidateEmail))
                 {
-                    var candidate = await context.Candidate.FirstOrDefaultAsync(x => x.CandidateId.ToLower() == candidateId_regNo.ToLower());
-
-                    if (candidate == null)
+                    var student = await studentService.GetStudentDetails(candidateId_regNo);
+                    if (student.Result == null)
                     {
-                        res.Message.FriendlyMessage = "Candidate Id doesn't exist!";
+                        res.Message.FriendlyMessage = student.Message.FriendlyMessage;
                         return res;
                     }
                     var query = context.CandidateAnswer
-                        .Where(d => d.Deleted != true && questions.Contains(d.QuestionId) && d.CandidateId == candidate.Id.ToString())
+                        .Where(d => d.Deleted != true && questions.Contains(d.QuestionId) && d.CandidateId == candidateId_regNo)
                         .Include(q => q.Question)
                         .OrderByDescending(s => s.CreatedOn);
 
