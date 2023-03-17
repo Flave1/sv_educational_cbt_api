@@ -42,6 +42,14 @@ namespace CBT.Controllers.CandidateController
                 return Ok(response);
             return BadRequest(response);
         }
+        [HttpGet("get-candidates-by-category")]
+        public async Task<IActionResult> GetAllCandidateByCategory(PaginationFilter filter, string categoryId)
+        {
+            var response = await _service.GetAllCandidateByCategory(filter, categoryId);
+            if (response.IsSuccessful)
+                return Ok(response);
+            return BadRequest(response);
+        }
         [HttpPost("update")]
         public async Task<IActionResult> UpdateCandidate([FromForm]UpdateCandidate request)
         {
