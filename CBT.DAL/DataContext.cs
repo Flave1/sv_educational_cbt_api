@@ -80,7 +80,7 @@ namespace CBT.DAL
                 if (entry.State == EntityState.Added)
                 {
                     entry.Entity.Deleted = false;
-                    entry.Entity.CreatedOn = DateTime.Now;
+                    entry.Entity.CreatedOn = GetCurrentLocalDateTime();
                     entry.Entity.CreatedBy = clientId;
                     entry.Entity.UserType = string.IsNullOrEmpty(smsClientId) ? 1 : 0;
                     entry.Entity.ClientId = clientId != "" ? Guid.Parse(clientId) : Guid.Empty;
@@ -88,7 +88,7 @@ namespace CBT.DAL
                 }
                 else
                 {
-                    entry.Entity.UpdatedOn = DateTime.Now;
+                    entry.Entity.UpdatedOn = GetCurrentLocalDateTime();
                     entry.Entity.UpdatedBy = clientId;
                     entry.Entity.UserType = string.IsNullOrEmpty(smsClientId) ? 1 : 0;
                     entry.Entity.ClientId = clientId != "" ? Guid.Parse(clientId) : Guid.Empty;
@@ -96,6 +96,12 @@ namespace CBT.DAL
                 }
             }
             return base.SaveChangesAsync(cancellationToken);
+        }
+        public DateTime GetCurrentLocalDateTime()
+        {
+            DateTime serverTime = DateTime.Now;
+            DateTime localTime = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(serverTime, TimeZoneInfo.Local.Id, "W. Central Africa Standard Time");
+            return localTime;
         }
     }
 }
