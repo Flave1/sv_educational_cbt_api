@@ -20,9 +20,9 @@ namespace CBT.Controllers.AdmissionControllers
         }
 
         [HttpGet("get-all-examination/by-sessionclass")]
-        public async Task<IActionResult> GetAllExamination2(PaginationFilter filter, string sessionClassId)
+        public async Task<IActionResult> GetAllExamination2(PaginationFilter filter, string sessionClassId, string subjectId)
         {
-            var response = await examService.GetAllExamination2(filter, sessionClassId);
+            var response = await examService.GetAllExamination2(filter, sessionClassId, subjectId);
             if (response.IsSuccessful)
                 return Ok(response);
             return BadRequest(response);

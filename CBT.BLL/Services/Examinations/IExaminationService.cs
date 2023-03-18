@@ -20,6 +20,6 @@ namespace CBT.BLL.Services.Examinations
         Task<APIResponse<UpdateExamination>> UpdateExamination(UpdateExamination request);
         Task<APIResponse<bool>> DeleteExamination(SingleDelete request);
         Task<APIResponse<PagedResponse<List<SelectExamination>>>> GetExaminationByStatus(PaginationFilter filter, int examStatus);
-        Task<APIResponse<PagedResponse<List<SelectExamination2>>>> GetAllExamination2(PaginationFilter filter, string sessionClassId);
+        Task<APIResponse<PagedResponse<List<SelectExamination2>>>> GetAllExamination2(PaginationFilter filter, string sessionClassId, string subjectId);
     }
 }
