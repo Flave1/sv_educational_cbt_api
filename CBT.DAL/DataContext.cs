@@ -53,7 +53,7 @@ namespace CBT.DAL
                 if (entry.State == EntityState.Added)
                 {
                     entry.Entity.Deleted = false;
-                    entry.Entity.CreatedOn = DateTime.Now;
+                    entry.Entity.CreatedOn = GetCurrentLocalDateTime();
                     entry.Entity.CreatedBy = clientId;
                     entry.Entity.UserType = string.IsNullOrEmpty(clientId) ? 1 : 0;
                     entry.Entity.ClientId = Guid.Parse(clientId);
@@ -61,7 +61,7 @@ namespace CBT.DAL
                 }
                 else
                 {
-                    entry.Entity.UpdatedOn = DateTime.Now;
+                    entry.Entity.UpdatedOn = GetCurrentLocalDateTime();
                     entry.Entity.UpdatedBy = clientId;
                     entry.Entity.UserType = string.IsNullOrEmpty(clientId) ? 1 : 0;
                     entry.Entity.ClientId = Guid.Parse(clientId);
