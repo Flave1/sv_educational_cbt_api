@@ -137,14 +137,39 @@ namespace CBT.BLL.Services.Examinations
             try
             {
                 var clientId = Guid.Parse(accessor.HttpContext.Items["userId"].ToString());
-                var query = context.Examination
-                    .Where(d => d.Deleted != true && d.ExaminationType == (int)ExaminationType.InternalExam && d.ClientId == clientId && d.CandidateCategoryId_ClassId == sessionClassId && d.ExamName_SubjectId == subjectId);
-            
+                
+                if(!string.IsNullOrEmpty(sessionClassId) && !string.IsNullOrEmpty(subjectId))
+                {
+                    var query = context.Examination
+                        .Where(d => d.Deleted != true && d.ExaminationType == (int)ExaminationType.InternalExam && d.ClientId == clientId && d.CandidateCategoryId_ClassId == sessionClassId && d.ExamName_SubjectId == subjectId);
 
-                var totalRecord = query.Count();
-                var result = await paginationService.GetPagedResult(query, filter).OrderByDescending(s => s.CreatedOn)
-                    .Select(db => new SelectExamination2(db, localTime)).ToListAsync();
-                res.Result = paginationService.CreatePagedReponse(result, filter, totalRecord);
+                    var totalRecord = query.Count();
+                    var result = await paginationService.GetPagedResult(query, filter).OrderByDescending(s => s.CreatedOn)
+                        .Select(db => new SelectExamination2(db, localTime)).ToListAsync();
+                    res.Result = paginationService.CreatePagedReponse(result, filter, totalRecord);
+                }
+
+                if(!string.IsNullOrEmpty(sessionClassId) && string.IsNullOrEmpty(subjectId))
+                {
+                    var query = context.Examination
+                        .Where(d => d.Deleted != true && d.ExaminationType == (int)ExaminationType.InternalExam && d.ClientId == clientId && d.CandidateCategoryId_ClassId == sessionClassId);
+
+                    var totalRecord = query.Count();
+                    var result = await paginationService.GetPagedResult(query, filter).OrderByDescending(s => s.CreatedOn)
+                        .Select(db => new SelectExamination2(db, localTime)).ToListAsync();
+                    res.Result = paginationService.CreatePagedReponse(result, filter, totalRecord);
+                }
+
+                if(string.IsNullOrEmpty(sessionClassId) && !string.IsNullOrEmpty(subjectId))
+                {
+                    var query = context.Examination
+                        .Where(d => d.Deleted != true && d.ExaminationType == (int)ExaminationType.InternalExam && d.ClientId == clientId && d.ExamName_SubjectId == subjectId);
+
+                    var totalRecord = query.Count();
+                    var result = await paginationService.GetPagedResult(query, filter).OrderByDescending(s => s.CreatedOn)
+                        .Select(db => new SelectExamination2(db, localTime)).ToListAsync();
+                    res.Result = paginationService.CreatePagedReponse(result, filter, totalRecord);
+                }
 
                 res.IsSuccessful = true;
                 res.Message.FriendlyMessage = Messages.GetSuccess;
