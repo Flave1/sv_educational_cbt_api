@@ -453,29 +453,29 @@ namespace CBT.BLL.Services.Result
                 var questionIds = await context.Question?.Where(x => x.ExaminationId == Guid.Parse(examinationId))
                     .Select(x => x.QuestionId)
                     .ToListAsync();
-
-                var candidate = new Candidate();
-
-                if (string.IsNullOrEmpty(candidateEmail))
-                {
-                    candidate = await context.Candidate?.Where(x => x.CandidateId.ToLower() == candidateId_regNo.ToLower())?.FirstOrDefaultAsync();
-                }
-
-                if (string.IsNullOrEmpty(candidateId_regNo))
-                {
-                    candidate = await context.Candidate?.Where(x => x.Email.ToLower() == candidateEmail.ToLower())?.FirstOrDefaultAsync();
-                }
-
-
+                
                 int totalScore = 0;
                 foreach (var item in questionIds)
                 {
                     var answer = await context.Question?.Where(x => x.QuestionId == item)?.FirstOrDefaultAsync();
-                    var candidateAnswer = await context.CandidateAnswer?.Where(x => x.QuestionId == item && x.CandidateId == candidate.Id.ToString())?.FirstOrDefaultAsync();
 
-                    if (answer?.Answers == candidateAnswer?.Answers)
+                    if (!string.IsNullOrEmpty(candidateId_regNo))
                     {
-                        totalScore += answer.Mark;
+                        var candidateAnswer = await context.CandidateAnswer?.Where(x => x.QuestionId == item && x.CandidateId == candidateId_regNo)?.FirstOrDefaultAsync();
+                        if (answer?.Answers == candidateAnswer?.Answers)
+                        {
+                            totalScore += answer.Mark;
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(candidateEmail))
+                    {
+                        var candidate = await context.Candidate?.Where(x => x.Email.ToLower() == candidateEmail.ToLower())?.FirstOrDefaultAsync();
+                        var candidateAnswer = await context.CandidateAnswer?.Where(x => x.QuestionId == item && x.CandidateId == candidate.Id.ToString())?.FirstOrDefaultAsync();
+                        if (answer?.Answers == candidateAnswer?.Answers)
+                        {
+                            totalScore += answer.Mark;
+                        }
                     }
 
                 }
@@ -494,7 +494,7 @@ namespace CBT.BLL.Services.Result
                 }
                 else
                 {
-
+                    var candidate = await context.Candidate?.Where(x => x.Email.ToLower() == candidateEmail.ToLower())?.FirstOrDefaultAsync();
                     status = totalScore >= examination.PassMark ? "Passed" : "Failed";
                     candidateName = $"{candidate?.FirstName} {candidate?.LastName}";
                 }
