@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CBT.DAL.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20221206210400_AddedProductURL")]
-    partial class AddedProductURL
+    [Migration("20230703084756_INIT")]
+    partial class INIT
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -104,8 +104,8 @@ namespace CBT.DAL.Migrations
                     b.Property<string>("Answers")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("CandidateId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("CandidateId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("ClientId")
                         .HasColumnType("uniqueidentifier");
@@ -121,6 +121,9 @@ namespace CBT.DAL.Migrations
 
                     b.Property<Guid>("QuestionId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("SmsClientId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("nvarchar(max)");
@@ -183,6 +186,9 @@ namespace CBT.DAL.Migrations
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("SmsClientId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("nvarchar(max)");
 
@@ -220,6 +226,9 @@ namespace CBT.DAL.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("SmsClientId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("nvarchar(max)");
 
@@ -253,6 +262,9 @@ namespace CBT.DAL.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CandidateExaminationId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CandidateIds")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("ClientId")
@@ -300,6 +312,9 @@ namespace CBT.DAL.Migrations
                     b.Property<bool>("ShuffleQuestions")
                         .HasColumnType("bit");
 
+                    b.Property<string>("SmsClientId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime2");
 
@@ -311,6 +326,12 @@ namespace CBT.DAL.Migrations
 
                     b.Property<DateTime>("UpdatedOn")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("UploadToSmpAsAssessment")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("UploadToSmpAsExam")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("UseAsAssessmentScore")
                         .HasColumnType("bit");
@@ -362,6 +383,9 @@ namespace CBT.DAL.Migrations
                     b.Property<int>("QuestionType")
                         .HasColumnType("int");
 
+                    b.Property<string>("SmsClientId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("nvarchar(max)");
 
@@ -384,6 +408,9 @@ namespace CBT.DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<bool>("Calculator")
+                        .HasColumnType("bit");
+
                     b.Property<Guid>("ClientId")
                         .HasColumnType("uniqueidentifier");
 
@@ -396,10 +423,25 @@ namespace CBT.DAL.Migrations
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("GeoLocation")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("ImageCasting")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("NotifyByEmail")
                         .HasColumnType("bit");
 
                     b.Property<bool>("NotifyBySMS")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("ScreenRecording")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("SendToEmail")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("ShowExamQuestionsAndAnswers")
                         .HasColumnType("bit");
 
                     b.Property<bool>("ShowPreviewBtn")
@@ -407,6 +449,12 @@ namespace CBT.DAL.Migrations
 
                     b.Property<bool>("ShowPreviousBtn")
                         .HasColumnType("bit");
+
+                    b.Property<bool>("ShowResult")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SmsClientId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("SubmitExamWhenUserLeavesScreen")
                         .HasColumnType("bit");
@@ -422,6 +470,12 @@ namespace CBT.DAL.Migrations
 
                     b.Property<int>("UserType")
                         .HasColumnType("int");
+
+                    b.Property<bool>("VideoRecording")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("ViewCategory")
+                        .HasColumnType("bit");
 
                     b.HasKey("SettingId");
 

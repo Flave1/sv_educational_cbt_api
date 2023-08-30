@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CBT.DAL.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class INIT : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -62,7 +62,8 @@ namespace CBT.DAL.Migrations
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserType = table.Column<int>(type: "int", nullable: false)
+                    UserType = table.Column<int>(type: "int", nullable: false),
+                    SmsClientId = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -90,15 +91,21 @@ namespace CBT.DAL.Migrations
                     UseAsAssessmentScore = table.Column<bool>(type: "bit", nullable: false),
                     AsExamScoreSessionAndTerm = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     AsAssessmentScoreSessionAndTerm = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UploadToSmpAsAssessment = table.Column<bool>(type: "bit", nullable: false),
+                    UploadToSmpAsExam = table.Column<bool>(type: "bit", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     ExaminationType = table.Column<int>(type: "int", nullable: false),
+                    PassMark = table.Column<int>(type: "int", nullable: false),
+                    ProductBaseurlSuffix = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CandidateIds = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Deleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserType = table.Column<int>(type: "int", nullable: false)
+                    UserType = table.Column<int>(type: "int", nullable: false),
+                    SmsClientId = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -114,15 +121,25 @@ namespace CBT.DAL.Migrations
                     NotifyBySMS = table.Column<bool>(type: "bit", nullable: false),
                     ShowPreviousBtn = table.Column<bool>(type: "bit", nullable: false),
                     ShowPreviewBtn = table.Column<bool>(type: "bit", nullable: false),
+                    ShowResult = table.Column<bool>(type: "bit", nullable: false),
+                    ShowExamQuestionsAndAnswers = table.Column<bool>(type: "bit", nullable: false),
                     UseWebCamCapture = table.Column<bool>(type: "bit", nullable: false),
                     SubmitExamWhenUserLeavesScreen = table.Column<bool>(type: "bit", nullable: false),
+                    ViewCategory = table.Column<bool>(type: "bit", nullable: false),
+                    Calculator = table.Column<bool>(type: "bit", nullable: false),
+                    SendToEmail = table.Column<bool>(type: "bit", nullable: false),
+                    GeoLocation = table.Column<bool>(type: "bit", nullable: false),
+                    ImageCasting = table.Column<bool>(type: "bit", nullable: false),
+                    ScreenRecording = table.Column<bool>(type: "bit", nullable: false),
+                    VideoRecording = table.Column<bool>(type: "bit", nullable: false),
                     Deleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserType = table.Column<int>(type: "int", nullable: false)
+                    UserType = table.Column<int>(type: "int", nullable: false),
+                    SmsClientId = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -255,7 +272,8 @@ namespace CBT.DAL.Migrations
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserType = table.Column<int>(type: "int", nullable: false)
+                    UserType = table.Column<int>(type: "int", nullable: false),
+                    SmsClientId = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -285,7 +303,8 @@ namespace CBT.DAL.Migrations
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserType = table.Column<int>(type: "int", nullable: false)
+                    UserType = table.Column<int>(type: "int", nullable: false),
+                    SmsClientId = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -304,7 +323,7 @@ namespace CBT.DAL.Migrations
                 {
                     AnswerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     QuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CandidateId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CandidateId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Answers = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Deleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -312,7 +331,8 @@ namespace CBT.DAL.Migrations
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserType = table.Column<int>(type: "int", nullable: false)
+                    UserType = table.Column<int>(type: "int", nullable: false),
+                    SmsClientId = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {

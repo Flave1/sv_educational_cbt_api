@@ -13,7 +13,7 @@ builder.Services.InstallServicesInAssembly(builder.Configuration);
 
 builder.Services.AddCors(p => p.AddPolicy("DevCorsPolicy", builder =>
 {
-    builder.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
+    builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
 }));
 
 var app = builder.Build();
